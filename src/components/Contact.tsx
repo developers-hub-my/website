@@ -62,24 +62,18 @@ const Contact = () => {
                   <Mail className="w-6 h-6 text-blue-600 mr-4" />
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-gray-600">contact@devhub.my</p>
+                    <p className="text-gray-600">hello@devhub.my</p>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <Phone className="w-6 h-6 text-blue-600 mr-4" />
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <p className="text-gray-600">+60 3-1234 5678</p>
-                  </div>
-                </div>
+
                 <div className="flex items-start">
                   <MapPin className="w-6 h-6 text-blue-600 mr-4" />
                   <div>
                     <p className="font-medium">Address</p>
                     <p className="text-gray-600">
-                      Level 30, Menara Prestige<br />
-                      No. 1, Jalan Pinang<br />
-                      50450 Kuala Lumpur
+                      No.24-01, Jalan Padi Emas 2,<br />
+                      Bandar Baru Uda,<br />
+                      81200 Johor Bahru, Johor
                     </p>
                   </div>
                 </div>
@@ -90,8 +84,7 @@ const Contact = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Company Details</h3>
               <p className="text-gray-600">
                 Developers Hub Sdn. Bhd.<br />
-                Company Registration No.: 1376248V<br />
-                State: Wilayah Persekutuan
+                Company Registration No.: 202001019928 (1376248-V)<br />
               </p>
             </div>
           </div>

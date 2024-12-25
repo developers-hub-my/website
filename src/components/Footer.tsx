@@ -14,9 +14,9 @@ const Footer = () => {
               <li><a href="#services" className="hover:text-blue-400 transition-colors">Services</a></li>
               <li><a href="#programs" className="hover:text-blue-400 transition-colors">Programs</a></li>
               <li>
-                <a 
-                  href="https://blog.devhub.my" 
-                  target="_blank" 
+                <a
+                  href="https://blog.devhub.my"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-blue-400 transition-colors"
                 >
@@ -39,10 +39,9 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
-              <li>contact@devhub.my</li>
-              <li>+60 3-1234 5678</li>
-              <li>Level 30, Menara Prestige</li>
-              <li>50450 Kuala Lumpur</li>
+              <li>hello@devhub.my</li>
+              <li>No.24-01, Jalan Padi Emas 2, Bandar Baru Uda,</li>
+              <li>81200 Johor Bahru, Johor</li>
             </ul>
           </div>
 
@@ -67,7 +66,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
           <p>© {new Date().getFullYear()} Developers Hub Sdn. Bhd. All rights reserved.</p>
-          <p className="mt-2">Company Registration No.: 1376248V | State: Wilayah Persekutuan</p>
+          <p className="mt-2">Company Registration No.: 202001019928 (1376248-V)</p>
         </div>
       </div>
     </footer>
