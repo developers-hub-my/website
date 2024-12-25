@@ -6,9 +6,9 @@ const Hero = () => {
     <div className="relative min-h-screen flex items-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <div className="text-center lg:text-left lg:flex lg:items-center lg:justify-between">
+        <div className="text-center lg:text-left lg:flex lg:items-center lg:justify-between space-x-4">
           <div className="lg:w-1/2">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               Empowering Innovation Through
               <span className="text-blue-600"> Education, Technology,</span> and
               <span className="text-blue-600"> Entrepreneurship</span>
@@ -17,14 +17,14 @@ const Hero = () => {
               Join us in shaping the future of technology and education. We provide comprehensive solutions
               for individuals and businesses looking to thrive in the digital age.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+            {/* <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
               <button className="px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center">
                 Join Us <ArrowRight className="ml-2 w-5 h-5" />
               </button>
               <button className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-colors">
                 Learn More
               </button>
-            </div>
+            </div> */}
           </div>
           <div className="hidden lg:block lg:w-1/2">
             <div className="grid grid-cols-2 gap-4 mt-8 lg:mt-0">
