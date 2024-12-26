@@ -5,14 +5,13 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><a href="#home" className="hover:text-blue-400 transition-colors">Home</a></li>
               <li><a href="#about-us" className="hover:text-blue-400 transition-colors">About Us</a></li>
               <li><a href="#services" className="hover:text-blue-400 transition-colors">Services</a></li>
-              <li><a href="#programs" className="hover:text-blue-400 transition-colors">Programs</a></li>
               <li>
                 <a
                   href="https://blog.devhub.my"
@@ -44,29 +43,12 @@ const Footer = () => {
               <li>81200 Johor Bahru, Johor</li>
             </ul>
           </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                <Twitter className="w-6 h-6" />
-              </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                <Linkedin className="w-6 h-6" />
-              </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                <Instagram className="w-6 h-6" />
-              </a>
-            </div>
-          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
-          <p>© {new Date().getFullYear()} Developers Hub Sdn. Bhd. All rights reserved.</p>
-          <p className="mt-2">Company Registration No.: 202001019928 (1376248-V)</p>
+          <p className="mt-2">Developers Hub Sdn. Bhd.</p>
+          <p className="text-xs">202001019928 (1376248-V).</p>
+          <p className="mt-2">© {new Date().getFullYear()} All rights reserved.</p>
         </div>
       </div>
     </footer>
