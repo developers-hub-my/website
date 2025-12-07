@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Code2, MessageSquare, Home, Users, Newspaper } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
 import Logo from './Logo';
+import DarkModeToggle from './DarkModeToggle';
 
 interface NavItem {
   name: string;
-  icon: React.ElementType;
-  url?: string;
+  href: string;
+  external?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { name: 'Home', icon: Home },
-  { name: 'About Us', icon: Users },
-  { name: 'Services', icon: Code2 },
-  { name: 'Blog', icon: Newspaper, url: 'https://blog.devhub.my' },
-  { name: 'Contact', icon: MessageSquare },
+  { name: 'Home', href: '#home' },
+  { name: 'About', href: '#about-us' },
+  { name: 'Services', href: '#services' },
+  { name: 'Contact', href: '#contact' },
 ];
 
 const Navbar = () => {
@@ -28,49 +28,51 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const renderNavLink = (item: NavItem) => {
-    const linkProps = item.url
-      ? {
-          href: item.url,
-          target: "_blank",
-          rel: "noopener noreferrer"
-        }
-      : {
-          href: `#${item.name.toLowerCase().replace(' ', '-')}`
-        };
-
-    return (
-      <a
-        key={item.name}
-        {...linkProps}
-        className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-      >
-        <item.icon className="w-4 h-4 mr-1" />
-        {item.name}
-      </a>
-    );
-  };
-
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-    }`}>
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700'
+          : 'bg-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex-shrink-0">
+        <div className="flex items-center justify-between h-16 sm:h-20">
+          <div className="shrink-0">
             <Logo />
           </div>
 
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              {navItems.map(renderNavLink)}
-            </div>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex md:items-center md:space-x-1">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                {...(item.external && {
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                })}
+                className="px-3 lg:px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-md hover:bg-slate-50 dark:hover:bg-slate-800"
+              >
+                {item.name}
+              </a>
+            ))}
+            <DarkModeToggle />
+            <a
+              href="#contact"
+              className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Get in Touch
+            </a>
           </div>
 
-          <div className="md:hidden">
+          {/* Mobile menu button */}
+          <div className="flex items-center space-x-2 md:hidden">
+            <DarkModeToggle />
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none transition-colors"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -78,32 +80,31 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg">
-            {navItems.map((item) => {
-              const linkProps = item.url
-                ? {
-                    href: item.url,
-                    target: "_blank",
-                    rel: "noopener noreferrer"
-                  }
-                : {
-                    href: `#${item.name.toLowerCase().replace(' ', '-')}`
-                  };
-
-              return (
-                <a
-                  key={item.name}
-                  {...linkProps}
-                  className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <item.icon className="w-4 h-4 mr-2" />
-                  {item.name}
-                </a>
-              );
-            })}
+        <div className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+          <div className="px-4 pt-2 pb-4 space-y-1">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                {...(item.external && {
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                })}
+                className="block px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+            <a
+              href="#contact"
+              className="block mt-4 px-4 py-3 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Get in Touch
+            </a>
           </div>
         </div>
       )}

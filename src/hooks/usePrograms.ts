@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { Code, Server, Database, BookOpen } from 'lucide-react';
 
-const defaultPrograms = [
-//   {
-//     icon: Code,
-//     title: 'Full-Stack Development',
-//     duration: '24 weeks',
-//     level: 'Intermediate to Advanced',
-//     description: 'Comprehensive program covering modern web development stack.',
-//     price: 'RM 12,00',
-//   },
-];
+interface Program {
+  title: string;
+  duration: string;
+  level: string;
+  description: string;
+  price: string;
+}
+
+const defaultPrograms: Program[] = [];
 
 export const usePrograms = () => {
   const [programs, setPrograms] = useState(defaultPrograms);
