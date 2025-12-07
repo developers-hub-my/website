@@ -10,7 +10,7 @@ const Logo = () => {
       />
       <div className="flex items-baseline">
         <span className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">Developers</span>
-        <span className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400">Hub</span>
+        <span className="text-lg sm:text-xl font-bold bg-linear-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">Hub</span>
       </div>
     </a>
   );
