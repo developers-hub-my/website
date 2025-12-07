@@ -25,11 +25,11 @@ const goals = [
 
 const About = () => {
   return (
-    <section id="about-us" className="py-16 sm:py-20 lg:py-24 bg-slate-50 dark:bg-slate-800">
+    <section id="about-us" className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">About Us</h2>
-          <div className="mt-4 w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
+          <div className="mt-4 w-20 h-1 bg-linear-to-r from-blue-600 to-cyan-500 mx-auto rounded-full"></div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -38,7 +38,7 @@ const About = () => {
             <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">
               Building the Future of Technology in Malaysia
             </h3>
-            <div className="space-y-4 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+            <div className="space-y-4 text-slate-600 dark:text-slate-400 leading-relaxed text-sm sm:text-base">
               <p>
                 Founded in 2020, Developers Hub Sdn Bhd is committed to fostering innovation and
                 excellence in technology education. We help individuals and organizations thrive
@@ -55,13 +55,6 @@ const About = () => {
                 tech ecosystem.
               </p>
             </div>
-            <div className="mt-6 sm:mt-8 p-4 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">Developers Hub Sdn. Bhd.</span>
-                <br />
-                Registration No: 202001019928 (1376248-V)
-              </p>
-            </div>
           </div>
 
           {/* Right Column - Goals Grid */}
@@ -69,11 +62,11 @@ const About = () => {
             {goals.map((goal, index) => (
               <div
                 key={index}
-                className="group p-4 sm:p-6 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-blue-200 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-200"
+                className="group p-4 sm:p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-200"
               >
                 <div className="flex items-start space-x-3 sm:space-x-4">
-                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
-                    <goal.icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
+                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <goal.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white mb-1 text-sm sm:text-base">{goal.title}</h4>

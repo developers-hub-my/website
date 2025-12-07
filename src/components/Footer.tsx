@@ -17,7 +17,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-900 dark:bg-slate-950 text-white">
+    <footer className="bg-slate-900 dark:bg-slate-950 text-white border-t border-slate-800 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
           {/* Company Info */}
@@ -25,7 +25,7 @@ const Footer = () => {
             <div className="mb-4 sm:mb-6">
               <div className="flex items-baseline">
                 <span className="text-lg sm:text-xl font-bold text-white">Developers</span>
-                <span className="text-lg sm:text-xl font-bold text-blue-400">Hub</span>
+                <span className="text-lg sm:text-xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Hub</span>
               </div>
             </div>
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
