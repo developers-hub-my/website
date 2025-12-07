@@ -21,33 +21,61 @@ npm run preview  # Preview production build
 
 ## Architecture
 
-This is a single-page marketing website for "Developers Hub Sdn Bhd" - a company focused on education, technology, and entrepreneurship.
+This is a single-page marketing website for "Developers Hub Sdn Bhd" - a Malaysian company focused on education, technology, and entrepreneurship based in Johor Bahru.
 
 ### Component Structure
 
 The app follows a simple page-section pattern where `App.tsx` composes the main layout:
 
-- `Navbar` - Navigation header
-- `Hero` - Main landing section with feature cards
-- `About` - Company information
-- `Services` - Service offerings
-- `Footer` - Contact info and links
+```text
+App.tsx
+├── Navbar      - Fixed navigation with scroll-aware styling and mobile hamburger menu
+├── Hero        - Landing section with tagline and 4 feature cards (Innovation, Education, Development, Partnership)
+├── About       - Company goals displayed as 4 animated cards
+├── Services    - 4 service offerings using ServiceCard component
+└── Footer      - Quick links, services list, and contact info
+```
+
+### Navigation
+
+The Navbar uses hash-based navigation (`#about-us`, `#services`, `#contact`) for in-page scrolling. External links (like Blog → `https://blog.devhub.my`) open in new tabs.
+
+### Card Components
+
+Two reusable card patterns for displaying content:
+
+- `ServiceCard` - Displays service with icon, title, description, and feature list (uses `ChevronRight` bullets)
+- `ProgramCard` - Displays training program with icon, metadata (duration, level, price), and enroll button
 
 ### Custom Hooks
 
 Located in `src/hooks/`:
 
-- `usePrograms` - Manages training programs state (currently empty by default, with placeholder structure)
-- `useNotifications` - Handles email subscription state
+- `usePrograms` - Manages training programs state (currently returns empty array, displays EmptyState)
+- `useNotifications` - Handles email subscription state with `handleSubscribe` callback
 
-### Notification Components
+### Notification Subscription System
 
-Modular notification subscription system in `src/components/notification/`:
+Modular form components in `src/components/notification/`:
 
-- `NotificationSubscribe` - Container component
-- `EmailInput` - Email form field
-- `SubscribeButton` - Submit button
+- `NotificationSubscribe` - Form container with submission handling
+- `EmailInput` - Controlled email input field
+- `SubscribeButton` - Submit button with loading state
 
-### Empty State Pattern
+Used by `EmptyState` component to prompt users to subscribe when no content is available.
 
-The `EmptyState` component provides a reusable pattern for sections with no content, including notification subscription prompts.
+### Unused Components
+
+Some components exist but are not currently used in App.tsx:
+
+- `Programs` - Training programs section (uses usePrograms hook and EmptyState)
+- `Contact` - Contact form with company details
+- `NotificationSubscribe` (in root components folder) - Duplicate, use the one in `/notification/` subdirectory
+
+### Styling Conventions
+
+- Custom blue color scale defined in `tailwind.config.js` (blue-50 through blue-900)
+- Primary accent color: `blue-600` (#0284c7)
+- Cards use `rounded-xl shadow-md hover:shadow-xl` pattern
+- Responsive breakpoints: `sm:`, `md:`, `lg:` with mobile-first approach
+- Section padding: `py-20` with `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` container pattern
