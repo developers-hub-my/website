@@ -1,0 +1,27 @@
+{
+  "name": "Developers Hub Sdn Bhd",
+  "short_name": "DevHub",
+  "description": "Empowering businesses through technology and innovation. Education, software development, and IT solutions in Malaysia.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "education", "technology"],
+  "lang": "en",
+  "dir": "ltr"
+}

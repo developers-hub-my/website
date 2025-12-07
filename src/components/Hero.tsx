@@ -57,7 +57,7 @@ const Hero = () => {
               className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-slate-900/20 dark:shadow-white/10"
             >
               Explore Services
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </a>
             <a
               href="#contact"
@@ -83,9 +83,9 @@ const Hero = () => {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <a href="#about-us" className="flex flex-col items-center text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <a href="#about-us" className="flex flex-col items-center text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" aria-label="Scroll to About Us section">
           <span className="text-xs mb-2">Scroll</span>
-          <ChevronDown className="w-5 h-5" />
+          <ChevronDown className="w-5 h-5" aria-hidden="true" />
         </a>
       </div>
 
