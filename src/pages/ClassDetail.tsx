@@ -1,7 +1,16 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock, BarChart3, MapPin, CalendarDays } from 'lucide-react';
-import { availableTickets, BAND_COPY, classBySlug, eventFor, formatDate, formatPrice } from '../lib/gatherhub';
+import {
+  availableTickets,
+  BAND_COPY,
+  classBySlug,
+  eventFor,
+  formatDate,
+  formatPrice,
+  SUBSCRIBE_IS_EXTERNAL,
+  SUBSCRIBE_URL,
+} from '../lib/gatherhub';
 
 // CTA rules follow the GatherHub landing contract (workspace doc 10):
 // - open → register CTA linking register_url (redirects to GatherHub checkout)
@@ -122,7 +131,8 @@ const ClassDetail = () => {
                 </a>
               ) : (
                 <a
-                  href="/#contact"
+                  href={SUBSCRIBE_URL}
+                  {...(SUBSCRIBE_IS_EXTERNAL ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   className="inline-block py-3 px-8 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 text-center border border-blue-600 dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                 >
                   Get Notified
