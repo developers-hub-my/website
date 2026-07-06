@@ -7,11 +7,11 @@ import { ClassDefinition, GatherHubEvent, GatherHubTicket } from '../types/gathe
 
 export const classes = classesData as ClassDefinition[];
 
-// "Get Notified" target: the GatherHub public subscribe page for the DevHub
-// organization (double opt-in newsletter). Falls back to the contact section
-// until the env var is set in Netlify.
+// "Get Notified" target. Vendor-neutral name on purpose: today it points at
+// the GatherHub public subscribe page (double opt-in newsletter), but it may
+// move to g8crm later. Falls back to the contact section until set in Netlify.
 export const SUBSCRIBE_URL: string =
-  import.meta.env.VITE_GATHERHUB_SUBSCRIBE_URL || '/#contact';
+  import.meta.env.VITE_SUBSCRIBE_URL || '/#contact';
 
 export const SUBSCRIBE_IS_EXTERNAL = SUBSCRIBE_URL.startsWith('http');
 
