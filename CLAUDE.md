@@ -79,3 +79,17 @@ Some components exist but are not currently used in App.tsx:
 - Cards use `rounded-xl shadow-md hover:shadow-xl` pattern
 - Responsive breakpoints: `sm:`, `md:`, `lg:` with mobile-first approach
 - Section padding: `py-20` with `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` container pattern
+
+## GatherHub Integration (build-time only)
+
+- `scripts/fetch-gatherhub.mjs` (prebuild) bakes GatherHub event payloads into
+  `src/data/gatherhub.generated.json`; `Classes`/`ClassCard` render from it.
+- Contract schema: `scripts/gatherhub-contract.mjs` (Zod, `.strict()`), source
+  of truth is the GatherHub workspace doc `10-devhub-landing-integration.md`.
+- NEVER re-compute ticket availability client-side — render `available` /
+  `available_until` verbatim. Bands (`remaining_band`) render copy only, never
+  seat numbers.
+- NEVER fetch GatherHub at runtime or reference `GATHERHUB_*` env vars outside
+  the prebuild script (secrets must not reach the bundle).
+- A fetch/validation failure for a UUID-bearing class must fail the build —
+  do not add a fallback.

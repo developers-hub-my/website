@@ -1,0 +1,23 @@
+name: Nightly rebuild
+
+# Covers pure date rollovers (an early-bird window or event ending overnight
+# with no writes in GatherHub). Event-driven freshness comes from GatherHub
+# webhooks hitting the same Netlify build hook.
+on:
+  schedule:
+    - cron: '0 20 * * *' # 04:00 MYT
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit Netlify build hook
+        env:
+          HOOK: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "NETLIFY_BUILD_HOOK_URL secret not set — skipping."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
