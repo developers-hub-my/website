@@ -1,60 +1,48 @@
-import { Clock, BarChart3, MapPin, CalendarDays } from 'lucide-react';
-import { ClassDefinition, GatherHubEvent, GatherHubTicket } from '../types/gatherhub';
+import { Link } from 'react-router-dom';
+import { Clock, BarChart3, MapPin, CalendarDays, ArrowRight } from 'lucide-react';
+import { ClassDefinition, GatherHubEvent } from '../types/gatherhub';
+import { availableTickets, formatDate, formatPrice } from '../lib/gatherhub';
 
 interface ClassCardProps {
   classDefinition: ClassDefinition;
   event?: GatherHubEvent;
 }
 
-// CTA rules follow the GatherHub landing contract (workspace doc 10):
-// - open → register CTA linking register_url
-// - only available tickets are shown; the cheapest is the primary price and a
-//   pricier available one is struck through (early-bird without name-matching)
-// - remaining_band renders copy only — never seat numbers
-// - sold_out / closed / ended / no UUID → waitlist CTA
-// - availability flags are rendered verbatim, never re-computed here
+// Summary card for the classes index / home section. The full CTA (register →
+// GatherHub) lives on the /classes/:slug detail page; the card links there.
 
-function formatPrice(ticket: GatherHubTicket): string {
-  const prefix = ticket.currency === 'MYR' ? 'RM' : ticket.currency;
-  return `${prefix} ${ticket.price.toLocaleString('en-MY')}`;
-}
-
-function formatDate(iso: string | null): string | null {
-  if (!iso) return null;
-  return new Date(iso).toLocaleDateString('en-MY', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-}
-
-const BAND_COPY: Record<string, string | null> = {
-  available: null,
-  low: 'Seats are running low',
-  last_few: 'Last few seats',
-  none: null,
+const STATUS_BADGE: Record<string, { label: string; classes: string } | null> = {
+  open: { label: 'Registration Open', classes: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' },
+  sold_out: { label: 'Sold Out', classes: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' },
+  closed: { label: 'Registration Closed', classes: 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' },
+  ended: { label: 'Past Run', classes: 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300' },
 };
 
 const ClassCard = ({ classDefinition, event }: ClassCardProps) => {
-  const isOpen = event?.status === 'open';
-  const isSoldOut = event?.status === 'sold_out';
-
-  const availableTickets = (event?.tickets ?? [])
-    .filter((ticket) => ticket.available)
-    .sort((a, b) => a.price - b.price);
-  const primaryTicket = availableTickets[0];
-  const struckTicket = availableTickets.find((ticket) => ticket.price > (primaryTicket?.price ?? 0));
-
-  const bandCopy = isOpen ? BAND_COPY[event.seats.remaining_band] : null;
-  const startsAt = formatDate(event?.starts_at ?? null);
+  const badge = event ? STATUS_BADGE[event.status] : null;
+  const tickets = availableTickets(event);
+  const primaryTicket = event?.status === 'open' ? tickets[0] : undefined;
+  const startsAt = formatDate(event?.starts_at);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+    <Link
+      to={`/classes/${classDefinition.slug}`}
+      className="block bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+    >
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          {classDefinition.title}
-        </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4">{classDefinition.description}</p>
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {classDefinition.title}
+          </h3>
+          {badge && (
+            <span className={`shrink-0 text-xs font-medium px-2 py-1 rounded-full ${badge.classes}`}>
+              {badge.label}
+            </span>
+          )}
+        </div>
+        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          {classDefinition.description}
+        </p>
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
@@ -79,45 +67,21 @@ const ClassCard = ({ classDefinition, event }: ClassCardProps) => {
           )}
         </div>
 
-        {isOpen && primaryTicket && (
-          <div className="mb-4">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-slate-700">
+          {primaryTicket ? (
+            <span className="text-lg font-bold text-gray-900 dark:text-white">
               {formatPrice(primaryTicket)}
+              <span className="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">onwards</span>
             </span>
-            {struckTicket && (
-              <span className="ml-2 text-gray-400 dark:text-gray-500 line-through">
-                {formatPrice(struckTicket)}
-              </span>
-            )}
-            {bandCopy && (
-              <p className="mt-1 text-sm font-medium text-amber-600 dark:text-amber-400">{bandCopy}</p>
-            )}
-          </div>
-        )}
-
-        {isSoldOut && (
-          <p className="mb-4 text-sm font-medium text-gray-600 dark:text-gray-300">
-            Sold out — get notified for the next run.
-          </p>
-        )}
-
-        {isOpen ? (
-          <a
-            href={event.register_url}
-            className="block w-full py-2 px-4 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
-          >
-            Register Now
-          </a>
-        ) : (
-          <a
-            href="#contact"
-            className="block w-full py-2 px-4 bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 text-center border border-blue-600 dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-slate-600 transition-colors cursor-pointer"
-          >
-            Get Notified
-          </a>
-        )}
+          ) : (
+            <span className="text-sm text-gray-500 dark:text-gray-400">Details &amp; next run</span>
+          )}
+          <span className="inline-flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
+            View Class <ArrowRight className="w-4 h-4 ml-1" />
+          </span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

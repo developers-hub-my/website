@@ -1,17 +1,17 @@
-import { GraduationCap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { GraduationCap, ArrowRight } from 'lucide-react';
 import ClassCard from './ClassCard';
-import classesData from '../data/classes.json';
-import gatherhubData from '../data/gatherhub.generated.json';
-import { ClassDefinition, GatherHubEvent } from '../types/gatherhub';
+import { classes, eventFor } from '../lib/gatherhub';
 
-// Class run data (pricing, seats, registration state) is baked at build time
-// by scripts/fetch-gatherhub.mjs — no runtime fetch. Freshness comes from the
-// nightly rebuild workflow + GatherHub webhooks hitting the Netlify build hook.
+// Home-page section: a taste of the classes catalogue. The full list lives at
+// /classes; each card links to its /classes/:slug detail page where the
+// register CTA redirects to GatherHub.
 
-const classes = classesData as ClassDefinition[];
-const events = gatherhubData as Record<string, GatherHubEvent>;
+const FEATURED_COUNT = 3;
 
 const Classes = () => {
+  const featured = classes.slice(0, FEATURED_COUNT);
+
   return (
     <section id="classes" className="py-20 bg-gray-50 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +22,7 @@ const Classes = () => {
           </p>
         </div>
 
-        {classes.length === 0 ? (
+        {featured.length === 0 ? (
           <div className="max-w-xl mx-auto text-center bg-white dark:bg-slate-800 rounded-xl shadow-md p-10">
             <GraduationCap className="w-12 h-12 text-blue-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -40,19 +40,25 @@ const Classes = () => {
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {classes.map((classDefinition) => (
-              <ClassCard
-                key={classDefinition.slug}
-                classDefinition={classDefinition}
-                event={
-                  classDefinition.gatherhub_event_uuid
-                    ? events[classDefinition.gatherhub_event_uuid]
-                    : undefined
-                }
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featured.map((classDefinition) => (
+                <ClassCard
+                  key={classDefinition.slug}
+                  classDefinition={classDefinition}
+                  event={eventFor(classDefinition)}
+                />
+              ))}
+            </div>
+            <div className="text-center mt-10">
+              <Link
+                to="/classes"
+                className="inline-flex items-center py-2 px-6 text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                View All Classes <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </div>
+          </>
         )}
       </div>
     </section>
