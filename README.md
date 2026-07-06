@@ -63,3 +63,26 @@ src/
 
 Developers Hub Sdn. Bhd.
 Company Registration No.: 202001019928 (1376248-V)
+
+## GatherHub Class Integration
+
+Class landing data (pricing, seats, registration state) comes from GatherHub's
+signed public API at **build time** — never fetched at runtime.
+
+- Evergreen class content lives in `src/data/classes.json`. A class with a
+  `gatherhub_event_uuid` gets live run data; without one it renders in
+  evergreen/waitlist mode.
+- `npm run build` runs `scripts/fetch-gatherhub.mjs` first (HMAC-signed fetch,
+  validated by `scripts/gatherhub-contract.mjs`) and bakes
+  `src/data/gatherhub.generated.json`.
+- **A failed fetch/validation for a UUID-bearing class fails the whole build**
+  (slug + uuid + reason in the error). Netlify keeps the last good deploy live —
+  never soften this into a silent waitlist fallback.
+- Env vars (see `.env.example`): `GATHERHUB_BASE_URL`, `GATHERHUB_CLIENT_KEY`,
+  `GATHERHUB_CLIENT_SECRET`, `GATHERHUB_CLIENT_DOMAIN` — set in Netlify build
+  environment; only needed once a class carries a UUID.
+- **Freshness:** the Netlify build hook URL must be registered in GatherHub as
+  a webhook endpoint for the DevHub organization, subscribed to
+  `event.updated`, `event.tickets_updated`, and `event.capacity_band_changed`;
+  the nightly-rebuild workflow (secret `NETLIFY_BUILD_HOOK_URL`) covers date
+  rollovers.
