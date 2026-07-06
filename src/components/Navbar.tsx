@@ -12,11 +12,11 @@ interface NavItem {
 const companyProfileUrl = import.meta.env.VITE_COMPANY_PROFILE_URL;
 
 const navItems: NavItem[] = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about-us' },
-  { name: 'Services', href: '#services' },
-  { name: 'Classes', href: '#classes' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Home', href: '/#home' },
+  { name: 'About', href: '/#about-us' },
+  { name: 'Services', href: '/#services' },
+  { name: 'Classes', href: '/classes' },
+  { name: 'Contact', href: '/#contact' },
   ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
 ];
 
