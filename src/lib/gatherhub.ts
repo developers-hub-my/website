@@ -7,6 +7,14 @@ import { ClassDefinition, GatherHubEvent, GatherHubTicket } from '../types/gathe
 
 export const classes = classesData as ClassDefinition[];
 
+// "Get Notified" target: the GatherHub public subscribe page for the DevHub
+// organization (double opt-in newsletter). Falls back to the contact section
+// until the env var is set in Netlify.
+export const SUBSCRIBE_URL: string =
+  import.meta.env.VITE_GATHERHUB_SUBSCRIBE_URL || '/#contact';
+
+export const SUBSCRIBE_IS_EXTERNAL = SUBSCRIBE_URL.startsWith('http');
+
 const events = gatherhubData as Record<string, GatherHubEvent>;
 
 export function classBySlug(slug: string): ClassDefinition | undefined {

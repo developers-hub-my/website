@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { GraduationCap } from 'lucide-react';
 import ClassCard from '../components/ClassCard';
-import { classes, eventFor } from '../lib/gatherhub';
+import { classes, eventFor, SUBSCRIBE_IS_EXTERNAL, SUBSCRIBE_URL } from '../lib/gatherhub';
 
 const ClassesIndex = () => {
   useEffect(() => {
@@ -30,7 +30,8 @@ const ClassesIndex = () => {
               the first to know when registration opens.
             </p>
             <a
-              href="/#contact"
+              href={SUBSCRIBE_URL}
+              {...(SUBSCRIBE_IS_EXTERNAL ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               className="inline-block py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Get Notified
