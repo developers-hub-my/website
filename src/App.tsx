@@ -8,6 +8,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ClassesIndex from './pages/ClassesIndex';
 import ClassDetail from './pages/ClassDetail';
+import NotFound from './pages/NotFound';
 
 function Home() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/classes" element={<ClassesIndex />} />
             <Route path="/classes/:slug" element={<ClassDetail />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
         </div>

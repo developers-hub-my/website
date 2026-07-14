@@ -2,15 +2,16 @@ import { useState } from 'react';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 
-const companyProfileUrl = import.meta.env.VITE_COMPANY_PROFILE_URL;
+const companyProfileUrl = import.meta.env.VITE_COMPANY_PROFILE_URL || 'https://devhub.my';
 
 const quickLinks = [
   { name: 'Home', href: '#home' },
   { name: 'About', href: '#about-us' },
   { name: 'Services', href: '#services' },
   { name: 'Contact', href: '#contact' },
-  { name: 'Blog', href: 'https://blog.devhub.my', external: true },
-  ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
+  // Blog belum ada — enable balik bila blog.devhub.my dah live
+  // { name: 'Blog', href: 'https://blog.devhub.my', external: true },
+  { name: 'Company Profile', href: companyProfileUrl, external: true },
 ];
 
 const services = [
