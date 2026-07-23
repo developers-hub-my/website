@@ -12,7 +12,35 @@ const FaqList = ({ faqs }: { faqs: TrainingFaq[] }) => (
           {faq.q}
           <ChevronDown className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" />
         </summary>
-        <p className="px-5 pb-5 text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
+        <div className="px-5 pb-5 space-y-3">
+          <p className="text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
+          {faq.bullets && (
+            <ul className="space-y-2">
+              {faq.bullets.map((bullet) => (
+                <li
+                  key={bullet.title ?? bullet.text}
+                  className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300"
+                >
+                  {/* Diamond marker — echoes the landing pages' motif */}
+                  <span className="mt-1.5 w-1.5 h-1.5 rotate-45 bg-blue-500 shrink-0" />
+                  <span>
+                    {bullet.title ? (
+                      <>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {bullet.title}
+                        </span>
+                        {' — '}
+                        {bullet.text}
+                      </>
+                    ) : (
+                      bullet.text
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </details>
     ))}
   </div>

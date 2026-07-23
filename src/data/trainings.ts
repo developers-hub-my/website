@@ -570,20 +570,23 @@ export function trainingByPath(stage: string, slug: string): Training | undefine
 export interface TrainingFaq {
   q: string;
   a: string;
+  /** Optional bullet list rendered under the answer — flattened into the JSON-LD text */
+  bullets?: { title?: string; text: string }[];
 }
 
 // Catalogue-level FAQs for the /trainings listing — the questions a visitor
 // comparing courses actually has (path structure, ordering, private runs,
 // registration). Rendered by TrainingsIndex and mirrored into FAQPage JSON-LD.
-const stageSummary = (Object.keys(STAGES) as Stage[])
-  .sort((a, b) => STAGES[a].order - STAGES[b].order)
-  .map((stage) => `Stage ${STAGES[stage].order} · ${STAGES[stage].label} — ${STAGES[stage].blurb}`)
-  .join(' ');
-
 export const catalogueFaqs: TrainingFaq[] = [
   {
     q: 'How is the training path structured?',
-    a: `${trainings.length} hands-on courses across four stages. ${stageSummary}`,
+    a: `${trainings.length} hands-on courses across four learning stages:`,
+    bullets: (Object.keys(STAGES) as Stage[])
+      .sort((a, b) => STAGES[a].order - STAGES[b].order)
+      .map((stage) => ({
+        title: `Stage ${STAGES[stage].order} · ${STAGES[stage].label}`,
+        text: STAGES[stage].blurb,
+      })),
   },
   {
     q: 'Do I need to follow the stages in order?',
@@ -612,9 +615,8 @@ export function trainingFaqs(training: Training): TrainingFaq[] {
     },
     {
       q: 'What do I walk away with?',
-      a: `Artifacts you built yourself, not notes — including: ${training.outcomes
-        .slice(0, 3)
-        .join('; ')}.`,
+      a: 'Artifacts you built yourself, not notes — including:',
+      bullets: training.outcomes.slice(0, 3).map((text) => ({ text })),
     },
     {
       q: 'Is this training hands-on or lecture-based?',

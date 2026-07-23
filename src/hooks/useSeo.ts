@@ -28,15 +28,25 @@ export const absoluteUrl = (url: string): string =>
   url.startsWith('http') ? url : `${SITE_URL}${url}`;
 
 // Build a FAQPage block from Q/A pairs — pass into useSeo's jsonLd. The same
-// pairs must also be rendered visibly on the page (Google requirement).
-export function faqPageJsonLd(faqs: { q: string; a: string }[]): object {
+// pairs must also be rendered visibly on the page (Google requirement); any
+// bullet list is flattened into the answer text for the schema.
+export function faqPageJsonLd(
+  faqs: { q: string; a: string; bullets?: { title?: string; text: string }[] }[],
+): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.q,
-      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.bullets
+          ? `${faq.a} ${faq.bullets
+              .map((b) => (b.title ? `${b.title} — ${b.text}` : b.text).replace(/\.$/, ''))
+              .join('; ')}.`
+          : faq.a,
+      },
     })),
   };
 }
