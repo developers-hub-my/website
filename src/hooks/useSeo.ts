@@ -27,6 +27,20 @@ export interface SeoOptions {
 export const absoluteUrl = (url: string): string =>
   url.startsWith('http') ? url : `${SITE_URL}${url}`;
 
+// Build a FAQPage block from Q/A pairs — pass into useSeo's jsonLd. The same
+// pairs must also be rendered visibly on the page (Google requirement).
+export function faqPageJsonLd(faqs: { q: string; a: string }[]): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  };
+}
+
 function setMeta(attr: 'name' | 'property', key: string, content: string): void {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
   if (!el) {

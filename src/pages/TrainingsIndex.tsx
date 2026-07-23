@@ -5,12 +5,14 @@ import {
   SHOW_HRD_CORP,
   STAGES,
   Stage,
+  catalogueFaqs,
   trainingImage,
   trainingLogo,
   trainingPath,
   trainings,
 } from '../data/trainings';
-import { SITE_URL, useSeo } from '../hooks/useSeo';
+import { SITE_URL, faqPageJsonLd, useSeo } from '../hooks/useSeo';
+import FaqList from '../components/FaqList';
 
 // Catalogue layout modelled on g8suite.com/our-solutions: intro header, a
 // facet filter rail (with counts + reset), and a flat card grid sorted by
@@ -54,6 +56,7 @@ const catalogueJsonLd = [
       { '@type': 'ListItem', position: 2, name: 'Trainings', item: `${SITE_URL}/trainings` },
     ],
   },
+  faqPageJsonLd(catalogueFaqs),
 ];
 
 const TrainingsIndex = () => {
@@ -313,6 +316,14 @@ const TrainingsIndex = () => {
             )}
           </div>
         </div>
+
+        {/* Catalogue-level FAQ — mirrored into FAQPage JSON-LD via catalogueFaqs */}
+        <section className="mt-16 max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+            Frequently asked
+          </h2>
+          <FaqList faqs={catalogueFaqs} />
+        </section>
       </div>
     </main>
   );

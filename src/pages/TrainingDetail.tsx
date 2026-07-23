@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Award, CheckCircle2, ChevronDown, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Award, CheckCircle2, ShieldCheck } from 'lucide-react';
 import {
   SHOW_HRD_CORP,
   STAGES,
@@ -13,7 +13,8 @@ import {
 } from '../data/trainings';
 import { GATHERHUB_ORG_URL, SUBSCRIBE_IS_EXTERNAL, SUBSCRIBE_URL } from '../lib/gatherhub';
 import { useDarkModeContext } from '../context/DarkModeContext';
-import { SITE_URL, absoluteUrl, useSeo } from '../hooks/useSeo';
+import { SITE_URL, absoluteUrl, faqPageJsonLd, useSeo } from '../hooks/useSeo';
+import FaqList from '../components/FaqList';
 
 // Landing page copy follows AIDCA, section by section:
 //   Attention  → hero (cover artwork + pain-hook headline + audience promise)
@@ -68,15 +69,7 @@ const TrainingDetail = () => {
               about: training.tags,
               teaches: training.outcomes,
             },
-            {
-              '@context': 'https://schema.org',
-              '@type': 'FAQPage',
-              mainEntity: trainingFaqs(training).map((faq) => ({
-                '@type': 'Question',
-                name: faq.q,
-                acceptedAnswer: { '@type': 'Answer', text: faq.a },
-              })),
-            },
+            faqPageJsonLd(trainingFaqs(training)),
             {
               '@context': 'https://schema.org',
               '@type': 'BreadcrumbList',
@@ -310,20 +303,7 @@ const TrainingDetail = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Frequently asked
               </h2>
-              <div className="space-y-3">
-                {faqs.map((faq) => (
-                  <details
-                    key={faq.q}
-                    className="group bg-white dark:bg-slate-800 rounded-xl shadow-sm"
-                  >
-                    <summary className="flex items-center justify-between gap-4 cursor-pointer list-none p-5 text-sm font-semibold text-gray-900 dark:text-white">
-                      {faq.q}
-                      <ChevronDown className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" />
-                    </summary>
-                    <p className="px-5 pb-5 text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
-                  </details>
-                ))}
-              </div>
+              <FaqList faqs={faqs} />
             </section>
 
             {/* Action — full-width CTA (all viewports) */}

@@ -572,6 +572,33 @@ export interface TrainingFaq {
   a: string;
 }
 
+// Catalogue-level FAQs for the /trainings listing — the questions a visitor
+// comparing courses actually has (path structure, ordering, private runs,
+// registration). Rendered by TrainingsIndex and mirrored into FAQPage JSON-LD.
+const stageSummary = (Object.keys(STAGES) as Stage[])
+  .sort((a, b) => STAGES[a].order - STAGES[b].order)
+  .map((stage) => `Stage ${STAGES[stage].order} · ${STAGES[stage].label} — ${STAGES[stage].blurb}`)
+  .join(' ');
+
+export const catalogueFaqs: TrainingFaq[] = [
+  {
+    q: 'How is the training path structured?',
+    a: `${trainings.length} hands-on courses across four stages. ${stageSummary}`,
+  },
+  {
+    q: 'Do I need to follow the stages in order?',
+    a: 'No. The stages mark depth, not prerequisites — take the stage you need today and come back for the next as your craft matures.',
+  },
+  {
+    q: 'Do you run private or in-house trainings for teams?',
+    a: 'Yes — any course in the catalogue can be delivered as a private, in-house run for your team upon request. Reach out through the contact section on our homepage and we’ll shape the run around your team.',
+  },
+  {
+    q: 'Where do I see upcoming dates, pricing and registration?',
+    a: 'On our GatherHub page — dates, venues, pricing and registration all live there. If no run is scheduled yet, hit “Get Notified” and you’ll be first in line when registration opens.',
+  },
+];
+
 // FAQ copy for the landing pages, composed from catalogue fields plus the
 // shared operating rules (scheduling/pricing/registration live on GatherHub;
 // delivery format and duration are decided per run). TrainingDetail renders
