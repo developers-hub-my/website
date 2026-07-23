@@ -16,6 +16,15 @@ export const SUBSCRIBE_URL: string =
 
 export const SUBSCRIBE_IS_EXTERNAL = SUBSCRIBE_URL.startsWith('http');
 
+// DevHub's public GatherHub organization page — the "see available sessions"
+// CTA on training landing pages. Same style as VITE_COMPANY_PROFILE_URL: a
+// public URL (not a secret), standard VITE_ prefix, baked at build time. When
+// unset, training pages fall back to the SUBSCRIBE_URL "Get Notified" CTA so
+// there is never a dead button. (Distinct from the un-prefixed GATHERHUB_*
+// secrets, which stay prebuild-only.)
+export const GATHERHUB_ORG_URL: string | undefined =
+  import.meta.env.VITE_GATHERHUB_ORG_URL || undefined;
+
 const events = gatherhubData as Record<string, GatherHubEvent>;
 
 export function classBySlug(slug: string): ClassDefinition | undefined {

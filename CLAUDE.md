@@ -80,10 +80,31 @@ Some components exist but are not currently used in App.tsx:
 - Responsive breakpoints: `sm:`, `md:`, `lg:` with mobile-first approach
 - Section padding: `py-20` with `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` container pattern
 
+## Trainings Catalogue
+
+- `/trainings` (listing, g8suite-style facet filters: Stage + Tags) and
+  `/trainings/:stage/:slug` (landing pages) render from the static catalogue
+  `src/data/trainings.ts` — 13 courses across 4 stages, copy authored from the
+  DevHub Academy repo's per-course `01-marketing/marketing-positioning.md`.
+- Landing-page copy follows AIDCA: hero (Attention) → pains (Interest) →
+  outcomes (Desire) → proof (Conviction) → CTA (Action).
+- Delivery format (physical/online) and duration are decided per run — never
+  displayed on the site. HRD Corp claims are on hold: the `SHOW_HRD_CORP`
+  flag in `src/data/trainings.ts` hides all badges/filters until flipped.
+- Artwork: social-kit posters converted to webp in
+  `public/images/trainings/<stage>/<slug>/` (cover/diagram/quote × dark/light,
+  theme-matched via DarkModeContext); brand logos vendored from simpleicons.org
+  in `public/images/logos/`.
+- The Action CTA links to `VITE_GATHERHUB_ORG_URL` (public URL, company-profile
+  style); when unset it falls back to `SUBSCRIBE_URL` — never a dead button.
+- Scheduling, pricing and registration live on GatherHub, never on the site.
+- `/classes` and `/classes/:slug` are legacy URLs that redirect to `/trainings`.
+
 ## GatherHub Integration (build-time only)
 
 - `scripts/fetch-gatherhub.mjs` (prebuild) bakes GatherHub event payloads into
-  `src/data/gatherhub.generated.json`; `Classes`/`ClassCard` render from it.
+  `src/data/gatherhub.generated.json` (currently evergreen — `classes.json` is
+  empty; the mechanism is kept for wiring per-training event data later).
 - Contract schema: `scripts/gatherhub-contract.mjs` (Zod, `.strict()`), source
   of truth is the GatherHub workspace doc `10-devhub-landing-integration.md`.
 - NEVER re-compute ticket availability client-side — render `available` /
