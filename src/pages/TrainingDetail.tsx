@@ -1,10 +1,11 @@
 import { ReactNode, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Award, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Award, CheckCircle2, ChevronDown, ShieldCheck } from 'lucide-react';
 import {
   SHOW_HRD_CORP,
   STAGES,
   trainingByPath,
+  trainingFaqs,
   trainingImage,
   trainingLogo,
   trainingPath,
@@ -69,6 +70,15 @@ const TrainingDetail = () => {
             },
             {
               '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: trainingFaqs(training).map((faq) => ({
+                '@type': 'Question',
+                name: faq.q,
+                acceptedAnswer: { '@type': 'Answer', text: faq.a },
+              })),
+            },
+            {
+              '@context': 'https://schema.org',
               '@type': 'BreadcrumbList',
               itemListElement: [
                 { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
@@ -116,6 +126,7 @@ const TrainingDetail = () => {
   }
 
   const stageInfo = STAGES[training.stage];
+  const faqs = trainingFaqs(training);
   const related = trainings
     .filter((t) => t.stage === training.stage && t.slug !== training.slug)
     .slice(0, 3);
@@ -290,6 +301,29 @@ const TrainingDetail = () => {
                   </li>
                 ))}
               </ul>
+            </section>
+
+            {/* Objections — FAQ, mirrored into FAQPage JSON-LD via trainingFaqs.
+                Sits right before the CTA so unanswered doubts don't block Action. */}
+            <section className="mb-14">
+              <Eyebrow>Questions</Eyebrow>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                Frequently asked
+              </h2>
+              <div className="space-y-3">
+                {faqs.map((faq) => (
+                  <details
+                    key={faq.q}
+                    className="group bg-white dark:bg-slate-800 rounded-xl shadow-sm"
+                  >
+                    <summary className="flex items-center justify-between gap-4 cursor-pointer list-none p-5 text-sm font-semibold text-gray-900 dark:text-white">
+                      {faq.q}
+                      <ChevronDown className="w-4 h-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <p className="px-5 pb-5 text-sm text-gray-600 dark:text-gray-300">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
             </section>
 
             {/* Action — full-width CTA (all viewports) */}

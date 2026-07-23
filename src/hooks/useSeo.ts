@@ -67,7 +67,25 @@ export function useSeo({ title, description, path, image, noindex, jsonLd }: Seo
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', ogImage);
 
-    const scripts = (JSON.parse(jsonLdJson) as object[]).map((block) => {
+    // Every indexable page gets a WebPage block for free; callers add
+    // page-specific schema (Course, FAQPage, …) via the jsonLd option.
+    const blocks: object[] = [
+      ...(noindex
+        ? []
+        : [
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              name: title,
+              description,
+              url,
+              isPartOf: { '@type': 'WebSite', name: 'Developers Hub', url: SITE_URL },
+            },
+          ]),
+      ...(JSON.parse(jsonLdJson) as object[]),
+    ];
+
+    const scripts = blocks.map((block) => {
       const script = document.createElement('script');
       script.type = 'application/ld+json';
       script.setAttribute('data-seo', 'route');

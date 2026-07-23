@@ -567,6 +567,43 @@ export function trainingByPath(stage: string, slug: string): Training | undefine
   return trainings.find((t) => t.stage === stage && t.slug === slug);
 }
 
+export interface TrainingFaq {
+  q: string;
+  a: string;
+}
+
+// FAQ copy for the landing pages, composed from catalogue fields plus the
+// shared operating rules (scheduling/pricing/registration live on GatherHub;
+// delivery format and duration are decided per run). TrainingDetail renders
+// these AND mirrors them into FAQPage JSON-LD — deriving both from this one
+// helper keeps the visible copy and the schema in sync, which Google requires.
+export function trainingFaqs(training: Training): TrainingFaq[] {
+  return [
+    {
+      q: `Who is ${training.title} for?`,
+      a: training.audience,
+    },
+    {
+      q: 'What do I walk away with?',
+      a: `Artifacts you built yourself, not notes — including: ${training.outcomes
+        .slice(0, 3)
+        .join('; ')}.`,
+    },
+    {
+      q: 'Is this training hands-on or lecture-based?',
+      a: 'Hands-on. Our trainings are taught by practitioners who ship production software daily — you spend the sessions building, breaking and fixing real things, not watching slides.',
+    },
+    {
+      q: 'Is it delivered online or in person?',
+      a: 'Delivery format and duration are decided per run — some runs are physical, some online. The details for each scheduled session are published on our GatherHub page.',
+    },
+    {
+      q: 'How do I register, and how much does it cost?',
+      a: 'Dates, venues, pricing and registration all live on our GatherHub page. If no run is scheduled yet, hit “Get Notified” and you’ll be first in line when registration opens.',
+    },
+  ];
+}
+
 export function trainingPath(training: Training): string {
   return `/trainings/${training.stage}/${training.slug}`;
 }
