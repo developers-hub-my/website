@@ -1,10 +1,20 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Compass, Home } from 'lucide-react';
+import { useSeo } from '../hooks/useSeo';
 
 const NotFound = () => {
+  const { pathname } = useLocation();
+
+  // noindex keeps soft-404s (SPA always answers 200) out of the index.
+  useSeo({
+    title: 'Page not found — Developers Hub',
+    description: 'The page you are looking for does not exist or may have been moved.',
+    path: pathname,
+    noindex: true,
+  });
+
   useEffect(() => {
-    document.title = 'Page not found — Developers Hub';
     window.scrollTo(0, 0);
   }, []);
 

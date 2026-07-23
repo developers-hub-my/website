@@ -12,6 +12,7 @@ import {
 } from '../data/trainings';
 import { GATHERHUB_ORG_URL, SUBSCRIBE_IS_EXTERNAL, SUBSCRIBE_URL } from '../lib/gatherhub';
 import { useDarkModeContext } from '../context/DarkModeContext';
+import { SITE_URL, absoluteUrl, useSeo } from '../hooks/useSeo';
 
 // Landing page copy follows AIDCA, section by section:
 //   Attention  → hero (cover artwork + pain-hook headline + audience promise)
@@ -39,10 +40,63 @@ const TrainingDetail = () => {
   // Social-kit artwork ships in dark + light variants — match the site theme.
   const theme = isDark ? 'dark' : 'light';
 
+  // SEO: OG image is always the light cover so social previews don't depend on
+  // the visitor's theme. Course + BreadcrumbList schema come from the same
+  // catalogue copy — no pricing/schedule (those live on GatherHub, contract rule).
+  useSeo(
+    training
+      ? {
+          title: `${training.title} Training | Developers Hub Malaysia`,
+          description: training.tagline,
+          path: trainingPath(training),
+          image: trainingImage(training, 'cover', 'light'),
+          jsonLd: [
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Course',
+              name: training.title,
+              description: training.tagline,
+              url: absoluteUrl(trainingPath(training)),
+              image: absoluteUrl(trainingImage(training, 'cover', 'light')),
+              provider: {
+                '@type': 'Organization',
+                name: 'Developers Hub Sdn Bhd',
+                url: SITE_URL,
+              },
+              educationalLevel: STAGES[training.stage].label,
+              about: training.tags,
+              teaches: training.outcomes,
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: 'Trainings',
+                  item: `${SITE_URL}/trainings`,
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: training.title,
+                  item: absoluteUrl(trainingPath(training)),
+                },
+              ],
+            },
+          ],
+        }
+      : {
+          title: 'Training Not Found — Developers Hub',
+          description: 'The training you are looking for does not exist or may have moved.',
+          path: '/trainings',
+          noindex: true,
+        },
+  );
+
   useEffect(() => {
-    document.title = training
-      ? `${training.title} — Developers Hub`
-      : 'Training Not Found — Developers Hub';
     window.scrollTo(0, 0);
   }, [training]);
 

@@ -10,6 +10,7 @@ import {
   trainingPath,
   trainings,
 } from '../data/trainings';
+import { SITE_URL, useSeo } from '../hooks/useSeo';
 
 // Catalogue layout modelled on g8suite.com/our-solutions: intro header, a
 // facet filter rail (with counts + reset), and a flat card grid sorted by
@@ -30,13 +31,45 @@ const allTags = Array.from(new Set(trainings.flatMap((t) => t.tags))).sort((a, b
 // poster's blue→coral gradient strip as the signature accent.
 const featured = trainings.find((t) => t.slug === 'augmented-developer');
 
+// Static catalogue → static structured data. ItemList tells crawlers this is
+// a catalogue page and links every course landing page for discovery.
+const catalogueJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Developers Hub Trainings',
+    numberOfItems: trainings.length,
+    itemListElement: trainings.map((t, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: t.title,
+      url: `${SITE_URL}${trainingPath(t)}`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Trainings', item: `${SITE_URL}/trainings` },
+    ],
+  },
+];
+
 const TrainingsIndex = () => {
   const [selectedStages, setSelectedStages] = useState<Stage[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [hrdCorpOnly, setHrdCorpOnly] = useState(false);
 
+  useSeo({
+    title: 'Developer Trainings & Courses in Malaysia | Developers Hub',
+    description:
+      'Hands-on developer training in Malaysia — Linux, Git, Docker, modern PHP, Laravel, Flutter, APIs, AI-augmented development and software architecture. One learning path, four stages, taught by practitioners who ship production software daily.',
+    path: '/trainings',
+    jsonLd: catalogueJsonLd,
+  });
+
   useEffect(() => {
-    document.title = 'Trainings — Developers Hub';
     window.scrollTo(0, 0);
   }, []);
 
