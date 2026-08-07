@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { Compass, Home } from 'lucide-react';
 import { useSeo } from '../hooks/useSeo';
 

@@ -9,34 +9,39 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  // Tracks whether the enter transition has run. Kept as the only piece of
+  // state so both flags below can be derived during render — setting them from
+  // inside the effect body would trigger cascading renders.
+  const [hasEntered, setHasEntered] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Mounted while opening, and while the exit transition is still playing.
+  const isVisible = isOpen || hasEntered;
+  // Drives the transition classes: off for one frame on enter, off on exit.
+  const isAnimating = isOpen && hasEntered;
 
   useEffect(() => {
     if (isOpen) {
-      setIsVisible(true);
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
       // Small delay to trigger animation
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setIsAnimating(true);
+          setHasEntered(true);
         });
       });
-      // Prevent body scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      setIsAnimating(false);
-      // Wait for animation to complete before hiding
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-      }, 300);
-      document.body.style.overflow = '';
-      return () => clearTimeout(timer);
+
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
 
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = '';
+    // Wait for animation to complete before hiding
+    const timer = setTimeout(() => {
+      setHasEntered(false);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   // Close on escape key

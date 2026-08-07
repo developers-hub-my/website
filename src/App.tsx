@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { initAnalytics, trackPageView } from './lib/analytics';
 import { useSeo } from './hooks/useSeo';

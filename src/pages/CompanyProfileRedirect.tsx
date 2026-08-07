@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 
 // Mirrors the "Company Profile" link in Navbar/Footer: /company-profile (the
 // URL baked into the printed QR code) resolves to the same VITE_COMPANY_PROFILE_URL

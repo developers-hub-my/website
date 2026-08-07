@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { ArrowLeft, Award, CheckCircle2, ShieldCheck } from 'lucide-react';
 import {
   SHOW_HRD_CORP,
