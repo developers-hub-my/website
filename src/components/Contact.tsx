@@ -63,9 +63,9 @@ const Contact = () => {
                 <div>
                   <p className="text-xs sm:text-sm text-blue-200">Address</p>
                   <p className="font-medium text-sm sm:text-base">
-                    No.24-01, Jalan Padi Emas 2,<br />
-                    Bandar Baru Uda,<br />
-                    81200 Johor Bahru, Johor
+                    37A, Jalan Harmonium 23/13,<br />
+                    Taman Desa Tebrau,<br />
+                    81100 Johor Bahru, Johor
                   </p>
                 </div>
               </div>

@@ -193,9 +193,9 @@ const TermsOfService = ({ isOpen, onClose }: TermsOfServiceProps) => {
           </p>
           <div className="mt-3 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300">
             <p className="font-medium text-slate-900 dark:text-white">Developers Hub Sdn. Bhd.</p>
-            <p>No.24-01, Jalan Padi Emas 2,</p>
-            <p>Bandar Baru Uda,</p>
-            <p>81200 Johor Bahru, Johor, Malaysia</p>
+            <p>37A, Jalan Harmonium 23/13,</p>
+            <p>Taman Desa Tebrau,</p>
+            <p>81100 Johor Bahru, Johor, Malaysia</p>
             <p className="mt-2">Email: <a href="mailto:hello@devhub.my" className="text-blue-600 dark:text-blue-400 hover:underline">hello@devhub.my</a></p>
           </div>
         </section>

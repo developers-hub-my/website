@@ -95,9 +95,9 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>
-                  No.24-01, Jalan Padi Emas 2,<br />
-                  Bandar Baru Uda,<br />
-                  81200 Johor Bahru, Johor
+                  37A, Jalan Harmonium 23/13,<br />
+                  Taman Desa Tebrau,<br />
+                  81100 Johor Bahru, Johor
                 </li>
               </ul>
             </div>

@@ -56,7 +56,7 @@ src/
 ## Contact
 
 - Email: hello@devhub.my
-- Address: No.24-01, Jalan Padi Emas 2, Bandar Baru Uda, 81200 Johor Bahru, Johor
+- Address: 37A, Jalan Harmonium 23/13, Taman Desa Tebrau, 81100 Johor Bahru, Johor
 - Blog: https://blog.devhub.my
 
 ## Company Details
