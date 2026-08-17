@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { initAnalytics, trackPageView } from './lib/analytics';
+import { initMetaPixel, trackMetaPageView } from './lib/meta-pixel';
 import { useSeo } from './hooks/useSeo';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -14,17 +15,20 @@ import TrainingDetail from './pages/TrainingDetail';
 import CompanyProfileRedirect from './pages/CompanyProfileRedirect';
 import NotFound from './pages/NotFound';
 
-// Reports SPA page views to GA4 on every route change (gtag's automatic
-// page_view is off — see lib/analytics.ts). No-op when the GA env var is unset.
+// Reports SPA page views to GA4 and the Meta Pixel on every route change (both
+// vendors' automatic page views are off — see lib/analytics.ts and
+// lib/meta-pixel.ts). Each vendor is a no-op when its env var is unset.
 function AnalyticsTracker() {
   const location = useLocation();
 
   useEffect(() => {
     initAnalytics();
+    initMetaPixel();
   }, []);
 
   useEffect(() => {
     trackPageView(location.pathname + location.search);
+    trackMetaPageView();
   }, [location.pathname, location.search]);
 
   return null;

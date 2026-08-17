@@ -146,6 +146,10 @@
     </script>
   </head>
   <body class="font-sans antialiased">
+    <!-- The Meta Pixel no-JS fallback is injected here at build time, and only
+         when VITE_META_PIXEL_ID is set — see metaPixelNoscript() in
+         vite.config.ts. The JS half (SPA route tracking) is in
+         src/lib/meta-pixel.ts. -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
