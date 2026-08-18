@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, Award, CheckCircle2, ShieldCheck } from 'lucide-react';
 import {
@@ -11,10 +11,12 @@ import {
   trainingPath,
   trainings,
 } from '../data/trainings';
-import { GATHERHUB_ORG_URL, SUBSCRIBE_IS_EXTERNAL, SUBSCRIBE_URL } from '../lib/gatherhub';
+import { GATHERHUB_ORG_URL, SHOW_GATHERHUB_SESSIONS } from '../lib/gatherhub';
+import { CRM_INTAKE_URL } from '../lib/crm';
 import { useDarkModeContext } from '../context/DarkModeContext';
 import { SITE_URL, absoluteUrl, faqPageJsonLd, useSeo } from '../hooks/useSeo';
 import FaqList from '../components/FaqList';
+import GetNotifiedModal from '../components/GetNotifiedModal';
 
 // Landing page copy follows AIDCA, section by section:
 //   Attention  → hero (cover artwork + pain-hook headline + audience promise)
@@ -41,6 +43,7 @@ const TrainingDetail = () => {
   const { isDark } = useDarkModeContext();
   // Social-kit artwork ships in dark + light variants — match the site theme.
   const theme = isDark ? 'dark' : 'light';
+  const [notifyOpen, setNotifyOpen] = useState(false);
 
   // SEO: OG image is always the light cover so social previews don't depend on
   // the visitor's theme. Course + BreadcrumbList schema come from the same
@@ -124,28 +127,38 @@ const TrainingDetail = () => {
     .filter((t) => t.stage === training.stage && t.slug !== training.slug)
     .slice(0, 3);
 
-  const primaryCta = GATHERHUB_ORG_URL
-    ? { href: GATHERHUB_ORG_URL, label: 'See Available Sessions', external: true }
-    : { href: SUBSCRIBE_URL, label: 'Get Notified', external: SUBSCRIBE_IS_EXTERNAL };
+  // GatherHub sessions CTA is on hold behind SHOW_GATHERHUB_SESSIONS, and
+  // "Get Notified" (g8crm intake modal) renders only when the endpoint is
+  // configured — with neither, every CTA surface disappears entirely rather
+  // than showing a dead button.
+  const sessionsUrl = SHOW_GATHERHUB_SESSIONS ? GATHERHUB_ORG_URL : undefined;
+  const canNotify = Boolean(CRM_INTAKE_URL);
+  const hasCta = Boolean(sessionsUrl) || canNotify;
+
+  const primaryCtaClass =
+    'block w-full py-3 px-6 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer';
+  const secondaryCtaClass =
+    'block w-full py-3 px-6 text-center font-semibold rounded-lg border border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors cursor-pointer';
+
+  const notifyButton = (className: string) => (
+    <button type="button" onClick={() => setNotifyOpen(true)} className={className}>
+      Get Notified
+    </button>
+  );
 
   const ctaButtons = (
     <>
-      <a
-        href={primaryCta.href}
-        {...(primaryCta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-        className="block w-full py-3 px-6 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-      >
-        {primaryCta.label}
-      </a>
-      {GATHERHUB_ORG_URL && (
+      {sessionsUrl && (
         <a
-          href={SUBSCRIBE_URL}
-          {...(SUBSCRIBE_IS_EXTERNAL ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          className="block w-full py-3 px-6 text-center font-semibold rounded-lg border border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+          href={sessionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={primaryCtaClass}
         >
-          Get Notified
+          See Available Sessions
         </a>
       )}
+      {canNotify && notifyButton(sessionsUrl ? secondaryCtaClass : primaryCtaClass)}
     </>
   );
 
@@ -307,17 +320,20 @@ const TrainingDetail = () => {
             </section>
 
             {/* Action — full-width CTA (all viewports) */}
-            <section className="relative bg-blue-600 dark:bg-blue-700 rounded-2xl shadow-md p-8 sm:p-10 text-center overflow-hidden mb-14">
-              <h2 className="text-2xl font-bold text-white mb-3">Ready to take a seat?</h2>
-              <p className="text-blue-100 mb-8 max-w-xl mx-auto">
-                Dates, venues, pricing and registration are on our GatherHub page. No run
-                scheduled yet? Get notified and be first in line when registration opens.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
-                {ctaButtons}
-              </div>
-              <div className={`absolute bottom-0 inset-x-0 h-1 ${gradientStrip}`} />
-            </section>
+            {hasCta && (
+              <section className="relative bg-blue-600 dark:bg-blue-700 rounded-2xl shadow-md p-8 sm:p-10 text-center overflow-hidden mb-14">
+                <h2 className="text-2xl font-bold text-white mb-3">Ready to take a seat?</h2>
+                <p className="text-blue-100 mb-8 max-w-xl mx-auto">
+                  {sessionsUrl
+                    ? 'Dates, venues, pricing and registration are on our GatherHub page. No run scheduled yet? Get notified and be first in line when registration opens.'
+                    : 'No run scheduled yet? Get notified and be first in line when registration opens — dates, venue and pricing land in your inbox first.'}
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                  {ctaButtons}
+                </div>
+                <div className={`absolute bottom-0 inset-x-0 h-1 ${gradientStrip}`} />
+              </section>
+            )}
 
             {/* Related trainings, same stage */}
             {related.length > 0 && (
@@ -370,9 +386,11 @@ const TrainingDetail = () => {
                       {training.priceNote}
                     </p>
                   )}
-                  <div className="space-y-3">{ctaButtons}</div>
+                  {hasCta && <div className="space-y-3">{ctaButtons}</div>}
                   <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                    Dates, venues and pricing live on our GatherHub page.
+                    {sessionsUrl
+                      ? 'Dates, venues and pricing live on our GatherHub page.'
+                      : 'Dates, venues and pricing are announced when registration opens.'}
                   </p>
                 </div>
               </div>
@@ -388,15 +406,30 @@ const TrainingDetail = () => {
       </div>
 
       {/* Sticky bottom CTA bar (mobile) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-gray-200 dark:border-slate-700 p-3">
-        <a
-          href={primaryCta.href}
-          {...(primaryCta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          className="block w-full py-3 px-6 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-        >
-          {primaryCta.label}
-        </a>
-      </div>
+      {hasCta && (
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-gray-200 dark:border-slate-700 p-3">
+          {sessionsUrl ? (
+            <a
+              href={sessionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={primaryCtaClass}
+            >
+              See Available Sessions
+            </a>
+          ) : (
+            notifyButton(primaryCtaClass)
+          )}
+        </div>
+      )}
+
+      {canNotify && (
+        <GetNotifiedModal
+          isOpen={notifyOpen}
+          onClose={() => setNotifyOpen(false)}
+          trainingTitle={training.title}
+        />
+      )}
     </main>
   );
 };

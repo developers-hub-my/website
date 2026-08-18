@@ -7,23 +7,19 @@ import { ClassDefinition, GatherHubEvent, GatherHubTicket } from '../types/gathe
 
 export const classes = classesData as ClassDefinition[];
 
-// "Get Notified" target. Vendor-neutral name on purpose: today it points at
-// the GatherHub public subscribe page (double opt-in newsletter), but it may
-// move to g8crm later. Exposed without the VITE_ prefix via envPrefix in
-// vite.config.ts. Falls back to the contact section until set in Netlify.
-export const SUBSCRIBE_URL: string =
-  import.meta.env.SUBSCRIBE_URL || '/#contact';
-
-export const SUBSCRIBE_IS_EXTERNAL = SUBSCRIBE_URL.startsWith('http');
-
 // DevHub's public GatherHub organization page — the "see available sessions"
 // CTA on training landing pages. Same style as VITE_COMPANY_PROFILE_URL: a
-// public URL (not a secret), standard VITE_ prefix, baked at build time. When
-// unset, training pages fall back to the SUBSCRIBE_URL "Get Notified" CTA so
-// there is never a dead button. (Distinct from the un-prefixed GATHERHUB_*
-// secrets, which stay prebuild-only.)
+// public URL (not a secret), standard VITE_ prefix, baked at build time.
+// (Distinct from the un-prefixed GATHERHUB_* secrets, which stay
+// prebuild-only.)
 export const GATHERHUB_ORG_URL: string | undefined =
   import.meta.env.VITE_GATHERHUB_ORG_URL || undefined;
+
+// The GatherHub sessions CTA is on hold (same pattern as SHOW_HRD_CORP in
+// src/data/trainings.ts): flip to true to bring "See Available Sessions"
+// back on training landing pages. While off, "Get Notified" (g8crm intake
+// modal, src/lib/crm.ts) is the only CTA.
+export const SHOW_GATHERHUB_SESSIONS = false;
 
 const events = gatherhubData as Record<string, GatherHubEvent>;
 

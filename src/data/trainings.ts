@@ -598,13 +598,14 @@ export const catalogueFaqs: TrainingFaq[] = [
   },
   {
     q: 'Where do I see upcoming dates, pricing and registration?',
-    a: 'On our GatherHub page — dates, venues, pricing and registration all live there. If no run is scheduled yet, hit “Get Notified” and you’ll be first in line when registration opens.',
+    a: 'Dates, venues and pricing are announced with each run. Hit “Get Notified” on any course page and you’ll be first in line when registration opens.',
   },
 ];
 
 // FAQ copy for the landing pages, composed from catalogue fields plus the
-// shared operating rules (scheduling/pricing/registration live on GatherHub;
-// delivery format and duration are decided per run). TrainingDetail renders
+// shared operating rules (scheduling/pricing are announced per run, never
+// listed on the site; delivery format and duration are decided per run;
+// leads go through the "Get Notified" CRM intake modal). TrainingDetail renders
 // these AND mirrors them into FAQPage JSON-LD — deriving both from this one
 // helper keeps the visible copy and the schema in sync, which Google requires.
 export function trainingFaqs(training: Training): TrainingFaq[] {
@@ -624,11 +625,11 @@ export function trainingFaqs(training: Training): TrainingFaq[] {
     },
     {
       q: 'Is it delivered online or in person?',
-      a: 'Delivery format and duration are decided per run — some runs are physical, some online. The details for each scheduled session are published on our GatherHub page.',
+      a: 'Delivery format and duration are decided per run — some runs are physical, some online. The details for each scheduled session are announced when registration opens.',
     },
     {
       q: 'How do I register, and how much does it cost?',
-      a: 'Dates, venues, pricing and registration all live on our GatherHub page. If no run is scheduled yet, hit “Get Notified” and you’ll be first in line when registration opens.',
+      a: 'Dates, venues and pricing are announced with each run. Hit “Get Notified” and you’ll be first in line when registration opens.',
     },
   ];
 }

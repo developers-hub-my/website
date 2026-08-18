@@ -28,10 +28,10 @@ function metaPixelNoscript(mode: string): Plugin {
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss(), metaPixelNoscript(mode)],
-  // Expose SUBSCRIBE_URL (exact name, owner wants it VITE_-free) to client
-  // code alongside the standard VITE_ prefix. Never widen this to '' — that
-  // would leak every build-environment variable into the bundle.
-  envPrefix: ['VITE_', 'SUBSCRIBE_URL'],
+  // Expose CRM_INTAKE_CHANNEL_API (exact name, owner wants it VITE_-free) to
+  // client code alongside the standard VITE_ prefix. Never widen this to ''
+  // — that would leak every build-environment variable into the bundle.
+  envPrefix: ['VITE_', 'CRM_INTAKE_CHANNEL_API'],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

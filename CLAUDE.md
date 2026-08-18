@@ -95,9 +95,18 @@ Some components exist but are not currently used in App.tsx:
   `public/images/trainings/<stage>/<slug>/` (cover/diagram/quote × dark/light,
   theme-matched via DarkModeContext); brand logos vendored from simpleicons.org
   in `public/images/logos/`.
-- The Action CTA links to `VITE_GATHERHUB_ORG_URL` (public URL, company-profile
-  style); when unset it falls back to `SUBSCRIBE_URL` — never a dead button.
-- Scheduling, pricing and registration live on GatherHub, never on the site.
+- "Get Notified" opens `GetNotifiedModal` (name, email, phone/company optional),
+  which POSTs the lead straight to the g8crm intake endpoint
+  `CRM_INTAKE_CHANNEL_API` (`https://crm.devhub.my/api/intake/<token>`) via
+  `src/lib/crm.ts` — no auth, the unguessable token is the credential, so the
+  URL is public by design and exposed VITE_-free through `envPrefix`. When the
+  env var is unset, the button and modal are not rendered at all.
+- The GatherHub "See Available Sessions" CTA is on hold: the
+  `SHOW_GATHERHUB_SESSIONS` flag in `src/lib/gatherhub.ts` hides it (and its
+  GatherHub-referencing copy) until flipped; `VITE_GATHERHUB_ORG_URL` only
+  takes effect then.
+- Scheduling, pricing and registration are never listed on the site — they are
+  announced per run (GatherHub, once the sessions CTA returns).
 - `/classes` and `/classes/:slug` are legacy URLs that redirect to `/trainings`.
 
 ## GatherHub Integration (build-time only)
