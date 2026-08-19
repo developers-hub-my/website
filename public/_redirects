@@ -1,1 +1,8 @@
+# Marketing downloads (ebooks) — proxied from the private devhub-downloads
+# site. Actual paths are unguessable tokens managed outside this repo; the
+# links are shared by the marketing team only and must never be listed on
+# the site, in robots.txt, or in the sitemap.
+/dl/*    https://devhub-downloads.netlify.app/:splat    200
+
+# SPA fallback — must stay last
 /*    /index.html   200
