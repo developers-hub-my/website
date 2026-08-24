@@ -9,9 +9,8 @@ const quickLinks = [
   { name: 'About', href: '#about-us' },
   { name: 'Services', href: '#services' },
   { name: 'Trainings', href: '/trainings' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '#contact' },
-  // Blog belum ada — enable balik bila blog.devhub.my dah live
-  // { name: 'Blog', href: 'https://blog.devhub.my', external: true },
   { name: 'Company Profile', href: companyProfileUrl, external: true },
 ];
 

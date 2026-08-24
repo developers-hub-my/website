@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -107,4 +108,109 @@
 .dark .bg-grid-pattern {
   background-image: linear-gradient(to right, #334155 1px, transparent 1px),
     linear-gradient(to bottom, #334155 1px, transparent 1px);
+}
+
+/* ---------------------------------------------------------------------------
+   Blog article body
+   ---------------------------------------------------------------------------
+   The post HTML is produced at build time by scripts/build-blog.mjs, so it is
+   plain semantic markup with no utility classes on it — the typography plugin
+   does the layout work and the rules below cover what it does not: anchor
+   offsets under the fixed navbar, and the highlight.js token palette.
+
+   Code blocks stay on a dark surface in BOTH themes: one token palette to
+   maintain, and a light-on-dark code block is what readers expect anyway.
+--------------------------------------------------------------------------- */
+
+.blog-prose {
+  @apply prose prose-slate dark:prose-invert max-w-none;
+  @apply prose-headings:scroll-mt-28;
+  @apply prose-a:text-blue-600 dark:prose-a:text-blue-400;
+  @apply prose-img:rounded-xl prose-img:shadow-md;
+}
+
+.blog-prose pre {
+  @apply bg-slate-900 text-slate-100 border border-slate-800 rounded-xl;
+}
+
+/* Inline code — the plugin's default backtick pseudo-elements get in the way
+   of the surrounding sentence, so drop them and use a chip instead. */
+.blog-prose :not(pre) > code {
+  @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 px-1.5 py-0.5 rounded-md font-normal text-[0.875em];
+}
+
+.blog-prose :not(pre) > code::before,
+.blog-prose :not(pre) > code::after {
+  content: none;
+}
+
+.blog-prose blockquote {
+  @apply border-l-blue-600 dark:border-l-blue-400 not-italic;
+}
+
+/* highlight.js token palette (resolved at build time — the library itself
+   never reaches the bundle, only these class names). */
+.hljs-comment,
+.hljs-quote {
+  @apply text-slate-400 italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag,
+.hljs-meta .hljs-keyword {
+  @apply text-rose-400;
+}
+
+.hljs-string,
+.hljs-addition,
+.hljs-regexp,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  @apply text-emerald-300;
+}
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  @apply text-amber-300;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  @apply text-sky-300;
+}
+
+.hljs-type,
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-title.class_ {
+  @apply text-violet-300;
+}
+
+.hljs-attr,
+.hljs-property,
+.hljs-params {
+  @apply text-cyan-300;
+}
+
+.hljs-meta,
+.hljs-deletion {
+  @apply text-slate-400;
+}
+
+.hljs-emphasis {
+  @apply italic;
+}
+
+.hljs-strong {
+  @apply font-semibold;
 }

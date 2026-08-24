@@ -11,6 +11,8 @@ import Services from './components/Services';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import TrainingsIndex from './pages/TrainingsIndex';
+import BlogIndex from './pages/BlogIndex';
+import BlogPost from './pages/BlogPost';
 import TrainingDetail from './pages/TrainingDetail';
 import CompanyProfileRedirect from './pages/CompanyProfileRedirect';
 import NotFound from './pages/NotFound';
@@ -62,6 +64,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/trainings" element={<TrainingsIndex />} />
             <Route path="/trainings/:stage/:slug" element={<TrainingDetail />} />
+            <Route path="/blog" element={<BlogIndex />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             {/* Legacy URLs — /classes was replaced by /trainings; keep shared links alive */}
             <Route path="/classes" element={<Navigate to="/trainings" replace />} />
             <Route path="/classes/:slug" element={<Navigate to="/trainings" replace />} />

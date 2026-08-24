@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# Sveltia CMS — the authoring UI behind https://devhub.my/admin.
+#
+# It commits markdown to content/blog in this repository; scripts/build-blog.mjs
+# turns that into the pages under /blog on the next Netlify build. The fields
+# below MIRROR the front-matter contract in scripts/blog-contract.mjs, which is
+# `.strict()` — add a field here without adding it there and the next build
+# fails. Change one, change the other.
+#
+# SIGNING IN
+#   The sign-in screen shows ONE button, "Sign In with GitHub" — the token and
+#   local-repository options are hidden by CSS in index.html. That button needs
+#   a GitHub OAuth app linked to the Netlify site (Netlify is the default OAuth
+#   client when no `base_url` is set here), or Sveltia CMS Authenticator on
+#   Cloudflare Workers with `backend.base_url` pointed at it.
+
+backend:
+  name: github
+  repo: developers-hub-my/website
+  branch: main
+  commit_messages:
+    create: 'content(blog): add "{{slug}}"'
+    update: 'content(blog): update "{{slug}}"'
+    delete: 'content(blog): remove "{{slug}}"'
+    uploadMedia: 'content(blog): upload {{path}}'
+    deleteMedia: 'content(blog): delete {{path}}'
+
+site_url: https://devhub.my
+display_url: https://devhub.my
+logout_redirect_url: https://devhub.my/blog
+
+# Replaces Sveltia's own name and mark on the sign-in screen and in the browser
+# tab. Sveltia adds a small "Powered by Sveltia CMS" line to the sign-in footer
+# when app_title is set — this is branding, not white-labelling.
+app_title: Developers Hub Content Manager
+logo:
+  src: /favicon.svg
+  # The sign-in screen is branded by public/admin/index.html; a second mark in
+  # the app header would only compete with it.
+  show_in_header: false
+
+# Images uploaded from the editor land next to the site's other static assets
+# and are referenced by their public path.
+media_folder: /public/images/blog
+public_folder: /images/blog
+
+collections:
+  - name: blog
+    label: Blog posts
+    label_singular: Blog post
+    description: >-
+      Posts published at devhub.my/blog. The file name becomes the URL, so it
+      cannot be changed after publishing without breaking links. Save with
+      "Draft" on to park a post in the repository without publishing it.
+    folder: /content/blog
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: yaml-frontmatter
+    preview_path: blog/{{slug}}
+    summary: '{{title}} — {{date}}'
+    sortable_fields:
+      - date
+      - title
+      - author
+    editor:
+      preview: false
+    fields:
+      - label: Title
+        name: title
+        widget: string
+      - label: Summary
+        name: description
+        widget: text
+        hint: >-
+          One or two sentences. Used on the blog listing, in Google results, in
+          link previews and in the RSS feed — so write it for a stranger.
+      - label: Publish date
+        name: date
+        widget: datetime
+        type: date
+        default: '{{now}}'
+      - label: Last updated
+        name: updated
+        widget: datetime
+        type: date
+        required: false
+        hint: Only set this when a published post is materially revised.
+      - label: Author
+        name: author
+        widget: string
+      - label: Author title
+        name: authorTitle
+        widget: string
+        required: false
+        hint: Shown next to the name, e.g. "Founder, Developers Hub Sdn Bhd".
+      - label: Topics
+        name: tags
+        widget: list
+        hint: >-
+          Title Case, e.g. Engineering, Training, Laravel. These are the filter
+          rail on /blog — reuse an existing topic before inventing a new one.
+      - label: Cover image
+        name: cover
+        widget: image
+        required: false
+        hint: Wide crop (about 2:1). Also used as the link preview image.
+      - label: Cover alt text
+        name: coverAlt
+        widget: string
+        required: false
+      - label: Canonical URL
+        name: canonical
+        widget: string
+        required: false
+        hint: Only if this post was published somewhere else first.
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        hint: >-
+          Drafts are committed but never published — they stay out of the site,
+          the RSS feed and the sitemap.
+      - label: Body
+        name: body
+        widget: markdown

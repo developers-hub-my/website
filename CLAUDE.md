@@ -38,7 +38,7 @@ App.tsx
 
 ### Navigation
 
-The Navbar uses hash-based navigation (`#about-us`, `#services`, `#contact`) for in-page scrolling. External links (like Blog → `https://blog.devhub.my`) open in new tabs.
+The Navbar uses hash-based navigation (`#about-us`, `#services`, `#contact`) for in-page scrolling. Section pages (`/trainings`, `/blog`) are ordinary links; external links (e.g. Company Profile) open in new tabs.
 
 ### Card Components
 
@@ -123,3 +123,76 @@ Some components exist but are not currently used in App.tsx:
   the prebuild script (secrets must not reach the bundle).
 - A fetch/validation failure for a UUID-bearing class must fail the build —
   do not add a fallback.
+
+## Blog & CMS
+
+- `/blog` (listing, Topic facet filters) and `/blog/:slug` (post pages) render
+  from markdown in `content/blog/*.md` — one file per post, and **the file name
+  IS the URL**, so renaming one breaks every shared link to it.
+- `scripts/build-blog.mjs` (prebuild, BEFORE `generate-sitemap.mjs`) validates
+  front matter against `scripts/blog-contract.mjs` (Zod, `.strict()` — same
+  contract discipline as GatherHub), renders markdown to HTML with marked +
+  highlight.js, and writes `src/data/blog.generated.json` (gitignored) and
+  `public/rss.xml`. A post that violates the contract FAILS the build.
+- Markdown is parsed at BUILD time only — no markdown parser reaches the
+  bundle. Post HTML is injected with `dangerouslySetInnerHTML`, which is safe
+  only because the sole source is first-party markdown committed to this repo.
+  Never point that path at anything a visitor can submit.
+- `draft: true` keeps a post out of the site, the RSS feed and the sitemap. The
+  dev server DOES render drafts (badged "Draft") so authors can preview them —
+  that is why the generated JSON is gitignored rather than committed.
+- Article styling is `.blog-prose` in `src/index.css` (@tailwindcss/typography
+  plus the highlight.js token palette). Code blocks stay on a dark surface in
+  both themes — one palette to maintain.
+- Authoring UI: **Sveltia CMS** (git-backed, CDN-served, Decap-compatible) at
+  `/admin` — `admin/index.html` + `admin/admin.css` (a second Vite build entry,
+  see `build.rollupOptions.input`; Sveltia's version is PINNED because it is
+  pre-1.0) and `public/admin/config.yml`. It commits markdown straight to
+  `developers-hub-my/website`, so publishing is a commit and Netlify rebuilds.
+  No backend, no database, no CMS hosting.
+- The admin page is a BUILD ENTRY, not a file in `public/`, precisely so
+  Tailwind compiles it — `public/` is copied verbatim and never processed. Its
+  CSS imports `tailwindcss/theme.css` + `utilities.css` but NOT preflight
+  (which would reset Sveltia's own components), with `source(none)` so the
+  marketing site's utility set is not baked into it. Only `config.yml` stays in
+  `public/`, since it is a static asset the CMS fetches at runtime.
+- The CMS is branded to match devhub.my in three layers, least fragile first:
+  1. **Config** — `app_title`, `logo`, `logout_redirect_url`.
+  2. **Design tokens** — Sveltia derives its whole palette from
+     `--sui-base-hue` (222, the hue behind Tailwind's slate/blue) plus `--sui-*`
+     overrides for the blue-600 accent and Inter. Theme through TOKENS; never
+     restyle the CMS's internals.
+  3. **Sign-in screen only** — card, gradient strip and Hero-style backdrop,
+     every rule guarded by `:has(> img.logo)` on the sign-in composition, and
+     Sveltia mounted into `#nc-root` (its documented custom mount element).
+     If Sveltia changes that markup the selectors stop matching and the page
+     loses its decoration, not its function — so after a version bump, open
+     /admin and check the sign-in screen in both themes.
+- The sign-in screen deliberately shows ONE door: Sign In with GitHub. The
+  token sign-in and (on localhost) the local-repository workflow are hidden.
+  Two consequences: GitHub OAuth MUST be configured for the Netlify site or
+  nobody can get in, and the local-repository workflow is unreachable in dev
+  until that rule is relaxed.
+- `:first-of-type` cannot express "first secondary button" — it counts
+  `<button>` ELEMENTS, so on localhost (where a primary button comes first) it
+  matches nothing and every option disappears, leaving an empty card. Target
+  `button.secondary ~ button.secondary` instead.
+- `config.yml` fields MIRROR `scripts/blog-contract.mjs` field for field. Change
+  one, change the other, or the CMS will write a post the next build rejects.
+  Validate the config with the official script:
+  `node scripts/validate-config.mjs public/admin/config.yml` (from the
+  `sveltia/ai-tools` repo, or the `sveltia-cms` Claude Code plugin).
+- Signing in: "Sign In Using Access Token" (a GitHub PAT) works with no setup
+  and suits a small team. For non-technical editors, register a GitHub OAuth
+  app and link it to the Netlify site — Netlify is the default OAuth client
+  when `backend.base_url` is unset — or deploy Sveltia CMS Authenticator on
+  Cloudflare Workers and point `base_url` at it.
+- `/admin` is `noindex` + `Disallow`ed in robots.txt. It needs explicit rules
+  in BOTH environments or the SPA fallback swallows it and answers with the
+  React 404: `public/_redirects` (above the `/*` fallback) on Netlify, and the
+  `cmsAdmin()` plugin in `vite.config.ts` in dev.
+- Those rules REDIRECT `/admin` → `/admin/` rather than rewriting, because the
+  trailing slash is load-bearing: at `/admin` every relative URL resolves
+  against the site root, so the stylesheet 404s and Sveltia looks for
+  `config.yml` in the wrong place — the CMS then renders completely unstyled.
+  `vite preview` honours neither rule set, so use `/admin/` there.

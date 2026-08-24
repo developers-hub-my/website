@@ -1,0 +1,173 @@
+/* =============================================================================
+   DevHub theme for Sveltia CMS  (/admin)
+   =============================================================================
+   Tailwind is imported WITHOUT preflight — this page shares its document with
+   Sveltia's own components, and preflight would reset their margins, borders
+   and form elements out from under them. `theme` + `utilities` give us the
+   same token scale the marketing site is built on, so every colour here is the
+   Tailwind name the site already uses (blue-600, slate-900 …) rather than a
+   hand-copied hex.
+
+   Sveltia derives its whole palette from `--sui-base-hue` and exposes the rest
+   as `--sui-*` tokens, so the CMS is themed through TOKENS, not by restyling
+   its internals — that survives version bumps. 222 is the hue behind
+   Tailwind's slate/blue, so the neutrals land on the site's greys for free.
+
+   The structural rules are for the SIGN-IN screen only and are all guarded by
+   `:has()` on the sign-in composition. If a future Sveltia release changes
+   that markup the selectors stop matching: the page loses its decoration,
+   never its function. After a version bump, open /admin and check this screen.
+
+   Rules stay UNLAYERED on purpose. Sveltia's own CSS is unlayered too, and
+   unlayered declarations beat layered ones — putting these in @layer would
+   hand every conflict to Sveltia.
+   ========================================================================== */
+
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+/* `source(none)`: this page has no utility classes of its own — everything is
+   @apply'd below — so scanning the project would only bake the marketing site's
+   entire utility set into the CMS stylesheet. */
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+
+/* Sveltia stamps data-theme on <html>; the marketing site uses a .dark class.
+   Same idea, different switch — this maps Tailwind's dark: variant onto it. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Sveltia mounts into #nc-root rather than <body> (its documented custom mount
+   element). The CMS sizes itself to its container, so the container has to be
+   the window. */
+#nc-root {
+  position: fixed;
+  inset: 0;
+}
+
+:root {
+  /* Both themes are painted here — tell the browser, so it skips its own
+     auto-dark pass and native controls follow the same theme. */
+  color-scheme: light dark;
+
+  /* --- Sveltia tokens ------------------------------------------------------
+     `!important` because Sveltia declares these from its own injected
+     stylesheet; without it, load order decides who wins. */
+  --sui-base-hue: 222 !important;
+  --sui-font-family-default: 'Inter', system-ui, sans-serif !important;
+  --sui-primary-accent-color: var(--color-blue-600) !important;
+  --sui-primary-accent-color-light: var(--color-blue-500) !important;
+  --sui-primary-accent-color-dark: var(--color-blue-700) !important;
+  --sui-primary-accent-color-text: var(--color-blue-600) !important;
+  --sui-button-primary-background-color: var(--color-blue-600) !important;
+  --sui-button-primary-background-color-focus: var(--color-blue-700) !important;
+  --sui-button-primary-background-color-active: var(--color-blue-700) !important;
+  --sui-button-primary-foreground-color: #fff !important;
+  --sui-focus-ring-color: var(--color-blue-500) !important;
+}
+
+:root[data-theme='dark'] {
+  /* Dark mode lifts the accent a step, the way the site's dark links do —
+     blue-600 on slate-900 falls under 4.5:1. */
+  --sui-primary-accent-color: var(--color-blue-500) !important;
+  --sui-primary-accent-color-text: var(--color-blue-400) !important;
+  --sui-button-primary-background-color-focus: var(--color-blue-500) !important;
+  --sui-button-primary-background-color-active: var(--color-blue-500) !important;
+}
+
+/* -----------------------------------------------------------------------------
+   Sign-in screen
+   -------------------------------------------------------------------------- */
+
+/* The backdrop echoes the site Hero: brand ground plus two soft colour washes.
+   Static gradients, not the Hero's animated blobs — this is a door, not a
+   landing page. It goes on `.main` rather than the shell because `.main` paints
+   its own opaque background over anything behind it. */
+.app-shell .main:has(.inner > img.logo) {
+  @apply bg-gray-50 dark:bg-slate-900;
+
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, --alpha(var(--color-blue-600) / 14%), transparent 60%),
+    radial-gradient(45rem 35rem at 105% 105%, --alpha(var(--color-cyan-500) / 12%), transparent 60%);
+}
+
+:root[data-theme='dark'] .app-shell .main:has(.inner > img.logo) {
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, --alpha(var(--color-blue-600) / 22%), transparent 60%),
+    radial-gradient(45rem 35rem at 105% 105%, --alpha(var(--color-cyan-500) / 16%), transparent 60%);
+}
+
+/* The panel holding the mark, the title and the sign-in button becomes a card
+   in the site's grammar: rounded surface, hairline border, soft shadow, and the
+   blue → indigo → rose strip the site uses on trainings and blog posts. */
+.app-shell .inner:has(> img.logo) {
+  @apply relative box-border overflow-hidden rounded-2xl border border-gray-200 bg-white
+    px-8 pt-11 pb-9 shadow-xl
+    dark:border-slate-700 dark:bg-slate-800 dark:shadow-black/40
+    max-[30rem]:px-6 max-[30rem]:pt-9 max-[30rem]:pb-8;
+
+  width: min(26rem, calc(100vw - 2.5rem));
+}
+
+.app-shell .inner:has(> img.logo)::before {
+  @apply absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-rose-400;
+
+  content: '';
+}
+
+.app-shell .inner:has(> img.logo) > img.logo {
+  @apply size-14 rounded-xl;
+}
+
+.app-shell .inner:has(> img.logo) > h1 {
+  @apply mx-0 mt-5 mb-2 text-center text-xl leading-snug font-semibold tracking-tight
+    text-slate-900 dark:text-white;
+}
+
+/* Sveltia gives each sign-in button a fixed 20rem width, which overflows the
+   card on a narrow screen. The group needs a DEFINITE width first: it is
+   shrink-to-fit by default, so a percentage on its children would resolve
+   against a width that depends on those children — and collapse them to zero. */
+.inner:has(> img.logo) .buttons {
+  @apply w-full max-w-80;
+}
+
+.inner:has(> img.logo) .buttons > button {
+  @apply max-w-full;
+}
+
+/* One door: Sign In with GitHub. Sveltia also offers a personal-access-token
+   sign-in, and on localhost a local-repository workflow with its helper copy —
+   all hidden. Note `:first-of-type` cannot express "first secondary button":
+   it counts <button> ELEMENTS, so on localhost, where a primary button comes
+   first, it matches nothing and every option disappears. Hiding the ones after
+   the first secondary is what actually holds in both compositions. */
+.inner:has(> img.logo) .buttons > button.primary,
+.inner:has(> img.logo) .buttons > div:not([class]),
+.inner:has(> img.logo) .buttons > button.secondary ~ button.secondary {
+  display: none !important;
+}
+
+/* Every secondary gets the primary paint — only the first one is visible, and
+   it is the screen's only action. */
+.inner:has(> img.logo) .buttons > button.secondary {
+  @apply border-blue-600 bg-blue-600 text-white;
+}
+
+.inner:has(> img.logo) .buttons > button.secondary .label {
+  @apply text-white;
+}
+
+.inner:has(> img.logo) .buttons > button.secondary:hover,
+.inner:has(> img.logo) .buttons > button.secondary:focus-visible {
+  @apply border-blue-700 bg-blue-700;
+}
+
+/* Sveltia's "Powered by" line under the card. */
+.app-shell .powered-by {
+  display: none !important;
+}
