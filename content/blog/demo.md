@@ -1,6 +1,6 @@
 ---
 title: Universal AI Coding Agent Formula
-description: AI
+description: Most CLAUDE.md guides read like project documentation — ten sections, several hundred lines, everything included "for full context." The problem is that the file loads every session and eats your context budget, and longer files reduce adherence rather than improving it. This breaks down what actually belongs in the file, what should become a Skill or a path-scoped rule, and gives you a 35-line template to start from.
 date: 2026-08-24
 updated: 2026-08-24
 author: Nasrul Hazim
@@ -13,51 +13,47 @@ canonical: ''
 draft: false
 ---
 
-CLAUDE.md **bukan dokumentasi projek**. Ia adalah **context budget**.
+## Read this first
 
-Setiap kali session start, fail ni di-load masuk context window — makan token
-sama-sama dengan conversation kau. Official guidance: **target bawah 200 baris**.
-Fail yang panjang makan lebih banyak context DAN menurunkan adherence.
+CLAUDE.md is **not project documentation**. It's a **context budget**.
 
-Maksudnya: makin panjang CLAUDE.md kau, makin **kurang** AI ikut arahan kau.
+Every session, this file gets loaded into the context window — consuming tokens alongside your actual conversation. The official guidance is to **target under 200 lines**. Longer files consume more context *and* reduce adherence.
 
-Formula asal (10 section, semua ditulis penuh) akan jadi 600–1000 baris.
-Itu bukan tuning — itu sabotaj.
+Which means: the longer your CLAUDE.md, the **less** the AI follows it.
 
-***
+A typical 10-section formula, written out in full, lands somewhere between 600 and 1,000 lines. That isn't tuning. That's sabotage.
 
-## Rule utama semasa menulis
+---
 
-> Kalau AI boleh baca benda tu dari codebase, **jangan tulis dalam CLAUDE.md**.
+## The one rule for writing it
 
-Ini bukan pendapat. Claude Code ada checkup (`/doctor`) yang akan cadang trim
-CLAUDE.md kau — ia potong content yang boleh derive dari codebase (directory
-layout, dependency list, architecture overview) dan **kekalkan** pitfalls,
-rationale, dan convention yang lain dari default tool.
+> If the AI can read it from the codebase, **don't put it in CLAUDE.md**.
 
-Guna ayat tu sebagai pisau. Setiap baris kena lulus ujian ni:
+This isn't an opinion. Claude Code ships a checkup (`/doctor`) that proposes trims for your CLAUDE.md — it cuts content derivable from the codebase (directory layouts, dependency lists, architecture overviews) and **keeps** pitfalls, rationale, and conventions that differ from tool defaults.
 
-| Soalan | Kalau YA |
-| --- | --- |
-| AI boleh tahu ni dengan baca 2-3 fail? | Buang |
-| Ni general knowledge (OWASP, SOLID, N+1)? | Buang |
-| Ni relevan untuk *setiap* task? | Kekal |
-| Ni boleh diverify (pass/fail)? | Kekal |
-| Ni prosedur multi-step? | Pindah jadi Skill |
-| Ni hanya untuk satu folder? | Pindah jadi path-scoped rule |
-| Ni MESTI jalan setiap kali? | Pindah jadi Hook |
+Use that as your knife. Every line has to pass this test:
 
-***
+| Question | If YES |
+|---|---|
+| Could the AI figure this out by reading 2-3 files? | Cut it |
+| Is this general knowledge (OWASP, SOLID, N+1)? | Cut it |
+| Is this relevant to *every* task? | Keep it |
+| Is this verifiable (pass/fail)? | Keep it |
+| Is this a multi-step procedure? | Move to a Skill |
+| Does this only apply to one folder? | Move to a path-scoped rule |
+| Must this run every single time? | Move to a Hook |
 
-## Bahagian 1 — Apa yang MASUK dalam CLAUDE.md
+---
 
-Tujuh section je. Pendek.
+## Part 1 — What goes IN
+
+Seven sections. Short ones.
 
 ### 1. Commands
 
-Paling tinggi nilai. Formula asal langsung tak sebut benda ni.
+The highest-value item in the entire file. Most formulas don't mention it at all.
 
-```plain
+```
 - Test: `php artisan test`  | single: `php artisan test --filter=OrderTest`
 - Lint: `./vendor/bin/pint --dirty`
 - Fresh DB: `php artisan migrate:fresh --seed`
@@ -66,95 +62,90 @@ Paling tinggi nilai. Formula asal langsung tak sebut benda ni.
 
 ### 2. Environment quirks
 
-Benda yang akan buat AI tersadung tapi tak nampak dalam code.
+The things that will trip the AI up but aren't visible in the code.
 
-```plain
-- PHP 8.3, Laravel 12. Guna Herd, bukan Sail.
-- Queue kena jalan manual masa dev: `php artisan queue:work`
-- Test guna Postgres, bukan SQLite — array/JSON column behaviour lain.
+```
+- PHP 8.3, Laravel 12. We use Herd, not Sail.
+- Queue must be run manually in dev: `php artisan queue:work`
+- Tests run on Postgres, not SQLite — array/JSON column behaviour differs.
 ```
 
-### 3. Conventions (yang LAIN dari default)
+### 3. Conventions (the ones that DIFFER from defaults)
 
-Kunci: tulis yang **menyimpang** dari default framework sahaja. Jangan ajar
-Laravel kat AI. Dan tunjuk fail contoh — satu reference file lagi kuat dari
-tiga perenggan penerangan.
+The key word is **differ**. Don't teach the AI Laravel. And point at an example file — one reference file beats three paragraphs of description.
 
-```plain
-- Public ID = UUID, internal ID = auto-increment. Jangan expose internal ID.
+```
+- Public IDs are UUIDs, internal IDs auto-increment. Never expose internal IDs.
 - Business logic → invokable Action class.
-  Contoh: `app/Actions/Order/PlaceOrder.php`
-- Side effect → Observer. Jangan letak dalam controller.
-- Enum wajib ada `label()` dan `color()`.
-  Contoh: `app/Enums/OrderStatus.php`
-- Backend yang boleh tukar → driver pattern (contract + manager).
+  Reference: `app/Actions/Order/PlaceOrder.php`
+- Side effects → Observers, never in controllers.
+- Enums must implement `label()` and `color()`.
+  Reference: `app/Enums/OrderStatus.php`
+- Swappable backends → driver pattern (contract + manager).
 ```
 
-### 4. Boundaries — apa yang HARAM sentuh
+### 4. Boundaries — what's off-limits
 
-Formula asal tak ada langsung. Ini yang selamatkan kau dari malam yang panjang.
+Almost always missing. This is the section that saves you a long night.
 
-```plain
-- Jangan edit migration yang dah merge ke `main` — tambah migration baru.
-- Jangan ubah `database/schema/*.dump` atau lock files.
-- Tanya dulu sebelum tambah composer dependency baru.
-- Jangan buang test untuk buat suite pass.
+```
+- Never edit migrations already merged to `main` — add a new one.
+- Never modify `database/schema/*.dump` or lock files.
+- Ask before adding a new composer dependency.
+- Never delete tests to make the suite pass.
 ```
 
 ### 5. Domain vocabulary
 
-Perkataan yang ada makna khusus dalam business kau. AI tak boleh teka ni.
+Words that mean something specific in your business. The AI can't guess these.
 
-```plain
-- "Tenant" = organisasi client, bukan user.
-- "Agent" = staff support dalaman. "Member" = user pihak client.
-- Source of truth untuk billing = Stripe, bukan table `subscriptions`.
+```
+- "Tenant" = the client organisation, not a user.
+- "Agent" = internal support staff. "Member" = client-side user.
+- Source of truth for billing is Stripe, not the `subscriptions` table.
 ```
 
 ### 6. Definition of done
 
-```plain
-Pint clean, `php artisan test` hijau, behaviour baru ada Pest test.
+```
+Pint clean, `php artisan test` green, new behaviour has a Pest test.
 ```
 
-### 7. Do / Don't (pendek je)
+### 7. Do / Don't (keep it short)
 
-Format ni bagus dalam formula asal. Kekalkan — tapi 5-6 baris, bukan 20.
-Hati-hati bercanggah: kalau dua rule berlawan, AI mungkin pilih salah satu
-secara rawak.
+This format works. Just keep it to five or six lines, not twenty. And watch for contradictions — if two rules conflict, the AI may pick one arbitrarily.
 
-***
+---
 
-## Bahagian 2 — Apa yang KELUAR (dan pergi ke mana)
+## Part 2 — What goes OUT (and where it goes instead)
 
-Section yang kau tulis tu bukan salah. Cuma salah tempat.
+The sections below aren't wrong. They're in the wrong place.
 
-| Section asal | Pergi ke mana | Kenapa |
-| --- | --- | --- |
-| Workflow (Understand → Explore → Plan → …) | **Skill** atau slash command | Prosedur per-task, bukan fakta per-session. Prosedur multi-step patut jadi skill |
-| Change Management checklist | **Skill** / `/plan` command | Hanya perlu untuk perubahan besar. Tak payah duduk dalam context 24/7 |
-| Documentation rules | **`.claude/rules/docs.md`** dengan `paths: ["docs/**"]` | Load bila sentuh docs sahaja |
-| Security rules (OWASP list) | **Buang 90%** | Model dah tahu SQL injection, XSS, CSRF. Senarai kategori = bakar token, tak ubah behaviour. Simpan yang project-specific je |
-| Performance rules | **Buang 80%** | "Jangan optimise membuta" tak boleh diverify. Tukar jadi: "Semua list endpoint wajib paginate. Tiada Eloquent call dalam loop" |
-| Known Gotchas | **`.claude/rules/gotchas.md`** | Section terbaik kau. Tapi ia membesar tanpa had — asingkan dan prune suku tahunan |
-| "Lint sebelum commit" | **Hook** | CLAUDE.md itu context, bukan enforcement. Kalau sesuatu MESTI jalan pada titik tertentu, guna hook |
-| Self-Learning rule | **Sebahagian besar dah automatik** | Auto memory sekarang simpan sendiri: preference kau, correction yang kau bagi, approach yang kau sahkan. Kau tak perlu maintain manual |
+| Section | Where it belongs | Why |
+|---|---|---|
+| Workflow (Understand → Explore → Plan → …) | **Skill** or slash command | A per-task procedure, not a per-session fact. Multi-step procedures belong in skills |
+| Change management checklist | **Skill** / `/plan` command | Only needed for large changes. No reason for it to sit in context 24/7 |
+| Documentation rules | **`.claude/rules/docs.md`** with `paths: ["docs/**"]` | Loads only when docs are being touched |
+| Security rules (the OWASP list) | **Cut 90%** | The model already knows SQL injection, XSS, CSRF. Listing categories burns tokens and changes nothing. Keep only what's project-specific |
+| Performance rules | **Cut 80%** | "Don't optimise blindly" is unfalsifiable. Rewrite as: "Every list endpoint paginates. No Eloquent calls inside loops" |
+| Known gotchas | **`.claude/rules/gotchas.md`** | The best section in any formula — but it grows without bound. Split it out and prune quarterly |
+| "Lint before commit" | **Hook** | CLAUDE.md is context, not enforcement. If something MUST run at a specific point, write a hook |
+| Self-learning rule | **Largely automated now** | Auto memory already records your preferences, the corrections you give, and the approaches you confirm. You don't need to maintain this by hand |
 
-***
+---
 
-## Bahagian 3 — Scope hierarchy (formula asal terlepas)
+## Part 3 — The scope hierarchy most guides miss
 
-Bukan satu fail. Ada empat lapisan, load dari paling luas ke paling spesifik:
+It isn't one file. There are four layers, loaded from broadest to most specific:
 
-| Scope | Lokasi | Untuk apa |
-| --- | --- | --- |
-| Managed policy | `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) | Standard company, deploy via MDM |
-| User | `~/.claude/CLAUDE.md` | Preference peribadi, semua projek |
-| Project | `./CLAUDE.md` atau `./.claude/CLAUDE.md` | Team-shared, masuk git |
-| Local | `./CLAUDE.local.md` | Peribadi untuk projek ni. Masukkan dalam `.gitignore` |
+| Scope | Location | Purpose |
+|---|---|---|
+| Managed policy | `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) | Company-wide standards, deployed via MDM |
+| User | `~/.claude/CLAUDE.md` | Personal preferences across all projects |
+| Project | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Team-shared, committed to git |
+| Local | `./CLAUDE.local.md` | Personal to this project. Add to `.gitignore` |
 
-Dan untuk projek besar: `.claude/rules/` — setiap fail satu topik, boleh
-di-scope ke path tertentu guna YAML frontmatter:
+And for larger projects: `.claude/rules/` — one file per topic, scopable to specific paths via YAML frontmatter:
 
 ```markdown
 ---
@@ -162,25 +153,22 @@ paths:
   - "app/Http/Api/**/*.php"
 ---
 # API Rules
-- Semua endpoint wajib Form Request untuk validation.
-- Response guna API Resource, jangan return model terus.
+- Every endpoint validates through a Form Request.
+- Responses go through API Resources, never return models directly.
 ```
 
-Rule macam ni **hanya** masuk context bila AI sentuh fail yang sepadan.
-Inilah jawapan sebenar untuk "rule aku terlalu panjang".
+A rule like this **only** enters context when the AI touches a matching file. This is the actual answer to "my rules file is too long."
 
-⚠️ Nota penting yang ramai artikel salah: pecah guna `@path` import **tidak**
-kurangkan context — fail yang di-import tetap load masa launch. Ia bantu
-organisation sahaja. Yang betul-betul jimat context ialah path-scoped rules.
+⚠️ One thing a lot of articles get wrong: splitting with `@path` imports does **not** reduce context — imported files still load at launch. It helps organisation, nothing more. Path-scoped rules are what actually save context.
 
-***
+---
 
-## Bahagian 4 — Template siap pakai
+## Part 4 — A template you can use today
 
-Ini keseluruhan CLAUDE.md. \~35 baris. Ia akan mengalahkan versi 800 baris.
+This is the entire CLAUDE.md. Around 35 lines. It will outperform an 800-line version.
 
 ```markdown
-# Belian — procurement system untuk SME Malaysia. User: purchasing officer + approver.
+# Belian — procurement system for Malaysian SMEs. Users: purchasing officers + approvers.
 
 ## Commands
 - Test: `php artisan test` | single: `php artisan test --filter=X`
@@ -188,74 +176,70 @@ Ini keseluruhan CLAUDE.md. \~35 baris. Ia akan mengalahkan versi 800 baris.
 - Fresh DB: `php artisan migrate:fresh --seed`
 
 ## Environment
-- PHP 8.3 / Laravel 12 / Herd. Postgres, bukan SQLite.
-- Queue kena jalan manual masa dev.
+- PHP 8.3 / Laravel 12 / Herd. Postgres, not SQLite.
+- Queue must be run manually in dev.
 
-## Conventions (lain dari default Laravel)
-- Public ID = UUID, internal ID = auto-increment. Jangan expose internal ID.
-- Business logic → invokable Action. Rujuk `app/Actions/PO/ApprovePO.php`
-- Side effect → Observer, bukan controller.
-- Enum wajib `label()` + `color()`. Rujuk `app/Enums/POStatus.php`
-- Swappable backend → contract + driver manager.
+## Conventions (differ from Laravel defaults)
+- Public IDs are UUIDs, internal IDs auto-increment. Never expose internal IDs.
+- Business logic → invokable Action. Reference `app/Actions/PO/ApprovePO.php`
+- Side effects → Observers, not controllers.
+- Enums implement `label()` + `color()`. Reference `app/Enums/POStatus.php`
+- Swappable backends → contract + driver manager.
 
 ## Boundaries
-- Jangan edit migration yang dah merge ke `main`.
-- Jangan buang test untuk paksa suite pass.
-- Tanya dulu sebelum tambah dependency.
+- Never edit migrations already merged to `main`.
+- Never delete tests to force the suite green.
+- Ask before adding a dependency.
 
 ## Vocabulary
-- "Requisition" = permohonan sebelum approve. "PO" = selepas approve.
-- Source of truth untuk supplier = SSM API, bukan table tempatan.
+- "Requisition" = pre-approval request. "PO" = post-approval.
+- Source of truth for suppliers is the SSM API, not the local table.
 
 ## Done means
-Pint clean, test hijau, behaviour baru ada Pest test.
+Pint clean, tests green, new behaviour has a Pest test.
 
 ## Gotchas
 @.claude/rules/gotchas.md
 ```
 
-***
+---
 
-## Bahagian 5 — Maintenance loop
+## Part 5 — The maintenance loop
 
-| Bila | Buat apa |
-| --- | --- |
-| Mula projek | `/init` — AI baca codebase, jana draf awal |
-| Selepas edit | `/context` — sahkan fail betul-betul ter-load |
-| Bila fail membengkak | `/doctor` — ia cadang apa nak trim |
-| Nak semak apa AI ingat | `/memory` |
-| AI buat silap sama kali kedua | Baru tambah satu baris |
+| When | Do this |
+|---|---|
+| Starting a project | `/init` — the AI reads the codebase and drafts a starting file |
+| After editing | `/context` — confirm the file actually loaded |
+| When the file bloats | `/doctor` — it proposes what to trim |
+| To see what the AI remembers | `/memory` |
+| AI makes the same mistake twice | *Now* add a line |
 
-Rule tambah content: **jangan tulis awal-awal**. Tunggu sampai AI buat silap
-yang sama dua kali, atau code review tangkap benda yang AI sepatutnya tahu.
-Kalau kau taip correction yang sama macam session lepas — itu tanda ia patut
-masuk CLAUDE.md.
+The rule for adding content: **don't write it upfront**. Wait until the AI makes the same mistake a second time, or a code review catches something it should have known. If you're typing the same correction you typed last session, that's the signal it belongs in CLAUDE.md.
 
-***
+---
 
-## Silap biasa (ringkasan)
+## Common mistakes, summarised
 
-| Silap | Betulkan |
-| --- | --- |
-| Tulis semua benda "untuk konteks penuh" | Tulis yang tak boleh derive dari code sahaja |
-| Senarai kategori (`Error handling`, `Logging`) | Tulis arahan yang boleh diverify |
-| Ajar general knowledge (OWASP, SOLID) | Model dah tahu. Buang |
-| Terangkan pattern dalam 3 perenggan | Tunjuk satu reference file |
-| Letak workflow prosedur dalam CLAUDE.md | Jadikan Skill |
-| Harap CLAUDE.md sebagai enforcement | CLAUDE.md = context, bukan enforcement. Guna Hook |
-| Satu fail gergasi untuk monorepo | `.claude/rules/` + path scoping |
+| Mistake | Fix |
+|---|---|
+| Writing everything "for full context" | Write only what can't be derived from code |
+| Listing categories (`Error handling`, `Logging`) | Write instructions you can verify |
+| Teaching general knowledge (OWASP, SOLID) | The model knows. Cut it |
+| Explaining a pattern in three paragraphs | Point at one reference file |
+| Putting workflow procedures in CLAUDE.md | Make it a Skill |
+| Treating CLAUDE.md as enforcement | It's context, not enforcement. Use a Hook |
+| One giant file for a monorepo | `.claude/rules/` + path scoping |
 
-***
+---
 
-## Satu ayat penutup
+## One closing line
 
-Formula asal jawab soalan **"apa yang AI kena tahu?"**
+Most formulas answer the question **"what does the AI need to know?"**
 
-Soalan sebenar ialah **"apa yang AI tak boleh tahu sendiri?"**
+The real question is **"what can't the AI figure out on its own?"**
 
-Yang kedua tu 10% dari saiz yang pertama — dan berkesan 10 kali ganda.
+The second answer is 10% the size of the first — and ten times more effective.
 
-***
+---
 
-\*Rujukan: Claude Code memory documentation —
-https://code.claude.com/docs/en/memory\*
+*Reference: [Claude Code memory documentation](https://code.claude.com/docs/en/memory)*
