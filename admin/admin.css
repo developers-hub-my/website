@@ -140,32 +140,20 @@ body {
   @apply max-w-full;
 }
 
-/* One door: Sign In with GitHub. Sveltia also offers a personal-access-token
-   sign-in, and on localhost a local-repository workflow with its helper copy —
-   all hidden. Note `:first-of-type` cannot express "first secondary button":
-   it counts <button> ELEMENTS, so on localhost, where a primary button comes
-   first, it matches nothing and every option disappears. Hiding the ones after
-   the first secondary is what actually holds in both compositions. */
-.inner:has(> img.logo) .buttons > button.primary,
-.inner:has(> img.logo) .buttons > div:not([class]),
-.inner:has(> img.logo) .buttons > button.secondary ~ button.secondary {
-  display: none !important;
-}
+/* Sveltia's button VARIANTS are contextual, not semantic: on localhost the
+   primary button is "Work with Local Repository" and GitHub sign-in is a
+   secondary; in production GitHub sign-in is itself the primary. So any rule
+   that hides or promotes by `.primary` / `.secondary` means something
+   different in each environment — an earlier attempt to show only the GitHub
+   button hid it in production and left the token option in its place.
 
-/* Every secondary gets the primary paint — only the first one is visible, and
-   it is the screen's only action. */
-.inner:has(> img.logo) .buttons > button.secondary {
-  @apply border-blue-600 bg-blue-600 text-white;
-}
+   Sveltia's own hierarchy is already right, and the --sui-* tokens above
+   colour it: whichever button is primary paints blue-600. Leave the options
+   alone. To offer GitHub only once OAuth is confirmed working, hide the token
+   option — always the LAST button in both compositions:
 
-.inner:has(> img.logo) .buttons > button.secondary .label {
-  @apply text-white;
-}
-
-.inner:has(> img.logo) .buttons > button.secondary:hover,
-.inner:has(> img.logo) .buttons > button.secondary:focus-visible {
-  @apply border-blue-700 bg-blue-700;
-}
+     .inner:has(> img.logo) .buttons > button:last-of-type { display: none }
+*/
 
 /* Sveltia's "Powered by" line under the card. */
 .app-shell .powered-by {
