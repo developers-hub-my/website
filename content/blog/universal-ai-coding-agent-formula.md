@@ -6,7 +6,7 @@ updated: 2026-08-24
 author: Nasrul Hazim
 authorTitle: Managing Director
 tags:
-  - Most CLAUDE.md guides read like project documentation — ten sections, several hundred lines, everything included "for full context." The problem is that the file loads every session and eats your context budget, and longer files reduce adherence rather than improving it. This breaks down what actually belongs in the file, what should become a Skill or a path-scoped rule, and gives you a 35-line template to start from.
+  - AI, Claude
 cover: ''
 coverAlt: ''
 canonical: ''
