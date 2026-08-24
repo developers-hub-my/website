@@ -168,15 +168,23 @@ Some components exist but are not currently used in App.tsx:
      If Sveltia changes that markup the selectors stop matching and the page
      loses its decoration, not its function — so after a version bump, open
      /admin and check the sign-in screen in both themes.
-- The sign-in screen deliberately shows ONE door: Sign In with GitHub. The
-  token sign-in and (on localhost) the local-repository workflow are hidden.
-  Two consequences: GitHub OAuth MUST be configured for the Netlify site or
-  nobody can get in, and the local-repository workflow is unreachable in dev
-  until that rule is relaxed.
-- `:first-of-type` cannot express "first secondary button" — it counts
-  `<button>` ELEMENTS, so on localhost (where a primary button comes first) it
-  matches nothing and every option disappears, leaving an empty card. Target
-  `button.secondary ~ button.secondary` instead.
+- NEVER hide or promote a sign-in button by its `.primary` / `.secondary`
+  class: Sveltia's variants are CONTEXTUAL, not semantic. On localhost the
+  primary is "Work with Local Repository" and GitHub sign-in is a secondary;
+  in production GitHub sign-in is itself the primary. A rule keyed on the
+  variant therefore means something different in each environment — one such
+  rule shipped a live site whose only option was the access token. Its
+  hierarchy is already correct, and the `--sui-*` tokens colour it. To offer
+  GitHub only, hide the LAST button (the token option in both compositions).
+- Positional selectors mislead here too: `:first-of-type` counts `<button>`
+  ELEMENTS, not classes, so "first secondary button" cannot be expressed with
+  it — on localhost it matches nothing and every option disappears.
+- Sign-in itself needs no per-person setup: access is GitHub WRITE permission
+  on `developers-hub-my/website`. Register a GitHub OAuth app (callback
+  `https://api.netlify.com/auth/done`, "Expire user access tokens" OFF — the
+  Netlify broker is not guaranteed to return a refresh token) and install it
+  under the Netlify site's Access & security → OAuth. Netlify is Sveltia's
+  default OAuth client while `backend.base_url` is unset.
 - `config.yml` fields MIRROR `scripts/blog-contract.mjs` field for field. Change
   one, change the other, or the CMS will write a post the next build rejects.
   Validate the config with the official script:
