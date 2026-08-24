@@ -7,6 +7,7 @@ author: Nasrul Hazim
 authorTitle: Managing Director
 tags:
   - AI
+  - Claude
 cover: ''
 coverAlt: ''
 canonical: ''
