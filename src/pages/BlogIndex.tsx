@@ -220,9 +220,18 @@ const BlogIndex = () => {
 
               {/* Card grid */}
               <div className="flex-1">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  {filtered.length} {filtered.length === 1 ? 'post' : 'posts'}
-                </p>
+                {/* The newest post is the banner above and is NOT repeated in
+                    the grid, so this line describes the grid rather than the
+                    listing — a "2 posts" label over a single card reads as a
+                    bug. Under a filter there is no banner, so the count is the
+                    whole result set again. */}
+                {rest.length > 0 && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    {featured
+                      ? 'More posts'
+                      : `${filtered.length} ${filtered.length === 1 ? 'post' : 'posts'}`}
+                  </p>
+                )}
 
                 {filtered.length === 0 ? (
                   <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-10 text-center text-gray-600 dark:text-gray-300">
