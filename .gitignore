@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Built from content/blog by scripts/build-blog.mjs on every build and on dev
+# server start — and the dev server's copy also carries drafts, which must not
+# land in a commit. The markdown in content/blog is the source of truth.
+src/data/blog.generated.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

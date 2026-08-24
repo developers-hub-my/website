@@ -4,6 +4,8 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
+    /* vite.config.ts imports scripts/build-blog.mjs, which is a Node script */
+    "types": ["node"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

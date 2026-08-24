@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { name: 'About', href: '/#about-us' },
   { name: 'Services', href: '/#services' },
   { name: 'Trainings', href: '/trainings' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '/#contact' },
   ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
 ];

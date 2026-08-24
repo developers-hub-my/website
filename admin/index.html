@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Content Manager — Developers Hub</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Same Inter as the marketing site, so the CMS reads as part of it. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Processed by Vite/Tailwind — this page is a build entry (see
+         vite.config.ts), not a static file in public/. Files in public/ are
+         copied verbatim, so Tailwind would never see classes written there.
+
+         Absolute path, not "./admin.css": at /admin (no trailing slash) a
+         relative href resolves against the ROOT, so the stylesheet 404s and the
+         CMS renders unstyled. An absolute path holds at both URLs. -->
+    <link rel="stylesheet" href="/admin/admin.css" />
+  </head>
+  <body>
+    <div id="nc-root"></div>
+
+    <!--
+      Sveltia CMS — a git-backed CMS served entirely from a CDN. It reads and
+      writes the markdown in content/blog straight to GitHub, so publishing is
+      a commit and Netlify rebuilds the site from it. Nothing is stored here.
+
+      The version is pinned on purpose: Sveltia is pre-1.0 and ships breaking
+      changes. To upgrade, bump the number, then load /admin and check both the
+      sign-in screen (styled in admin.css) and a test post.
+
+      No stylesheet from the package and no type="module" — both are documented
+      mistakes; the bundle carries its own styles and is not an ES module.
+    -->
+    <script src="https://unpkg.com/@sveltia/cms@0.196.0/dist/sveltia-cms.js"></script>
+  </body>
+</html>

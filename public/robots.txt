@@ -10,6 +10,8 @@ Sitemap: https://devhub.my/sitemap.xml
 # Crawl-delay for polite crawling
 Crawl-delay: 1
 
-# Disallow admin or private paths (add as needed)
-# Disallow: /admin/
-# Disallow: /private/
+# The CMS is a client-side app that talks to GitHub — nothing to index.
+Disallow: /admin/
+
+# RSS feed
+# https://devhub.my/rss.xml

@@ -1,6 +1,7 @@
 // Generates public/sitemap.xml from the static training catalogue in
-// src/data/trainings.ts. Runs as part of prebuild (alongside
-// fetch-gatherhub.mjs), so the sitemap can never drift from the catalogue.
+// src/data/trainings.ts and the blog index in src/data/blog.generated.json.
+// Runs as part of prebuild, AFTER build-blog.mjs, so the sitemap can never
+// drift from either catalogue.
 //
 // Slugs/stages are regex-extracted rather than importing the TS module —
 // trainings.ts pulls in lucide-react, which we don't want to evaluate in a
@@ -14,6 +15,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_URL = 'https://devhub.my';
+
+// Written moments earlier by build-blog.mjs; drafts are already stripped.
+const blogPosts = JSON.parse(readFileSync(join(root, 'src/data/blog.generated.json'), 'utf8'));
 
 const source = readFileSync(join(root, 'src/data/trainings.ts'), 'utf8');
 const entries = [...source.matchAll(/slug:\s*'([^']+)',\s*\n\s*stage:\s*'([^']+)'/g)].map(
@@ -41,6 +45,16 @@ const urls = [
     changefreq: 'monthly',
     priority: '0.8',
   })),
+  // The blog index only earns a slot once something is published on it.
+  ...(blogPosts.length > 0
+    ? [{ loc: `${SITE_URL}/blog`, changefreq: 'weekly', priority: '0.7' }]
+    : []),
+  ...blogPosts.map((post) => ({
+    loc: `${SITE_URL}/blog/${post.slug}`,
+    lastmod: post.updated ?? post.date,
+    changefreq: 'monthly',
+    priority: '0.6',
+  })),
 ];
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -49,7 +63,7 @@ ${urls
   .map(
     (url) => `  <url>
     <loc>${url.loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${url.lastmod ?? today}</lastmod>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
   </url>`,

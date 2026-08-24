@@ -4,5 +4,13 @@
 # the site, in robots.txt, or in the sitemap.
 /dl/*    https://devhub-downloads.netlify.app/:splat    200
 
+# The CMS is its own page in the build (dist/admin/index.html), not a route in
+# the SPA — without these it falls through to the SPA fallback below and
+# answers with the React 404. The redirect (not a rewrite) is deliberate: the
+# page's stylesheet and Sveltia's own config.yml lookup are relative to the
+# document, so the URL has to keep its trailing slash.
+/admin     /admin/             301
+/admin/    /admin/index.html   200
+
 # SPA fallback — must stay last
 /*    /index.html   200
