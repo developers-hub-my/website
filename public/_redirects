@@ -1,14 +1,19 @@
-# Rule C4: one redirect hop, straight to the final URL.
+# Rule C4 note: http://www.devhub.my/* costs TWO redirect hops, and cannot be
+# fixed from this file.
 #
-# http://www.devhub.my/x/ was costing two: Netlify forces HTTPS at the edge
-# first (301), then applies the primary-domain redirect (301). An explicit rule
-# with the full source URL is matched before both, so the wrong-scheme +
-# wrong-host case collapses into a single hop like the other three variants.
+#   http://www.devhub.my/x/  →301→  https://www.devhub.my/x/  →301→  https://devhub.my/x/
 #
-# Absolute URLs are only meaningful in the `from` field for this purpose — do
-# not rewrite the path rules below to use them.
-http://www.devhub.my/*    https://devhub.my/:splat    301!
-https://www.devhub.my/*   https://devhub.my/:splat    301!
+# Netlify terminates TLS and forces HTTPS at the edge before _redirects is
+# evaluated, so the first hop happens before any rule here can match. Explicit
+# absolute-URL rules for both www forms were tried and deployed on 1 Sep 2026;
+# production still returned 301 → 301 → 200, so they were removed rather than
+# left in place implying the case is handled.
+#
+# The other three variants are single-hop: http://devhub.my/,
+# https://www.devhub.my/ and the no-trailing-slash form. Only the request that
+# is BOTH wrong-scheme and wrong-host pays twice, because it crosses two
+# separate layers. Closing it needs a change above Netlify's edge — a CDN or DNS
+# rule that answers http://www directly — not a repo change.
 
 # Marketing downloads (ebooks) — proxied from the private devhub-downloads
 # site. Actual paths are unguessable tokens managed outside this repo; the
