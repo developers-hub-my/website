@@ -1,4 +1,3 @@
-import React from 'react';
 import { LucideIcon, Clock, BarChart3, DollarSign } from 'lucide-react';
 
 interface ProgramCardProps {
