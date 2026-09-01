@@ -94,7 +94,12 @@ Four rules are locked (Phase 03/14, enforced by `scripts/check-seo.mjs`):
 - trailing slash on everything except the homepage, which stays `https://devhub.my/`
 - one redirect hop maximum, straight to the final URL — so **internal links must
   already carry the trailing slash**; a link to `/services/x` costs a 301 on
-  every click and every crawl
+  every click and every crawl. One documented exception:
+  `http://www.devhub.my/*` costs two hops and cannot be fixed from this repo,
+  because Netlify forces HTTPS at the edge before `_redirects` is evaluated.
+  Absolute-URL rules for it were tried, deployed and verified not to work, so
+  they were removed rather than left implying the case is handled. Closing it
+  needs a CDN or DNS rule above Netlify's edge.
 - a query string never becomes part of a canonical URL
 
 `blogPath()` and `trainingPath()` return the slashed form for this reason.
