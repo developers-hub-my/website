@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "typecheck": "node scripts/build-blog.mjs && tsc --noEmit -p tsconfig.app.json",
     "preview": "vite preview",
-    "postbuild": "node scripts/generate-sitemap.mjs && node scripts/generate-llms.mjs && node scripts/check-seo.mjs",
+    "postbuild": "node scripts/generate-robots.mjs && node scripts/generate-sitemap.mjs && node scripts/generate-llms.mjs && node scripts/check-seo.mjs",
     "check:seo": "node scripts/check-seo.mjs",
     "check:live": "node scripts/check-live.mjs"
   },

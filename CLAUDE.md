@@ -222,13 +222,24 @@ canonical.
 A preview is a byte-identical copy of the site on another hostname, and the
 prerendered HTML hardcodes production canonicals — so an indexable preview feeds
 Google canonical tags pointing at devhub.my from a host that is not devhub.my.
-`netlify.toml` sets `X-Robots-Tag: noindex, nofollow` and swaps in
-`public/staging/robots.txt` for the `deploy-preview` and `branch-deploy`
-contexts. Phase 13 asks for both, because they do different jobs: the header
-keeps a linked page out of the index, the robots file stops the crawl.
+Netlify already sets `X-Robots-Tag: noindex` on preview deploys, which covers
+indexing. Crawling is covered by `scripts/generate-robots.mjs`, which reads
+Netlify's `CONTEXT` variable at build time and writes either the production
+`robots.txt` or one that disallows everything. Anything other than
+`production` — including a local build — gets the disallow-everything version,
+because the failure that matters is a staging copy getting indexed.
 
-Redirect rules stay in `public/_redirects`, not `netlify.toml` — two files both
-claiming to define routing is how a rule gets shadowed silently.
+**Do not try to express this as a `[context.*]` block in `netlify.toml`.** Those
+blocks accept build settings and environment variables only; header and redirect
+rules written inside one are parsed and then silently ignored. That was the first
+attempt, and it looked correct on deploy-preview-43 while doing nothing.
+
+`netlify.toml` therefore holds build settings and nothing else. Redirects stay in
+`public/_redirects` — two files both claiming to define routing is how a rule
+gets shadowed silently.
+
+`check-seo.mjs` asserts the right robots.txt for the context it is run in, and
+fails a production build that ships the staging one.
 
 ### Phase 00: `g8stack.com` is ours
 
