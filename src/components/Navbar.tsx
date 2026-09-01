@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 import { Menu, X } from 'lucide-react';
 import Logo from './Logo';
 import DarkModeToggle from './DarkModeToggle';
@@ -9,15 +10,34 @@ interface NavItem {
   external?: boolean;
 }
 
+// Internal destinations use <Link> so navigation stays client-side after
+// hydration; only the external company profile is a plain anchor. Rendering an
+// internal route as <a href> would work — every URL is a real document now —
+// but it would reload the whole app on every menu click.
+const NavLink = ({ item, className, onClick }: { item: NavItem; className: string; onClick?: () => void }) =>
+  item.external ? (
+    <a href={item.href} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
+      {item.name}
+    </a>
+  ) : (
+    <Link to={item.href} className={className} onClick={onClick}>
+      {item.name}
+    </Link>
+  );
+
 const companyProfileUrl = import.meta.env.VITE_COMPANY_PROFILE_URL;
 
 const navItems: NavItem[] = [
-  { name: 'Home', href: '/#home' },
-  { name: 'About', href: '/#about-us' },
-  { name: 'Services', href: '/#services' },
-  { name: 'Trainings', href: '/trainings' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Contact', href: '/#contact' },
+  // Real URLs now that the pages exist. The old `/#about-us` form scrolled on
+  // the homepage and went nowhere from any other page, so /about/ and
+  // /contact/ had no inbound link in the primary navigation at all.
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about/' },
+  { name: 'Services', href: '/services/' },
+  { name: 'Technologies', href: '/technologies/' },
+  { name: 'Trainings', href: '/trainings/' },
+  { name: 'Blog', href: '/blog/' },
+  { name: 'Contact', href: '/contact/' },
   ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
 ];
 
@@ -52,25 +72,19 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-1">
             {navItems.map((item) => (
-              <a
+              <NavLink
                 key={item.name}
-                href={item.href}
-                {...(item.external && {
-                  target: '_blank',
-                  rel: 'noopener noreferrer',
-                })}
+                item={item}
                 className="px-3 lg:px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-md hover:bg-slate-50 dark:hover:bg-slate-800"
-              >
-                {item.name}
-              </a>
+              />
             ))}
             <DarkModeToggle />
-            <a
-              href="#contact"
+            <Link
+              to="/contact/"
               className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
               Get in Touch
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -95,26 +109,20 @@ const Navbar = () => {
         <div id="mobile-menu" className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
           <div className="px-4 pt-2 pb-4 space-y-1">
             {navItems.map((item) => (
-              <a
+              <NavLink
                 key={item.name}
-                href={item.href}
-                {...(item.external && {
-                  target: '_blank',
-                  rel: 'noopener noreferrer',
-                })}
+                item={item}
                 className="block px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
                 onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </a>
+              />
             ))}
-            <a
-              href="#contact"
+            <Link
+              to="/contact/"
               className="block mt-4 px-4 py-3 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               Get in Touch
-            </a>
+            </Link>
           </div>
         </div>
       )}

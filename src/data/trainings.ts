@@ -574,6 +574,23 @@ export interface TrainingFaq {
   bullets?: { title?: string; text: string }[];
 }
 
+/**
+ * Flattens a FAQ into the `{ question, answer }` pair the schema builder takes,
+ * folding any bullet list into the answer text.
+ *
+ * The visible page renders the bullets separately, so this keeps the schema
+ * answer complete without the two versions saying different things — the
+ * alignment Phase 06 layer 6 checks by hand.
+ */
+export const faqToQa = (faq: TrainingFaq): { question: string; answer: string } => ({
+  question: faq.q,
+  answer: faq.bullets
+    ? `${faq.a} ${faq.bullets
+        .map((bullet) => (bullet.title ? `${bullet.title} — ${bullet.text}` : bullet.text).replace(/\.$/, ''))
+        .join('; ')}.`
+    : faq.a,
+});
+
 // Catalogue-level FAQs for the /trainings listing — the questions a visitor
 // comparing courses actually has (path structure, ordering, private runs,
 // registration). Rendered by TrainingsIndex and mirrored into FAQPage JSON-LD.
@@ -634,6 +651,7 @@ export function trainingFaqs(training: Training): TrainingFaq[] {
   ];
 }
 
+/** Trailing slash included — see the note on blogPath; C4 allows no redirect hops. */
 export function trainingPath(training: Training): string {
-  return `/trainings/${training.stage}/${training.slug}`;
+  return `/trainings/${training.stage}/${training.slug}/`;
 }

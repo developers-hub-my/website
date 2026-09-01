@@ -1,5 +1,5 @@
 ---
-title: "One learning path, four stages: how we structure developer training"
+title: "One learning path, four stages of developer training"
 description: >-
   Most training catalogues are a pile of unrelated courses. Ours is a single
   path with four stages — here is the reasoning behind that structure and how

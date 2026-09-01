@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router';
-import { ArrowLeft, ArrowRight, CalendarDays, Clock } from 'lucide-react';
+import { ArrowRight, CalendarDays, Clock } from 'lucide-react';
 import {
   blogPath,
   formatPostDate,
@@ -8,7 +8,21 @@ import {
   relatedPosts,
   type Post,
 } from '../data/blog';
-import { SITE_URL, absoluteUrl, useSeo } from '../hooks/useSeo';
+import { useSeo } from '../hooks/useSeo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { canonicalUrl, pageTitle, ID } from '../data/site';
+import { personByName } from '../data/people';
+import { TECHNOLOGIES } from '../data/technologies';
+import {
+  articleNode,
+  breadcrumbNode,
+  logoNode,
+  organizationNode,
+  personNode,
+  technologyNode,
+  webPageNode,
+  webSiteNode,
+} from '../lib/schema';
 
 // The article body is HTML rendered from markdown at build time by
 // scripts/build-blog.mjs. It is first-party content committed to this repo (by
@@ -19,49 +33,69 @@ import { SITE_URL, absoluteUrl, useSeo } from '../hooks/useSeo';
 
 const gradientStrip = 'bg-gradient-to-r from-blue-600 via-indigo-500 to-rose-400';
 
-const postJsonLd = (post: Post) => [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    dateModified: post.updated ?? post.date,
-    author: { '@type': 'Person', name: post.author },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Developers Hub Sdn Bhd',
-      url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: absoluteUrl('/logo.png') },
-    },
-    image: absoluteUrl(post.cover ?? '/og-image.png'),
-    keywords: post.tags.join(', '),
-    url: absoluteUrl(blogPath(post)),
-    mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(blogPath(post)) },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-      { '@type': 'ListItem', position: 3, name: post.title, item: absoluteUrl(blogPath(post)) },
+// Nodes for one post. Every entity the article references — the author, the
+// technologies it is about — is emitted as a full node in the same graph, so
+// no reference dangles (R6). `about` is limited to technologies the post's
+// tags genuinely match: Phase 10 warns against attaching ten topics to one
+// article to look semantically rich.
+const postNodes = (post: Post) => {
+  const canonical = canonicalUrl(blogPath(post));
+  const author = personByName(post.author);
+  const about = TECHNOLOGIES.filter((technology) =>
+    post.tags.some((tag) => tag.toLowerCase() === technology.name.toLowerCase()),
+  );
+
+  return {
+    canonical,
+    crumbs: [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }, { name: post.title }],
+    author,
+    nodes: [
+      organizationNode(),
+      logoNode(),
+      webSiteNode(),
+      webPageNode({
+        canonical,
+        name: pageTitle(post.title),
+        description: post.description,
+        mainEntityId: ID.article(canonical),
+      }),
+      breadcrumbNode(canonical, [
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/blog/' },
+        { name: post.title },
+      ]),
+      author && personNode(author),
+      ...about.map(technologyNode),
+      author &&
+        articleNode({
+          canonical,
+          headline: post.title,
+          description: post.description,
+          datePublished: post.date,
+          dateModified: post.updated ?? post.date,
+          authorId: ID.person(author.slug),
+          aboutIds: about.map((technology) => ID.technology(technology.slug)),
+          image: post.cover ?? '/og-image.png',
+        }),
     ],
-  },
-];
+  };
+};
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = slug ? postBySlug(slug) : undefined;
 
+  const schema = post ? postNodes(post) : null;
+
   useSeo(
-    post
+    post && schema
       ? {
-          title: `${post.title} | Developers Hub`,
+          title: pageTitle(post.title),
           description: post.description,
           path: blogPath(post),
           image: post.cover,
-          jsonLd: postJsonLd(post),
+          crumbs: schema.crumbs,
+          nodes: schema.nodes,
         }
       : {
           title: 'Post not found — Developers Hub',
@@ -75,12 +109,12 @@ const BlogPost = () => {
     window.scrollTo(0, 0);
   }, [post]);
 
-  if (!post) {
+  if (!post || !schema) {
     return (
       <main className="pt-24 pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Post not found</h1>
-          <Link to="/blog" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <Link to="/blog/" className="text-blue-600 dark:text-blue-400 hover:underline">
             Browse all posts
           </Link>
         </div>
@@ -93,13 +127,11 @@ const BlogPost = () => {
   return (
     <main className="pt-24 pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          to="/blog"
-          className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline mb-8"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" />
-          All posts
-        </Link>
+        {/* The breadcrumb carries the link back to /blog, so the old "All
+            posts" link would have been a second link to the same place from
+            one page — and only the breadcrumb is the visible counterpart of
+            the BreadcrumbList in the graph (R8). */}
+        <Breadcrumbs crumbs={schema.crumbs} />
 
         <header>
           <div className={`h-1 w-16 rounded-full ${gradientStrip} mb-6`} />
@@ -175,7 +207,7 @@ const BlogPost = () => {
               practitioners.
             </p>
             <Link
-              to="/trainings"
+              to="/trainings/"
               className="inline-flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
             >
               Browse trainings

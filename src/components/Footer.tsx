@@ -1,24 +1,27 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
+import { SERVICES } from '../data/services';
+import { TECHNOLOGIES } from '../data/technologies';
 
 const companyProfileUrl = import.meta.env.VITE_COMPANY_PROFILE_URL || 'https://devhub.my';
 
+// Real pages, not homepage anchors. The footer is on every page, so these
+// links are what give /about/, /contact/, each service and each technology a
+// site-wide inbound path — the Phase 08 requirement that no P0 entity is an
+// orphan. Anchors like `#about-us` only resolved on the homepage and were dead
+// links from everywhere else.
 const quickLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about-us' },
-  { name: 'Services', href: '#services' },
-  { name: 'Trainings', href: '/trainings' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about/' },
+  { name: 'Services', href: '/services/' },
+  { name: 'Technologies', href: '/technologies/' },
+  { name: 'Trainings', href: '/trainings/' },
+  { name: 'Blog', href: '/blog/' },
+  { name: 'Authors', href: '/authors/' },
+  { name: 'Contact', href: '/contact/' },
   { name: 'Company Profile', href: companyProfileUrl, external: true },
-];
-
-const services = [
-  'Education & Training',
-  'Software Development',
-  'IT Consultation',
-  'Business Solutions',
 ];
 
 const Footer = () => {
@@ -53,16 +56,23 @@ const Footer = () => {
               <ul className="space-y-2 sm:space-y-3">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      {...(link.external && {
-                        target: '_blank',
-                        rel: 'noopener noreferrer',
-                      })}
-                      className="text-slate-400 hover:text-white transition-colors text-xs sm:text-sm"
-                    >
-                      {link.name}
-                    </a>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-slate-400 hover:text-white transition-colors text-xs sm:text-sm"
+                      >
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.href}
+                        className="text-slate-400 hover:text-white transition-colors text-xs sm:text-sm"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -73,10 +83,34 @@ const Footer = () => {
               <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3 sm:mb-4">
                 Services
               </h3>
+              {/* Named from the service catalogue and linked, not typed out as
+                  plain text. A service listed in the footer with no link was an
+                  entity the crawler could not reach from anywhere. */}
               <ul className="space-y-2 sm:space-y-3">
-                {services.map((service) => (
-                  <li key={service}>
-                    <span className="text-slate-400 text-xs sm:text-sm">{service}</span>
+                {SERVICES.map((service) => (
+                  <li key={service.slug}>
+                    <Link
+                      to={`/services/${service.slug}/`}
+                      className="text-slate-400 hover:text-white transition-colors text-xs sm:text-sm"
+                    >
+                      {service.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className="mt-6 text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3 sm:mb-4">
+                Technologies
+              </h3>
+              <ul className="space-y-2 sm:space-y-3">
+                {TECHNOLOGIES.map((technology) => (
+                  <li key={technology.slug}>
+                    <Link
+                      to={`/technologies/${technology.slug}/`}
+                      className="text-slate-400 hover:text-white transition-colors text-xs sm:text-sm"
+                    >
+                      {technology.name}
+                    </Link>
                   </li>
                 ))}
               </ul>

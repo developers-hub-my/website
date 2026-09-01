@@ -4,18 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>Developers Hub Sdn Bhd | Technology Education & Software Development in Malaysia</title>
-    <meta name="title" content="Developers Hub Sdn Bhd | Technology Education & Software Development in Malaysia" />
-    <meta name="description" content="Developers Hub is a leading technology company in Johor Bahru, Malaysia offering education & training, software development, IT consultation, and business solutions. Empowering businesses through innovation since 2020." />
-    <meta name="keywords" content="software development Malaysia, IT training Johor Bahru, technology education, React development, Laravel development, IT consultation Malaysia, business solutions, tech training, coding bootcamp Malaysia, web development JB" />
-    <meta name="author" content="Developers Hub Sdn Bhd" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="English" />
-    <meta name="revisit-after" content="7 days" />
+    <!--
+      Per-page tags are NOT written here.
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://devhub.my" />
+      Title, description, robots, canonical, the OG/Twitter pair and the single
+      JSON-LD @graph are all injected below by scripts/prerender.mjs, from the
+      values src/hooks/useSeo.ts collects while the page renders. Adding any of
+      them back to this file would put the same value on every URL — which is
+      exactly the state the 1 Sep 2026 audit found, where all nineteen URLs
+      canonicalised to the homepage.
+
+      Three hand-written JSON-LD blocks used to live here (Organization,
+      LocalBusiness, WebSite). They were removed wholesale rather than repaired,
+      per the Phase 05 pre-work instruction: three separate blocks break R1, the
+      empty "telephone" broke R5, the LocalBusiness @id did not match the
+      registry, and the WebSite block advertised a SearchAction for a site
+      search that does not exist. src/lib/schema.ts replaces all of it.
+
+      Also gone, deliberately: meta keywords, author, language and revisit-after
+      (dead signals), and the geo.* / ICBM pair — location is expressed properly
+      by GeoCoordinates inside LocalBusiness, and these would otherwise be
+      stamped onto every page of the site rather than the ones about the office.
+    -->
+    <!--app-head-->
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -26,29 +37,11 @@
     <meta name="theme-color" content="#1e40af" />
     <meta name="msapplication-TileColor" content="#1e40af" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Site-wide social defaults; the per-page values are injected above. -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://devhub.my" />
-    <meta property="og:title" content="Developers Hub Sdn Bhd | Technology Education & Software Development" />
-    <meta property="og:description" content="Empowering businesses through technology and innovation. Your trusted partner for education, software development, and IT solutions in Malaysia." />
-    <meta property="og:image" content="https://devhub.my/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_MY" />
     <meta property="og:site_name" content="Developers Hub" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://devhub.my" />
-    <meta name="twitter:title" content="Developers Hub Sdn Bhd | Technology Education & Software Development" />
-    <meta name="twitter:description" content="Empowering businesses through technology and innovation. Your trusted partner for education, software development, and IT solutions in Malaysia." />
-    <meta name="twitter:image" content="https://devhub.my/og-image.png" />
-
-    <!-- Geo Tags for Local SEO -->
-    <meta name="geo.region" content="MY-01" />
-    <meta name="geo.placename" content="Johor Bahru" />
-    <meta name="geo.position" content="1.55450;103.79608" />
-    <meta name="ICBM" content="1.55450, 103.79608" />
 
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="Developers Hub Blog" href="/rss.xml" />
@@ -57,103 +50,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Developers Hub Sdn Bhd",
-      "alternateName": "DevHub",
-      "url": "https://devhub.my",
-      "logo": "https://devhub.my/logo.png",
-      "description": "Developers Hub is a leading technology company in Malaysia offering education & training, software development, IT consultation, and business solutions.",
-      "foundingDate": "2020",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "37A, Jalan Harmonium 23/13, Taman Desa Tebrau",
-        "addressLocality": "Johor Bahru",
-        "addressRegion": "Johor",
-        "postalCode": "81100",
-        "addressCountry": "MY"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "hello@devhub.my",
-        "contactType": "customer service",
-        "availableLanguage": ["English", "Malay"]
-      },
-      "sameAs": [
-        "https://blog.devhub.my"
-      ],
-      "areaServed": {
-        "@type": "Country",
-        "name": "Malaysia"
-      },
-      "serviceType": [
-        "Technology Education",
-        "Software Development",
-        "IT Consultation",
-        "Business Solutions"
-      ]
-    }
-    </script>
-
-    <!-- Local Business Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Developers Hub Sdn Bhd",
-      "image": "https://devhub.my/logo.png",
-      "@id": "https://devhub.my",
-      "url": "https://devhub.my",
-      "telephone": "",
-      "email": "hello@devhub.my",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "37A, Jalan Harmonium 23/13, Taman Desa Tebrau",
-        "addressLocality": "Johor Bahru",
-        "addressRegion": "Johor",
-        "postalCode": "81100",
-        "addressCountry": "MY"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 1.55450,
-        "longitude": 103.79608
-      },
-      "priceRange": "$$",
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "09:00",
-        "closes": "18:00"
-      }
-    }
-    </script>
-
-    <!-- Website Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Developers Hub",
-      "url": "https://devhub.my",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://devhub.my/?s={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
   </head>
   <body class="font-sans antialiased">
     <!-- The Meta Pixel no-JS fallback is injected here at build time, and only
          when VITE_META_PIXEL_ID is set — see metaPixelNoscript() in
          vite.config.ts. The JS half (SPA route tracking) is in
          src/lib/meta-pixel.ts. -->
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

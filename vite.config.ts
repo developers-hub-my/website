@@ -110,6 +110,10 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  // The prerender pass builds src/entry-server.tsx on its own, via
+  // vite.ssr.config.ts — Vite 8 builds both environments from one config, so
+  // the HTML inputs above would otherwise be handed to the SSR environment,
+  // which rejects them.
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

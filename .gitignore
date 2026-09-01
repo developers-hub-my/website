@@ -37,3 +37,7 @@ todo.md
 # Environment variables
 .env
 .env.example
+
+# Consultant reference documents dropped in the repo root to read locally.
+# They are inputs to the work, not part of the site — never commit them.
+*.pdf

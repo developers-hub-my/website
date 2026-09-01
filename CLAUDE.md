@@ -5,40 +5,99 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Development Commands
 
 ```bash
-npm run dev      # Start development server (Vite)
-npm run build    # Production build
-npm run lint     # Run ESLint
-npm run preview  # Preview production build
+npm run dev         # Start development server (Vite)
+npm run build       # Production build — client, SSR bundle, prerender, sitemap, llms.txt, SEO gate
+npm run lint        # Run ESLint
+npm run preview     # Preview production build
+npm run check:seo   # Phase 06 acceptance tests T1-T8 / S1-S6 over dist/ (also runs in postbuild)
+npm run check:live  # C1-C6, 404s and redirect hops against a served origin
 ```
 
 ## Tech Stack
 
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS with custom blue color palette and Montserrat font
+- **Framework**: React 19 with TypeScript, React Router 8
+- **Build Tool**: Vite 8, with a second SSR build used only for prerendering
+- **Styling**: Tailwind CSS with a custom blue palette; Inter loaded from Google Fonts
 - **Icons**: lucide-react
 - **Linting**: ESLint with TypeScript and React Hooks plugins
 
 ## Architecture
 
-This is a single-page marketing website for "Developers Hub Sdn Bhd" - a Malaysian company focused on education, technology, and entrepreneurship based in Johor Bahru.
+This is a **prerendered** marketing website for "Developers Hub Sdn Bhd" - a
+Malaysian company focused on education, technology, and entrepreneurship based
+in Johor Bahru.
+
+It is authored as a React SPA but **does not ship as one**. `npm run build`
+emits a real HTML document per route:
+
+1. `vite build` — client bundle plus `dist/index.html` as the template
+2. `vite build --config vite.ssr.config.ts` — `dist-ssr/entry-server.js`
+3. `scripts/prerender.mjs` — renders every route in `entry-server.js` `routes()`
+   and writes `dist/<route>/index.html`, injecting the head and one JSON-LD
+   `@graph` collected during render
+4. `postbuild` — sitemap, `llms.txt`, then the SEO acceptance gate
+
+**Do not reintroduce the `/* /index.html 200` fallback in `public/_redirects`.**
+That single rule was the root cause of most of the 1 Sep 2026 audit findings: it
+answered every unmatched path with the homepage at HTTP 200, so `/about/`,
+`/llms.txt` and `/tidak-wujud/` all returned the same document, the crawler saw
+one page instead of nineteen, and every URL canonicalised to `https://devhub.my`.
+Unmatched paths now fall through to `dist/404.html`, which Netlify serves with a
+genuine 404.
+
+`src/App.tsx` deliberately creates **no router** — `main.tsx` supplies
+`BrowserRouter`, `entry-server.tsx` supplies `StaticRouter`. A router inside
+`App` reads `document` on construction and makes the tree unrenderable on the
+server. For the same reason, nothing in the render path may touch `window` or
+`document` outside an effect.
 
 ### Component Structure
 
 The app follows a simple page-section pattern where `App.tsx` composes the main layout:
 
+`App.tsx` holds the route table and the shared chrome. The homepage composes
+sections; every other route is a page in `src/pages/`.
+
 ```text
 App.tsx
-├── Navbar      - Fixed navigation with scroll-aware styling and mobile hamburger menu
-├── Hero        - Landing section with tagline and 4 feature cards (Innovation, Education, Development, Partnership)
-├── About       - Company goals displayed as 4 animated cards
-├── Services    - 4 service offerings using ServiceCard component
-└── Footer      - Quick links, services list, and contact info
+├── Navbar                       Fixed nav, scroll-aware, mobile hamburger
+├── Routes
+│   ├── /                        Hero + About + Services + Contact sections
+│   ├── /about/                  AboutPage        Organization, Person
+│   ├── /contact/                ContactPage      LocalBusiness, address, hours
+│   ├── /services/               ServicesIndex    the four Service entities
+│   ├── /services/:slug/         ServiceDetail    + related technologies, FAQ
+│   ├── /technologies/           TechnologiesIndex
+│   ├── /technologies/:slug/     TechnologyDetail + services, courses, experts
+│   ├── /authors/                AuthorsIndex
+│   ├── /authors/:slug/          AuthorProfile    expertise with its evidence
+│   ├── /trainings/[…]           TrainingsIndex, TrainingDetail
+│   └── /blog/[…]                BlogIndex, BlogPost
+└── Footer                       Links every service, technology and hub
 ```
 
-### Navigation
+Entity pages share `PageShell` (breadcrumbs, the single `h1`, the definition
+lede) and `Section`. Adding a page means adding it to the route table **and** to
+`routes()` in `entry-server.tsx` — the second is what gets it prerendered, into
+the sitemap and into `llms.txt`.
 
-The Navbar uses hash-based navigation (`#about-us`, `#services`, `#contact`) for in-page scrolling. Section pages (`/trainings`, `/blog`) are ordinary links; external links (e.g. Company Profile) open in new tabs.
+### Navigation and the URL contract
+
+Every internal destination is a real page with a **trailing slash**, reached
+with `<Link to>`. The Navbar's old hash links (`#about-us`, `#services`,
+`#contact`) are gone: they scrolled on the homepage and went nowhere from any
+other page, which left `/about/` and `/contact/` with no inbound link at all.
+
+Four rules are locked (Phase 03/14, enforced by `scripts/check-seo.mjs`):
+
+- https only, host `devhub.my` with no `www`
+- trailing slash on everything except the homepage, which stays `https://devhub.my/`
+- one redirect hop maximum, straight to the final URL — so **internal links must
+  already carry the trailing slash**; a link to `/services/x` costs a 301 on
+  every click and every crawl
+- a query string never becomes part of a canonical URL
+
+`blogPath()` and `trainingPath()` return the slashed form for this reason.
 
 ### Card Components
 
@@ -79,6 +138,76 @@ Some components exist but are not currently used in App.tsx:
 - Cards use `rounded-xl shadow-md hover:shadow-xl` pattern
 - Responsive breakpoints: `sm:`, `md:`, `lg:` with mobile-first approach
 - Section padding: `py-20` with `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` container pattern
+
+## Entity, SEO, AEO & GEO SOP
+
+DevHub (as consultant) hands this repo a gate-based SOP: 22 phases, each with
+acceptance criteria it verifies against production. Phases landing here are
+**05, 06, 08, 12, 13, 14, 16** plus the page-build half of **03**. Tracked in
+the epic issue and its per-block issues.
+
+### Entity data is the source of truth
+
+`src/data/site.ts` holds company identity **once** — legal name, address, email,
+logo, founding year — plus the **canonical ID registry** (`ID`). Change an
+address there and the JSON-LD, footer and contact page all move together; that
+is a Phase 07 requirement, not a convenience.
+
+`services.ts`, `technologies.ts` and `people.ts` hold the entities and the
+relationships between them. The same relationship data drives the JSON-LD, the
+visible related-content links, the sitemap and `llms.txt` — if the graph says a
+service relates to Laravel but no visible link connects the two pages, that is a
+defect, not a styling choice.
+
+**Never build an `@id` by string concatenation.** Every one comes from `ID` in
+`site.ts`. A slug is part of an `@id`, so renaming a slug after launch breaks
+entity identity and is a full migration, not a one-line edit.
+
+### One `@graph` per page
+
+`src/lib/schema.ts` is the only module that produces schema. Pages declare their
+nodes and `useSeo` assembles exactly one `<script type="application/ld+json">`
+containing one `@graph`. The builder:
+
+- collapses duplicate `@id`s, so an entity is emitted once and referenced after
+- **closes the graph itself** — a Service references its technologies and a
+  Person references what they know about, so `buildGraph` pulls in any
+  referenced entity the page did not declare. Without that, every page would
+  have to know the transitive set, and that is how dangling references ship.
+- **prunes empty values last** — `null`, `""`, `[]`, `{}`, `N/A`, `TBD`. An
+  empty property is a worse signal than an absent one, so a value DevHub does
+  not have is simply not written in `site.ts` (there is no `telephone`,
+  `priceRange` or `sameAs` today).
+
+Breadcrumbs are declared once per page as a `crumbs` array and passed to **both**
+`breadcrumbNode()` and `<Breadcrumbs>`, so the schema and the visible trail
+cannot drift.
+
+### Never fake anything
+
+Rule 06 of the SOP, and it is absolute: no invented author, project, review,
+citation, partnership or award. No "Editorial Team" byline standing in for a
+person — a name and photo going public is that person's decision. A technology
+gets a page only when there is a real project, course or published article
+behind it; the homepage's old ten-technology list had evidence for almost none
+of them and is not coming back.
+
+### The gate runs on every build
+
+`scripts/check-seo.mjs` runs in `postbuild`, so a failing gate fails the build
+locally, in CI and on Netlify alike. It checks T1-T8 and S1-S6 over the real
+output: one JSON-LD block, one Organization node, registry-matching and
+deterministic `@id`s, no empty values, canonical/`og:url`/`WebPage.url`
+agreement, breadcrumb parity, crawlable internal links, one `h1`, titles under
+60 characters, and sitemap/`llms.txt` consistency.
+
+To confirm it still bites, break something deliberately — change an `@id`, pass
+a different crumb array to `<PageShell>` than to `breadcrumbNode()` — and the
+build must fail. DevHub asks for that demonstration.
+
+`scripts/check-live.mjs` covers what only a served origin can answer: redirect
+hop counts, real 404 status, and whether `?utm_source=` creates a second
+canonical.
 
 ## Trainings Catalogue
 

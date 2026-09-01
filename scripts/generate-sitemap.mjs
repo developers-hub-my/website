@@ -1,76 +1,91 @@
-// Generates public/sitemap.xml from the static training catalogue in
-// src/data/trainings.ts and the blog index in src/data/blog.generated.json.
-// Runs as part of prebuild, AFTER build-blog.mjs, so the sitemap can never
-// drift from either catalogue.
+// Generates dist/sitemap.xml from the same route list the prerender step used.
 //
-// Slugs/stages are regex-extracted rather than importing the TS module —
-// trainings.ts pulls in lucide-react, which we don't want to evaluate in a
-// bare Node build step. Each catalogue entry opens with `slug:` immediately
-// followed by `stage:` on the next line; that pairing skips the identically
-// named helper-function parameters further down the file.
+// Phase 12's inclusion rule is a single rule with no exceptions: published AND
+// indexable AND has a canonical URL AND returns 200 AND is self-canonical. That
+// holds here by construction — the list comes from entry-server.js routes(), so
+// a URL is in the sitemap if and only if a document was written for it. There
+// is no hand-maintained list to drift, and no way to add a URL to the sitemap
+// without the page existing.
+//
+// Two things the SOP asks us to stop doing, both of which this file used to do:
+//
+//   changefreq / priority   Removed. "Hierarchy sebenar datang dari internal
+//                           link, navigation dan kualiti content, bukan nombor
+//                           dalam XML." Google ignores them; keeping them only
+//                           invites someone to read meaning into them later.
+//
+//   lastmod = today         Removed. The old version stamped the build date on
+//                           every non-blog URL, so lastmod moved on every
+//                           deploy whether or not a word had changed. The gate
+//                           is literally "edit a typo, lastmod must not move".
+//                           Dates now come from the contentUpdated field on
+//                           each entity.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const dist = join(root, 'dist');
 const SITE_URL = 'https://devhub.my';
 
-// Written moments earlier by build-blog.mjs; drafts are already stripped.
-const blogPosts = JSON.parse(readFileSync(join(root, 'src/data/blog.generated.json'), 'utf8'));
-
-const source = readFileSync(join(root, 'src/data/trainings.ts'), 'utf8');
-const entries = [...source.matchAll(/slug:\s*'([^']+)',\s*\n\s*stage:\s*'([^']+)'/g)].map(
-  ([, slug, stage]) => ({ slug, stage }),
+const { routes, lastModified } = await import(
+  pathToFileURL(join(root, 'dist-ssr/entry-server.js')).href
 );
 
-// Parser-drift guard: the catalogue holds 13 courses. If the regex suddenly
-// finds almost none, the file layout changed — fail the build loudly instead
-// of shipping a sitemap that silently dropped every training page.
-if (entries.length < 10) {
+const list = routes();
+const dates = lastModified();
+
+// S1 (every URL returns 200) is guaranteed only if a document was actually
+// written for it. Checking the files exist is the cheap half of that check;
+// the HTTP half runs against production in the acceptance tests.
+const missing = list.filter(
+  (route) => !existsSync(join(dist, route === '/' ? 'index.html' : join(route, 'index.html'))),
+);
+
+if (missing.length > 0) {
   console.error(
-    `generate-sitemap: only ${entries.length} trainings parsed from trainings.ts — ` +
-      'catalogue layout changed? Update the regex in scripts/generate-sitemap.mjs.',
+    `generate-sitemap: ${missing.length} route(s) have no prerendered document:\n  ${missing.join('\n  ')}`,
   );
   process.exit(1);
 }
 
-const today = new Date().toISOString().slice(0, 10);
+// S5: no URL may appear twice, across the whole sitemap.
+const duplicates = list.filter((route, index) => list.indexOf(route) !== index);
+if (duplicates.length > 0) {
+  console.error(`generate-sitemap: duplicate URLs: ${[...new Set(duplicates)].join(', ')}`);
+  process.exit(1);
+}
 
-const urls = [
-  { loc: `${SITE_URL}/`, changefreq: 'weekly', priority: '1.0' },
-  { loc: `${SITE_URL}/trainings`, changefreq: 'weekly', priority: '0.9' },
-  ...entries.map(({ stage, slug }) => ({
-    loc: `${SITE_URL}/trainings/${stage}/${slug}`,
-    changefreq: 'monthly',
-    priority: '0.8',
-  })),
-  // The blog index only earns a slot once something is published on it.
-  ...(blogPosts.length > 0
-    ? [{ loc: `${SITE_URL}/blog`, changefreq: 'weekly', priority: '0.7' }]
-    : []),
-  ...blogPosts.map((post) => ({
-    loc: `${SITE_URL}/blog/${post.slug}`,
-    lastmod: post.updated ?? post.date,
-    changefreq: 'monthly',
-    priority: '0.6',
-  })),
-];
+const entries = list
+  .map((route) => {
+    const loc = `${SITE_URL}${route}`;
+    const lastmod = dates[route];
 
-const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-  .map(
-    (url) => `  <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod ?? today}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>
-  </url>`,
-  )
-  .join('\n')}
-</urlset>
-`;
+    return lastmod
+      ? `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`
+      : `  <url>\n    <loc>${loc}</loc>\n  </url>`;
+  })
+  .join('\n');
 
-writeFileSync(join(root, 'public/sitemap.xml'), xml);
-console.log(`generate-sitemap: wrote ${urls.length} URLs to public/sitemap.xml`);
+writeFileSync(
+  join(dist, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`,
+);
+
+// S4: every URL must be https, on the bare host, with a trailing slash.
+const malformed = list.filter((route) => !route.startsWith('/') || !route.endsWith('/'));
+if (malformed.length > 0) {
+  console.error(`generate-sitemap: malformed route(s): ${malformed.join(', ')}`);
+  process.exit(1);
+}
+
+// robots.txt must reference the sitemap — checked here so the two cannot be
+// deployed out of step.
+const robots = readFileSync(join(dist, 'robots.txt'), 'utf8');
+if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml\s*$/m.test(robots)) {
+  console.error('generate-sitemap: robots.txt does not reference https://devhub.my/sitemap.xml');
+  process.exit(1);
+}
+
+console.log(`generate-sitemap: wrote ${list.length} URLs to dist/sitemap.xml`);
