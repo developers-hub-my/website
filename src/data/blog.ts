@@ -35,7 +35,10 @@ export const allTags = Array.from(new Set(posts.flatMap((post) => post.tags))).s
   a.localeCompare(b),
 );
 
-export const blogPath = (post: Post): string => `/blog/${post.slug}`;
+// Trailing slash included, because this value is used directly as a link
+// target. Rule C4 allows no redirect hops, and an internal link to
+// /blog/x would be 301'd to /blog/x/ on every click and every crawl.
+export const blogPath = (post: Post): string => `/blog/${post.slug}/`;
 
 export const postBySlug = (slug: string): Post | undefined =>
   posts.find((post) => post.slug === slug);

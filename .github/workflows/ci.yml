@@ -1,0 +1,56 @@
+name: CI
+
+# The Phase 06 gate. Every change that touches a template, a route, the
+# canonical logic or the schema builder has to clear T1-T8 and S1-S6 before it
+# can merge — the SOP's point being that a check run by hand stops being run
+# within two months.
+#
+# check-seo runs as part of `npm run build` (postbuild), so a failing gate fails
+# the build here and on Netlify alike. There is no way to deploy past it.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      # Runs prebuild → vite build → SSR build → prerender → sitemap → llms.txt
+      # → check-seo. A dangling @id, an empty property, a breadcrumb that does
+      # not match the visible trail or a title over 60 characters fails here.
+      - name: Build and run the SEO acceptance tests
+        run: npm run build
+
+  # C1-C6, real 404s and one-hop redirects can only be answered by a served
+  # origin, so this runs against production after main is updated. On a pull
+  # request the deploy preview URL is not known to this workflow.
+  live:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Wait for the Netlify deploy to go live
+        run: sleep 90
+      - name: Verify the served origin
+        run: node scripts/check-live.mjs https://devhub.my

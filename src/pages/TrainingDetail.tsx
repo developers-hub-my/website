@@ -1,11 +1,12 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { ArrowLeft, Award, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Award, CheckCircle2, ShieldCheck } from 'lucide-react';
 import {
   SHOW_HRD_CORP,
   STAGES,
   trainingByPath,
   trainingFaqs,
+  faqToQa,
   trainingImage,
   trainingLogo,
   trainingPath,
@@ -14,7 +15,18 @@ import {
 import { GATHERHUB_ORG_URL, SHOW_GATHERHUB_SESSIONS } from '../lib/gatherhub';
 import { CRM_INTAKE_URL } from '../lib/crm';
 import { useDarkModeContext } from '../context/DarkModeContext';
-import { SITE_URL, absoluteUrl, faqPageJsonLd, useSeo } from '../hooks/useSeo';
+import { useSeo } from '../hooks/useSeo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { canonicalUrl, pageTitle, ID } from '../data/site';
+import {
+  breadcrumbNode,
+  courseNode,
+  faqPageNode,
+  logoNode,
+  organizationNode,
+  webPageNode,
+  webSiteNode,
+} from '../lib/schema';
 import FaqList from '../components/FaqList';
 import GetNotifiedModal from '../components/GetNotifiedModal';
 
@@ -48,56 +60,50 @@ const TrainingDetail = () => {
   // SEO: OG image is always the light cover so social previews don't depend on
   // the visitor's theme. Course + BreadcrumbList schema come from the same
   // catalogue copy — no pricing/schedule (those live on GatherHub, contract rule).
+  const canonical = training ? canonicalUrl(trainingPath(training)) : '';
+  const crumbs = training
+    ? [
+        { name: 'Home', path: '/' },
+        { name: 'Trainings', path: '/trainings/' },
+        { name: training.title },
+      ]
+    : [];
+
   useSeo(
     training
       ? {
-          title: `${training.title} Training | Developers Hub Malaysia`,
+          title: pageTitle(training.title),
           description: training.tagline,
           path: trainingPath(training),
           image: trainingImage(training, 'cover', 'light'),
-          jsonLd: [
-            {
-              '@context': 'https://schema.org',
-              '@type': 'Course',
-              name: training.title,
+          crumbs,
+          nodes: [
+            organizationNode(),
+            logoNode(),
+            webSiteNode(),
+            webPageNode({
+              canonical,
+              name: pageTitle(training.title),
               description: training.tagline,
-              url: absoluteUrl(trainingPath(training)),
-              image: absoluteUrl(trainingImage(training, 'cover', 'light')),
-              provider: {
-                '@type': 'Organization',
-                name: 'Developers Hub Sdn Bhd',
-                url: SITE_URL,
-              },
+              mainEntityId: ID.course(canonical),
+            }),
+            {
+              ...courseNode({
+                canonical,
+                name: training.title,
+                description: training.tagline,
+              }),
               educationalLevel: STAGES[training.stage].label,
-              about: training.tags,
               teaches: training.outcomes,
             },
-            faqPageJsonLd(trainingFaqs(training)),
-            {
-              '@context': 'https://schema.org',
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-                {
-                  '@type': 'ListItem',
-                  position: 2,
-                  name: 'Trainings',
-                  item: `${SITE_URL}/trainings`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 3,
-                  name: training.title,
-                  item: absoluteUrl(trainingPath(training)),
-                },
-              ],
-            },
+            breadcrumbNode(canonical, crumbs),
+            faqPageNode(canonical, trainingFaqs(training).map(faqToQa)),
           ],
         }
       : {
           title: 'Training Not Found — Developers Hub',
           description: 'The training you are looking for does not exist or may have moved.',
-          path: '/trainings',
+          path: '/trainings/',
           noindex: true,
         },
   );
@@ -113,7 +119,7 @@ const TrainingDetail = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Training not found
           </h1>
-          <Link to="/trainings" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <Link to="/trainings/" className="text-blue-600 dark:text-blue-400 hover:underline">
             Browse all trainings
           </Link>
         </div>
@@ -165,12 +171,11 @@ const TrainingDetail = () => {
   return (
     <main className="pt-24 pb-24 lg:pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          to="/trainings"
-          className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> All trainings
-        </Link>
+        {/* The breadcrumb replaces the old "All trainings" back-link: it links
+            the same destination while also being the visible half of the
+            BreadcrumbList in the graph (R8). Keeping both would have pointed
+            twice at /trainings from one page. */}
+        <Breadcrumbs crumbs={crumbs} />
 
         {/* Attention — hero */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md overflow-hidden mb-12">

@@ -5,12 +5,26 @@
 /dl/*    https://devhub-downloads.netlify.app/:splat    200
 
 # The CMS is its own page in the build (dist/admin/index.html), not a route in
-# the SPA — without these it falls through to the SPA fallback below and
-# answers with the React 404. The redirect (not a rewrite) is deliberate: the
-# page's stylesheet and Sveltia's own config.yml lookup are relative to the
-# document, so the URL has to keep its trailing slash.
+# the SPA. The redirect (not a rewrite) is deliberate: the page's stylesheet and
+# Sveltia's own config.yml lookup are relative to the document, so the URL has
+# to keep its trailing slash.
 /admin     /admin/             301
 /admin/    /admin/index.html   200
 
-# SPA fallback — must stay last
-/*    /index.html   200
+# Legacy URLs. /classes was replaced by /trainings; keep shared links alive.
+# One hop each, straight to the final trailing-slash URL — rule C4 allows no
+# chains, so these point at the destination and never at another redirect.
+/classes         /trainings/    301
+/classes/*       /trainings/    301
+
+# There is deliberately NO `/* /index.html 200` fallback any more.
+#
+# That single rule was the root cause of most of the 1 Sep 2026 audit findings:
+# it answered every unmatched path with the homepage at HTTP 200, which is why
+# /about/, /services/, /llms.txt and /tidak-wujud/ all returned the same
+# document, why the crawler reported "5 pages" for a nineteen-URL sitemap, and
+# why every URL canonicalised to https://devhub.my.
+#
+# Every route is now a real file written by scripts/prerender.mjs, so Netlify
+# serves the right document directly. Anything that matches no file falls
+# through to dist/404.html, which Netlify returns with a genuine 404 status.

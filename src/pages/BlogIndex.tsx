@@ -9,7 +9,10 @@ import {
   posts,
   type Post,
 } from '../data/blog';
-import { SITE_URL, useSeo } from '../hooks/useSeo';
+import { useSeo } from '../hooks/useSeo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { canonicalUrl } from '../data/site';
+import { breadcrumbNode, organizationNode, logoNode, webSiteNode, webPageNode } from '../lib/schema';
 
 // Listing layout deliberately mirrors /trainings — same header, same facet
 // rail, same card grammar — so the two catalogues on the site read as one
@@ -17,34 +20,6 @@ import { SITE_URL, useSeo } from '../hooks/useSeo';
 // of the training path.
 
 const gradientStrip = 'bg-gradient-to-r from-blue-600 via-indigo-500 to-rose-400';
-
-const listingJsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Blog',
-    name: 'Developers Hub Blog',
-    url: `${SITE_URL}/blog`,
-    description:
-      'Field notes on software engineering, developer training and technology practice from Developers Hub Sdn Bhd.',
-    publisher: { '@type': 'Organization', name: 'Developers Hub Sdn Bhd', url: SITE_URL },
-    blogPost: posts.map((post) => ({
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.description,
-      datePublished: post.date,
-      author: { '@type': 'Person', name: post.author },
-      url: `${SITE_URL}${blogPath(post)}`,
-    })),
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-    ],
-  },
-];
 
 const PostMeta = ({ post, className = '' }: { post: Post; className?: string }) => (
   <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${className}`}>
@@ -69,12 +44,28 @@ const DraftBadge = () => (
 const BlogIndex = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  const canonical = canonicalUrl('/blog');
+  const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog' }];
+
   useSeo({
-    title: 'Blog | Developers Hub Malaysia',
+    title: 'Blog | DevHub Malaysia',
     description:
       'Field notes on software engineering, developer training and technology practice — Laravel, PHP, containers, identity, observability and AI-augmented development — from the team at Developers Hub, Johor Bahru.',
-    path: '/blog',
-    jsonLd: listingJsonLd,
+    path: '/blog/',
+    crumbs,
+    nodes: [
+      organizationNode(),
+      logoNode(),
+      webSiteNode(),
+      webPageNode({
+        canonical,
+        type: 'CollectionPage',
+        name: 'Blog | DevHub Malaysia',
+        description:
+          'Field notes on software engineering, developer training and technology practice from Developers Hub Sdn Bhd.',
+      }),
+      breadcrumbNode(canonical, crumbs),
+    ],
   });
 
   useEffect(() => {
@@ -104,6 +95,7 @@ const BlogIndex = () => {
   return (
     <main className="pt-24 pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs crumbs={crumbs} />
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Blog</h1>
@@ -127,7 +119,7 @@ const BlogIndex = () => {
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
               The first posts are being written. In the meantime, the{' '}
-              <Link to="/trainings" className="text-blue-600 dark:text-blue-400 hover:underline">
+              <Link to="/trainings/" className="text-blue-600 dark:text-blue-400 hover:underline">
                 training catalogue
               </Link>{' '}
               is where most of our thinking already lives.

@@ -1,17 +1,26 @@
-# Robots.txt for Developers Hub Sdn Bhd
+# Robots.txt for Developers Hub Sdn Bhd — production.
 # https://devhub.my
+#
+# This file controls CRAWL ACCESS only. It is not a way to keep a page out of
+# the index: a URL blocked here can still be indexed, with no content, from
+# links alone. Use a noindex tag for that, and never both on the same URL —
+# a crawler that is disallowed cannot read the tag telling it to stay out.
+#
+# Crawl-delay was removed. Google ignores it, and the crawlers that honour it
+# were being slowed down for no reason on a site of twenty-odd pages.
 
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://devhub.my/sitemap.xml
-
-# Crawl-delay for polite crawling
-Crawl-delay: 1
-
-# The CMS is a client-side app that talks to GitHub — nothing to index.
+# Crawl-control only: these have a real reason not to be fetched.
 Disallow: /admin/
+Disallow: /login/
+Disallow: /*?s=
+Disallow: /*?sort=
+Disallow: /*?filter=
 
-# RSS feed
-# https://devhub.my/rss.xml
+# /dl/* is deliberately absent. Those are unguessable marketing download
+# tokens; listing them here would publish the very paths the scheme exists to
+# keep unlisted. They are not linked from the site and not in the sitemap.
+
+Sitemap: https://devhub.my/sitemap.xml

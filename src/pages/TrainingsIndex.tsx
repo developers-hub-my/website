@@ -6,12 +6,23 @@ import {
   STAGES,
   Stage,
   catalogueFaqs,
+  faqToQa,
   trainingImage,
   trainingLogo,
   trainingPath,
   trainings,
 } from '../data/trainings';
-import { SITE_URL, faqPageJsonLd, useSeo } from '../hooks/useSeo';
+import { useSeo } from '../hooks/useSeo';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { canonicalUrl } from '../data/site';
+import {
+  breadcrumbNode,
+  faqPageNode,
+  logoNode,
+  organizationNode,
+  webPageNode,
+  webSiteNode,
+} from '../lib/schema';
 import FaqList from '../components/FaqList';
 
 // Catalogue layout modelled on g8suite.com/our-solutions: intro header, a
@@ -35,41 +46,34 @@ const featured = trainings.find((t) => t.slug === 'augmented-developer');
 
 // Static catalogue → static structured data. ItemList tells crawlers this is
 // a catalogue page and links every course landing page for discovery.
-const catalogueJsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Developers Hub Trainings',
-    numberOfItems: trainings.length,
-    itemListElement: trainings.map((t, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: t.title,
-      url: `${SITE_URL}${trainingPath(t)}`,
-    })),
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'Trainings', item: `${SITE_URL}/trainings` },
-    ],
-  },
-  faqPageJsonLd(catalogueFaqs),
-];
-
 const TrainingsIndex = () => {
   const [selectedStages, setSelectedStages] = useState<Stage[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [hrdCorpOnly, setHrdCorpOnly] = useState(false);
 
+  const canonical = canonicalUrl('/trainings');
+  const crumbs = [{ name: 'Home', path: '/' }, { name: 'Trainings' }];
+
   useSeo({
-    title: 'Developer Trainings & Courses in Malaysia | Developers Hub',
+    title: 'Developer Training in Malaysia | DevHub',
     description:
       'Hands-on developer training in Malaysia — Linux, Git, Docker, modern PHP, Laravel, Flutter, APIs, AI-augmented development and software architecture. One learning path, four stages, taught by practitioners who ship production software daily.',
-    path: '/trainings',
-    jsonLd: catalogueJsonLd,
+    path: '/trainings/',
+    crumbs,
+    nodes: [
+      organizationNode(),
+      logoNode(),
+      webSiteNode(),
+      webPageNode({
+        canonical,
+        type: 'CollectionPage',
+        name: 'Developer Training in Malaysia | DevHub',
+        description:
+          'The DevHub training catalogue — thirteen courses across four stages, from Foundation to Architect.',
+      }),
+      breadcrumbNode(canonical, crumbs),
+      faqPageNode(canonical, catalogueFaqs.map(faqToQa)),
+    ],
   });
 
   useEffect(() => {
@@ -108,6 +112,7 @@ const TrainingsIndex = () => {
   return (
     <main className="pt-24 pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs crumbs={crumbs} />
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Trainings</h1>
