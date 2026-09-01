@@ -1,3 +1,15 @@
+# Rule C4: one redirect hop, straight to the final URL.
+#
+# http://www.devhub.my/x/ was costing two: Netlify forces HTTPS at the edge
+# first (301), then applies the primary-domain redirect (301). An explicit rule
+# with the full source URL is matched before both, so the wrong-scheme +
+# wrong-host case collapses into a single hop like the other three variants.
+#
+# Absolute URLs are only meaningful in the `from` field for this purpose — do
+# not rewrite the path rules below to use them.
+http://www.devhub.my/*    https://devhub.my/:splat    301!
+https://www.devhub.my/*   https://devhub.my/:splat    301!
+
 # Marketing downloads (ebooks) — proxied from the private devhub-downloads
 # site. Actual paths are unguessable tokens managed outside this repo; the
 # links are shared by the marketing team only and must never be listed on
