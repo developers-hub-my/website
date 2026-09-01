@@ -69,5 +69,5 @@ pitched at an average nobody occupies.
 
 Scheduling, format and pricing are decided per run, because a public class and
 an in-house team engagement are genuinely different things. Browse the
-catalogue at [Trainings](https://devhub.my/trainings), or write to
+catalogue at [Trainings](https://devhub.my/trainings/), or write to
 [hello@devhub.my](mailto:hello@devhub.my) and tell us where your team is stuck.

@@ -201,12 +201,25 @@ for (const route of routes().slice(0, 5)) {
 
 // --- Site-wide artifacts ----------------------------------------------------
 
+// robots.txt differs by deploy context, so the assertion has to as well:
+// production must invite the crawl and point at the sitemap, everything else
+// must refuse it outright. Checking only the production shape would fail every
+// preview build; checking neither would let a staging deploy ship crawlable.
+const context = process.env.CONTEXT ?? 'local';
 const robots = readFileSync(join(dist, 'robots.txt'), 'utf8');
-if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml$/m.test(robots)) {
-  fail('robots', '/robots.txt', 'does not reference the sitemap');
-}
-if (/^Crawl-delay:/m.test(robots)) {
-  fail('robots', '/robots.txt', 'still sets Crawl-delay');
+
+if (context === 'production') {
+  if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml$/m.test(robots)) {
+    fail('robots', '/robots.txt', 'does not reference the sitemap');
+  }
+  if (/^Crawl-delay:/m.test(robots)) {
+    fail('robots', '/robots.txt', 'still sets Crawl-delay');
+  }
+  if (/^Disallow:\s*\/$/m.test(robots)) {
+    fail('robots', '/robots.txt', 'production is serving the staging robots.txt — the whole site is disallowed');
+  }
+} else if (!/^Disallow:\s*\/$/m.test(robots)) {
+  fail('robots', '/robots.txt', `context "${context}" is not production but robots.txt does not disallow everything`);
 }
 
 const sitemap = readFileSync(join(dist, 'sitemap.xml'), 'utf8');

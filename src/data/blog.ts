@@ -35,10 +35,16 @@ export const allTags = Array.from(new Set(posts.flatMap((post) => post.tags))).s
   a.localeCompare(b),
 );
 
+// Posts live under /resources/articles/, the path the SOP's URL map assigns to
+// Article entities. The markdown still lives in content/blog/ — the file name is
+// still the slug, and renaming a file still breaks its URL. Only the prefix
+// moved, and /blog/* 301s to the new location.
+//
 // Trailing slash included, because this value is used directly as a link
-// target. Rule C4 allows no redirect hops, and an internal link to
-// /blog/x would be 301'd to /blog/x/ on every click and every crawl.
-export const blogPath = (post: Post): string => `/blog/${post.slug}/`;
+// target: rule C4 allows no redirect hops, and a link to
+// /resources/articles/x would be 301'd to /resources/articles/x/ on every
+// click and every crawl.
+export const blogPath = (post: Post): string => `/resources/articles/${post.slug}/`;
 
 export const postBySlug = (slug: string): Post | undefined =>
   posts.find((post) => post.slug === slug);

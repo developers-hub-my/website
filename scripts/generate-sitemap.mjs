@@ -21,7 +21,7 @@
 //                           Dates now come from the contentUpdated field on
 //                           each entity.
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -80,12 +80,9 @@ if (malformed.length > 0) {
   process.exit(1);
 }
 
-// robots.txt must reference the sitemap — checked here so the two cannot be
-// deployed out of step.
-const robots = readFileSync(join(dist, 'robots.txt'), 'utf8');
-if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml\s*$/m.test(robots)) {
-  console.error('generate-sitemap: robots.txt does not reference https://devhub.my/sitemap.xml');
-  process.exit(1);
-}
+// The robots.txt/sitemap cross-check lives in scripts/check-seo.mjs, not here.
+// It was in both, and the copy here was not context-aware: it failed every
+// preview build, where robots.txt correctly disallows everything, and it failed
+// before check-seo could run and say anything more useful.
 
 console.log(`generate-sitemap: wrote ${list.length} URLs to dist/sitemap.xml`);

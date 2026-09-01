@@ -63,7 +63,7 @@ const lines = [
   '## Knowledge',
   '',
   link('/trainings/', 'Trainings', 'Thirteen developer courses across four stages, from Foundation to Architect.'),
-  link('/blog/', 'Blog', 'Field notes on software engineering, developer training and technology practice.'),
+  link('/resources/', 'Resources', 'Articles and field notes on software engineering, developer training and technology practice.'),
   link('/authors/', 'Authors', "The people who write DevHub's technical content, and the evidence behind their expertise."),
   '',
   '## Company',

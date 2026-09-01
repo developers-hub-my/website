@@ -11,11 +11,22 @@
 /admin     /admin/             301
 /admin/    /admin/index.html   200
 
-# Legacy URLs. /classes was replaced by /trainings; keep shared links alive.
-# One hop each, straight to the final trailing-slash URL — rule C4 allows no
-# chains, so these point at the destination and never at another redirect.
+# Legacy URLs. One hop each, straight to the final trailing-slash URL — rule C4
+# allows no chains, so these point at the destination and never at another
+# redirect.
+#
+# /classes was replaced by /trainings.
 /classes         /trainings/    301
 /classes/*       /trainings/    301
+
+# Posts moved from /blog/ to /resources/articles/, the path the SOP's URL map
+# assigns to Article entities. The slug is unchanged, so every shared link
+# survives as a single 301 to the same post. These stay permanently: the whole
+# reason the move happened now, at zero organic traffic, is that the cost of
+# breaking a link only goes up.
+/blog            /resources/                301
+/blog/           /resources/                301
+/blog/:slug      /resources/articles/:slug/ 301
 
 # There is deliberately NO `/* /index.html 200` fallback any more.
 #

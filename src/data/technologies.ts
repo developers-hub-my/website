@@ -10,16 +10,18 @@
 // page, course or article behind most of them. That list is exactly the
 // inflation the rule describes, and it is not reproduced here.
 //
-// Three qualify on evidence held in this repo:
+// Four qualify on evidence held in this repo:
 //   laravel      two courses, and the stack the development service is built on
 //   php          one course, and the language underneath the Laravel work
 //   claude-code  three courses and a published article — the strongest of them
+//   docker       one course, and the packaging every delivery ships through
 //
-// The SOP leaves the third slot to the business owner (see issue #37). Claude
-// Code is the evidence-backed recommendation, not a settled decision: Docker
-// also has a dedicated course and would qualify on the same test.
+// The SOP left the third slot to the business owner, who took both candidates
+// rather than choosing between them (issue #37). Both clear the same test, so
+// there are four technology pages rather than the three the SOP sketched — the
+// gate is evidence, not a headcount.
 
-export type TechnologySlug = 'laravel' | 'php' | 'claude-code';
+export type TechnologySlug = 'laravel' | 'php' | 'claude-code' | 'docker';
 
 export interface Technology {
   slug: TechnologySlug;
@@ -96,6 +98,22 @@ export const TECHNOLOGIES: Technology[] = [
     experts: ['nasrul-hazim'],
     contentUpdated: '2026-09-01',
   },
+  {
+    slug: 'docker',
+    name: 'Docker',
+    schemaType: 'SoftwareApplication',
+    description:
+      'How DevHub uses Docker to package and run applications, and the container course we teach.',
+    definition:
+      'Docker is a platform for packaging an application together with its dependencies into a container, so it runs the same way on a developer machine as it does on a server. Containers share the host kernel rather than running a full guest operating system.',
+    howDevhubUsesIt:
+      'DevHub packages client applications as containers so the environment that passes review is the environment that runs in production. The Docker & Container Fundamentals course exists because the failure we are most often called in to fix is a system that works on one machine and nowhere else.',
+    officialUrl: 'https://www.docker.com',
+    services: ['software-development', 'it-consultation', 'technology-education'],
+    trainingSlugs: ['docker-fundamentals'],
+    experts: ['nasrul-hazim'],
+    contentUpdated: '2026-09-01',
+  },
 ];
 
 export const technologyBySlug = (slug: string): Technology | undefined =>
@@ -104,3 +122,14 @@ export const technologyBySlug = (slug: string): Technology | undefined =>
 /** Technologies related to a service — the other direction of SERVICES.technologies. */
 export const technologiesForService = (serviceSlug: string): Technology[] =>
   TECHNOLOGIES.filter((technology) => technology.services.includes(serviceSlug));
+
+/**
+ * Technologies a given course teaches — the reverse of `trainingSlugs`.
+ *
+ * The relationship is stored once, on the technology, and read from both
+ * directions. Storing it on the course as well would let the two lists drift,
+ * and Phase 08 treats a relationship that exists in one layer but not the other
+ * as a defect rather than a difference of opinion.
+ */
+export const technologiesForTraining = (trainingSlug: string): Technology[] =>
+  TECHNOLOGIES.filter((technology) => technology.trainingSlugs.includes(trainingSlug));

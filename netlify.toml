@@ -1,0 +1,18 @@
+# Netlify build configuration.
+#
+# Only build settings live here. Redirects stay in public/_redirects — two files
+# both defining routing is how a rule gets shadowed silently.
+#
+# Headers and redirects are deliberately NOT expressed as [context.*] blocks.
+# Those blocks accept build settings and environment variables only; header and
+# redirect rules written inside one are accepted by the parser and then never
+# applied. Verified on deploy-preview-43: the file deployed, and neither the
+# header value nor the redirect took effect.
+#
+# Keeping deploy previews out of the index is therefore done at build time
+# instead — scripts/generate-robots.mjs reads Netlify's CONTEXT variable and
+# writes the matching robots.txt. See the note there.
+
+[build]
+  command = "npm run build"
+  publish = "dist"

@@ -15,7 +15,7 @@ For a while our writing lived on a separate subdomain, away from everything
 else we do. That never quite worked. The trainings are here, the services are
 here, the company is here — the writing should be here too.
 
-So this is the new home: **devhub.my/blog**.
+So this is the new home: **devhub.my/resources**.
 
 ## What we will publish
 
@@ -55,4 +55,4 @@ If you would rather read in a feed reader, the RSS feed is at
 
 If a post is useful — or wrong — we would like to know. Reach us at
 [hello@devhub.my](mailto:hello@devhub.my). If you are looking for training for
-your team, the full catalogue is at [Trainings](https://devhub.my/trainings).
+your team, the full catalogue is at [Trainings](https://devhub.my/trainings/).

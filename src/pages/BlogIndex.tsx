@@ -44,14 +44,14 @@ const DraftBadge = () => (
 const BlogIndex = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const canonical = canonicalUrl('/blog');
-  const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog' }];
+  const canonical = canonicalUrl('/resources');
+  const crumbs = [{ name: 'Home', path: '/' }, { name: 'Resources' }];
 
   useSeo({
-    title: 'Blog | DevHub Malaysia',
+    title: 'Resources | DevHub Malaysia',
     description:
       'Field notes on software engineering, developer training and technology practice — Laravel, PHP, containers, identity, observability and AI-augmented development — from the team at Developers Hub, Johor Bahru.',
-    path: '/blog/',
+    path: '/resources/',
     crumbs,
     nodes: [
       organizationNode(),
@@ -60,7 +60,7 @@ const BlogIndex = () => {
       webPageNode({
         canonical,
         type: 'CollectionPage',
-        name: 'Blog | DevHub Malaysia',
+        name: 'Resources | DevHub Malaysia',
         description:
           'Field notes on software engineering, developer training and technology practice from Developers Hub Sdn Bhd.',
       }),

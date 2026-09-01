@@ -18,9 +18,11 @@ import { useDarkModeContext } from '../context/DarkModeContext';
 import { useSeo } from '../hooks/useSeo';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { canonicalUrl, pageTitle, ID } from '../data/site';
+import { technologiesForTraining } from '../data/technologies';
 import {
   breadcrumbNode,
   courseNode,
+  technologyNode,
   faqPageNode,
   logoNode,
   organizationNode,
@@ -60,6 +62,11 @@ const TrainingDetail = () => {
   // SEO: OG image is always the light cover so social previews don't depend on
   // the visitor's theme. Course + BreadcrumbList schema come from the same
   // catalogue copy — no pricing/schedule (those live on GatherHub, contract rule).
+  // The technologies this course teaches. Drives the Course node's `about`
+  // and the visible links below it, so a crawler and a reader see the same
+  // relationship — and each technology page already links back here.
+  const technologies = training ? technologiesForTraining(training.slug) : [];
+
   const canonical = training ? canonicalUrl(trainingPath(training)) : '';
   const crumbs = training
     ? [
@@ -95,7 +102,11 @@ const TrainingDetail = () => {
               }),
               educationalLevel: STAGES[training.stage].label,
               teaches: training.outcomes,
+              about: technologies.map((technology) => ({
+                '@id': ID.technology(technology.slug),
+              })),
             },
+            ...technologies.map(technologyNode),
             breadcrumbNode(canonical, crumbs),
             faqPageNode(canonical, trainingFaqs(training).map(faqToQa)),
           ],
@@ -313,6 +324,31 @@ const TrainingDetail = () => {
                 ))}
               </ul>
             </section>
+
+            {/* The technologies this course teaches, linked. The same list is
+                the Course node's `about`, and each technology page lists this
+                course in return — Phase 08 asks for the relationship to be
+                walkable in both directions, not just present in the markup. */}
+            {technologies.length > 0 && (
+              <section className="mb-14">
+                <Eyebrow>Technologies</Eyebrow>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                  What this course covers
+                </h2>
+                <ul className="flex flex-wrap gap-3">
+                  {technologies.map((technology) => (
+                    <li key={technology.slug}>
+                      <Link
+                        to={`/technologies/${technology.slug}/`}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
+                        How DevHub uses {technology.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {/* Objections — FAQ, mirrored into FAQPage JSON-LD via trainingFaqs.
                 Sits right before the CTA so unanswered doubts don't block Action. */}
