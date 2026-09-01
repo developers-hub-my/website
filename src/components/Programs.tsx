@@ -1,4 +1,3 @@
-import React from 'react';
 import ProgramCard from './ProgramCard';
 import EmptyState from './EmptyState';
 import { Calendar } from 'lucide-react';

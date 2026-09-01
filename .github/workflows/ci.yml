@@ -29,8 +29,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # `npm run typecheck` generates src/data/blog.generated.json first: it is
+      # gitignored, so a fresh checkout does not have it and every import of it
+      # would fail to resolve.
       - name: Typecheck
-        run: npx tsc --noEmit -p tsconfig.app.json
+        run: npm run typecheck
 
       # Runs prebuild → vite build → SSR build → prerender → sitemap → llms.txt
       # → check-seo. A dangling @id, an empty property, a breadcrumb that does
