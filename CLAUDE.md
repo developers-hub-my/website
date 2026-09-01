@@ -95,11 +95,13 @@ Four rules are locked (Phase 03/14, enforced by `scripts/check-seo.mjs`):
 - one redirect hop maximum, straight to the final URL — so **internal links must
   already carry the trailing slash**; a link to `/services/x` costs a 301 on
   every click and every crawl. One documented exception:
-  `http://www.devhub.my/*` costs two hops and cannot be fixed from this repo,
-  because Netlify forces HTTPS at the edge before `_redirects` is evaluated.
-  Absolute-URL rules for it were tried, deployed and verified not to work, so
-  they were removed rather than left implying the case is handled. Closing it
-  needs a CDN or DNS rule above Netlify's edge.
+  `http://www.devhub.my/*` costs two hops. devhub.my is proxied through
+  Cloudflare in front of Netlify, and the hops come from different layers —
+  Cloudflare answers the http→https one itself (its response carries no
+  `x-nf-request-id`), Netlify answers www→apex. A rule in `_redirects` cannot
+  reach the first, which is why the absolute-URL attempt was removed. It is
+  fixable at Cloudflare with a Redirect Rule on hostname `www.devhub.my`; drop
+  the exception in `check-live.mjs` once that is live.
 - a query string never becomes part of a canonical URL
 
 `blogPath()` and `trainingPath()` return the slashed form for this reason.

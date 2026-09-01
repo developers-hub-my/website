@@ -175,12 +175,14 @@ if (isProduction) {
     const redirects = hops.filter((hop) => typeof hop.status === 'number' && hop.status >= 300 && hop.status < 400);
     const last = hops[hops.length - 1];
 
-    // Documented deviation, narrow on purpose: a request that is BOTH
-    // wrong-scheme and wrong-host crosses two layers, and Netlify forces HTTPS
-    // at the edge before _redirects is evaluated — so the first hop is not
-    // reachable from this repo. Explicit absolute-URL rules were tried and
-    // deployed; production still returned 301 → 301 → 200. See the note in
-    // public/_redirects.
+    // Documented deviation, narrow on purpose. A request that is both
+    // wrong-scheme and wrong-host crosses two layers: Cloudflare answers the
+    // http→https hop itself (no x-nf-request-id on that response), and Netlify
+    // answers the www→apex hop. Nothing in this repo can reach the first one.
+    //
+    // It is fixable, just not here — a Cloudflare Redirect Rule on hostname
+    // www.devhub.my collapses both. Drop this exception once that rule is live.
+    // See the note in public/_redirects.
     //
     // Every other variant must still be single-hop, and this one must never
     // exceed two: a third hop would mean a new chain, not the platform floor.

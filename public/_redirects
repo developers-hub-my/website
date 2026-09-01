@@ -1,19 +1,27 @@
 # Rule C4 note: http://www.devhub.my/* costs TWO redirect hops, and cannot be
-# fixed from this file.
+# fixed from this file — but it CAN be fixed at Cloudflare.
 #
 #   http://www.devhub.my/x/  →301→  https://www.devhub.my/x/  →301→  https://devhub.my/x/
 #
-# Netlify terminates TLS and forces HTTPS at the edge before _redirects is
-# evaluated, so the first hop happens before any rule here can match. Explicit
-# absolute-URL rules for both www forms were tried and deployed on 1 Sep 2026;
-# production still returned 301 → 301 → 200, so they were removed rather than
-# left in place implying the case is handled.
+# devhub.my is proxied through Cloudflare in front of Netlify, and the two hops
+# come from different layers. Measured 1 Sep 2026:
 #
-# The other three variants are single-hop: http://devhub.my/,
-# https://www.devhub.my/ and the no-trailing-slash form. Only the request that
-# is BOTH wrong-scheme and wrong-host pays twice, because it crosses two
-# separate layers. Closing it needs a change above Netlify's edge — a CDN or DNS
-# rule that answers http://www directly — not a repo change.
+#   hop 1  Server: cloudflare, no x-nf-request-id  → Cloudflare answered it.
+#          This is "Always Use HTTPS". The request never reaches Netlify, which
+#          is why an absolute-URL rule in this file had no effect when it was
+#          tried and deployed.
+#   hop 2  x-nf-request-id present                 → Netlify's primary-domain
+#          redirect, passed back through Cloudflare.
+#
+# To collapse both into one, add a Cloudflare Redirect Rule (Rules → Redirect
+# Rules) matching hostname `www.devhub.my` on any scheme and sending it straight
+# to https://devhub.my with the path preserved, 301. Redirect Rules run in the
+# dynamic-redirect phase, ahead of Always Use HTTPS, so the www request is
+# answered once and never reaches hop 2.
+#
+# Until that rule exists, scripts/check-live.mjs allows exactly two hops for
+# this one variant. The other three are single-hop already: http://devhub.my/,
+# https://www.devhub.my/ and the no-trailing-slash form.
 
 # Marketing downloads (ebooks) — proxied from the private devhub-downloads
 # site. Actual paths are unguessable tokens managed outside this repo; the
