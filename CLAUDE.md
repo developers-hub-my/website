@@ -154,7 +154,15 @@ address there and the JSON-LD, footer and contact page all move together; that
 is a Phase 07 requirement, not a convenience.
 
 `services.ts`, `technologies.ts` and `people.ts` hold the entities and the
-relationships between them. The same relationship data drives the JSON-LD, the
+relationships between them. There are four technologies — Laravel, PHP, Claude
+Code and Docker — because the business owner took both candidates for the SOP's
+third slot rather than choosing. The gate is evidence, not a headcount: each has
+a course or a published article behind it.
+
+A relationship is stored **once** and read from both directions.
+`technologiesForTraining()` and `technologiesForService()` are reverse lookups
+over `Technology.trainingSlugs` and `Technology.services`; storing the same link
+on both entities would let the two copies drift. The same relationship data drives the JSON-LD, the
 visible related-content links, the sitemap and `llms.txt` — if the graph says a
 service relates to Laravel but no visible link connects the two pages, that is a
 defect, not a styling choice.
@@ -209,6 +217,28 @@ build must fail. DevHub asks for that demonstration.
 hop counts, real 404 status, and whether `?utm_source=` creates a second
 canonical.
 
+### Deploy previews must stay out of the index
+
+A preview is a byte-identical copy of the site on another hostname, and the
+prerendered HTML hardcodes production canonicals — so an indexable preview feeds
+Google canonical tags pointing at devhub.my from a host that is not devhub.my.
+`netlify.toml` sets `X-Robots-Tag: noindex, nofollow` and swaps in
+`public/staging/robots.txt` for the `deploy-preview` and `branch-deploy`
+contexts. Phase 13 asks for both, because they do different jobs: the header
+keeps a linked page out of the index, the robots file stops the crawl.
+
+Redirect rules stay in `public/_redirects`, not `netlify.toml` — two files both
+claiming to define routing is how a rule gets shadowed silently.
+
+### Phase 00: `g8stack.com` is ours
+
+`docs/seo/disavow.txt` records it as permanently whitelisted. It is the largest
+referring domain in the profile (12 backlinks) and the consultant's draft
+disavow file listed it as toxic; it is in fact DevHub's own product, from the
+same `g8*` family as g8crm and g8desk. The file is deliberately **not ready to
+upload** — only 4 of the ~44 flagged domains have been reviewed by hand, and the
+SOP requires each one classified individually rather than trusting the export.
+
 ## Trainings Catalogue
 
 - `/trainings` (listing, g8suite-style facet filters: Stage + Tags) and
@@ -255,9 +285,16 @@ canonical.
 
 ## Blog & CMS
 
-- `/blog` (listing, Topic facet filters) and `/blog/:slug` (post pages) render
-  from markdown in `content/blog/*.md` — one file per post, and **the file name
-  IS the URL**, so renaming one breaks every shared link to it.
+- `/resources/` (listing, Topic facet filters) and `/resources/articles/:slug/`
+  (post pages) render from markdown in `content/blog/*.md` — one file per post,
+  and **the file name IS the slug**, so renaming one breaks every shared link
+  to it.
+- Posts moved from `/blog/` to `/resources/articles/` on 1 Sep 2026 to match the
+  SOP's URL map, which assigns that path to Article entities. The source
+  directory is still `content/blog/` and the slug is unchanged, so every old
+  link survives as a single 301 (`public/_redirects`). Those redirects are
+  permanent — the move happened at zero organic traffic precisely because the
+  cost of breaking a link only rises.
 - `scripts/build-blog.mjs` (prebuild, BEFORE `generate-sitemap.mjs`) validates
   front matter against `scripts/blog-contract.mjs` (Zod, `.strict()` — same
   contract discipline as GatherHub), renders markdown to HTML with marked +

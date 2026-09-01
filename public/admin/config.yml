@@ -58,7 +58,7 @@ collections:
     slug: '{{slug}}'
     extension: md
     format: yaml-frontmatter
-    preview_path: blog/{{slug}}
+    preview_path: resources/articles/{{slug}}
     summary: '{{title}} — {{date}}'
     sortable_fields:
       - date

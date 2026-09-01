@@ -1,0 +1,75 @@
+# docs/seo/disavow.txt
+# Developers Hub Sdn Bhd - Google Disavow file
+# Owner: SEO. Last updated: 2026-09-01
+#
+# RULES
+# 1. Domain level only. Spam networks rotate URLs, so "domain:" beats a URL list.
+# 2. One domain per line. No blank "domain:" lines, no trailing spaces.
+# 3. Comments start with #. Google ignores them, humans need them.
+# 4. This file is the FULL list, not a delta. Uploading replaces the previous file.
+# 5. Never remove a line without recording why in the change log.
+# 6. Keep this file in the repo. Losing it means rebuilding the whole audit.
+#
+# STATUS: NOT READY TO UPLOAD.
+# The Backlink Audit (1 Sep 2026) counts 44 toxic domains out of 59. Only the
+# entries below have been reviewed by hand. Phase 00 step 04 requires every one
+# of the 59 to be classified individually - "Jangan percaya label toksik secara
+# membuta tuli. Semrush boleh salah dalam kedua-dua arah." Do not paste the
+# Semrush export in to fill the gap.
+
+
+# ============================================================================
+# WHITELIST - never disavow. Checked before anything was added below,
+# per Phase 00 step 05.
+# ============================================================================
+#
+# g8stack.com
+#   DevHub's own product ("G8Stack - API Management Made Simple"), part of the
+#   same g8* family as g8crm, g8desk and g8suite. Confirmed by the founder,
+#   1 Sep 2026.
+#
+#   It is the single largest referring domain in the profile: 12 backlinks,
+#   AS 2, TS 23. The consultant's draft disavow file listed it as toxic. Had
+#   that shipped, DevHub would have disavowed links from its own product.
+#   This entry exists so the same mistake cannot be made twice.
+#
+#   The Semrush whitelist showed 0 entries at the time of the audit, so this
+#   must also be whitelisted in Semrush itself, not only recorded here.
+
+
+# ============================================================================
+# REVIEWED - toxic, zero topical relevance to a software house.
+# All point at https://devhub.my/ only. Compound and money anchors.
+# ============================================================================
+
+domain:chordmp3.net
+domain:gladeflowers.com
+domain:homesforsaleoldgreenwichct.com
+domain:hostprinter.com
+
+
+# ============================================================================
+# STILL TO CLASSIFY
+# ============================================================================
+#
+# Roughly 40 of the 44 flagged domains have not been reviewed one by one.
+# Export the full referring-domain list and classify each as: editorial,
+# legitimate directory, junk directory, spam/PBN, scraper, or unsure. Leave
+# anything genuinely unsure OUT of this file - a wrong disavow removes a real
+# link and is hard to undo.
+#
+# Two things worth knowing before the upload:
+#
+#   - hostprinter.com (3,779 visits) and chordmp3.net (1,002 visits) send real
+#     referral traffic. That traffic will disappear after the disavow. It is
+#     worthless traffic, but record the baseline so the drop is not later read
+#     as a ranking effect.
+#
+#   - Connect GSC has still not been pressed in the Backlink Audit. Until it
+#     is, the audit sees only Semrush's index, not the links Google actually
+#     counts (Phase 00 step 03).
+#
+# And the point the SOP makes about all of this: a disavow removes risk, it
+# does not produce traffic. The profile is 65.4% compound anchors with 0%
+# naked, which is a built profile, not an earned one. If it was bought, it
+# recurs until the buying stops.

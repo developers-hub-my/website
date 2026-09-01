@@ -16,6 +16,7 @@ import BlogPost from './pages/BlogPost';
 import TrainingDetail from './pages/TrainingDetail';
 import CompanyProfileRedirect from './pages/CompanyProfileRedirect';
 import NotFound from './pages/NotFound';
+import LegacyBlogPost from './pages/LegacyBlogPost';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ServicesIndex from './pages/ServicesIndex';
@@ -118,8 +119,13 @@ function App() {
           <Route path="/authors/:slug" element={<AuthorProfile />} />
           <Route path="/trainings" element={<TrainingsIndex />} />
           <Route path="/trainings/:stage/:slug" element={<TrainingDetail />} />
-          <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/resources" element={<BlogIndex />} />
+          <Route path="/resources/articles/:slug" element={<BlogPost />} />
+          {/* Legacy blog URLs. Netlify 301s these before the SPA ever sees
+              them; these routes only cover an in-app navigation that still
+              uses the old path. */}
+          <Route path="/blog" element={<Navigate to="/resources" replace />} />
+          <Route path="/blog/:slug" element={<LegacyBlogPost />} />
           {/* Legacy URLs — /classes was replaced by /trainings; keep shared links alive */}
           <Route path="/classes" element={<Navigate to="/trainings" replace />} />
           <Route path="/classes/:slug" element={<Navigate to="/trainings" replace />} />

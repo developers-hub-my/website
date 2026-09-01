@@ -50,6 +50,10 @@ export const PEOPLE: Person[] = [
         evidence: 'Teaches the Modern PHP course on OOP, SOLID and design patterns; maintains open-source PHP packages.',
       },
       {
+        technologySlug: 'docker',
+        evidence: 'Teaches the Docker & Container Fundamentals course; containerises DevHub client deployments.',
+      },
+      {
         technologySlug: 'claude-code',
         evidence: 'Author of "The Universal AI Coding Agent Formula"; teaches three courses covering AI-augmented development.',
       },

@@ -47,7 +47,7 @@ const postNodes = (post: Post) => {
 
   return {
     canonical,
-    crumbs: [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }, { name: post.title }],
+    crumbs: [{ name: 'Home', path: '/' }, { name: 'Resources', path: '/resources/' }, { name: post.title }],
     author,
     nodes: [
       organizationNode(),
@@ -61,7 +61,7 @@ const postNodes = (post: Post) => {
       }),
       breadcrumbNode(canonical, [
         { name: 'Home', path: '/' },
-        { name: 'Blog', path: '/blog/' },
+        { name: 'Resources', path: '/resources/' },
         { name: post.title },
       ]),
       author && personNode(author),
@@ -100,7 +100,7 @@ const BlogPost = () => {
       : {
           title: 'Post not found — Developers Hub',
           description: 'That post does not exist or may have been moved.',
-          path: `/blog/${slug ?? ''}`,
+          path: `/resources/articles/${slug ?? ''}`,
           noindex: true,
         },
   );
@@ -114,7 +114,7 @@ const BlogPost = () => {
       <main className="pt-24 pb-20 min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Post not found</h1>
-          <Link to="/blog/" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <Link to="/resources/" className="text-blue-600 dark:text-blue-400 hover:underline">
             Browse all posts
           </Link>
         </div>

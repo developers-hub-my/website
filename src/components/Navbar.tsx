@@ -36,7 +36,7 @@ const navItems: NavItem[] = [
   { name: 'Services', href: '/services/' },
   { name: 'Technologies', href: '/technologies/' },
   { name: 'Trainings', href: '/trainings/' },
-  { name: 'Blog', href: '/blog/' },
+  { name: 'Resources', href: '/resources/' },
   { name: 'Contact', href: '/contact/' },
   ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
 ];

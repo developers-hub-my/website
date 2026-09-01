@@ -63,7 +63,7 @@ export function routes(): string[] {
     ...PEOPLE.map((person) => `/authors/${person.slug}/`),
     '/trainings/',
     ...trainings.map(trainingPath),
-    '/blog/',
+    '/resources/',
     ...posts.map(blogPath),
   ];
 }
@@ -115,7 +115,7 @@ export function lastModified(): Record<string, string> {
   map['/services/'] = newest(SERVICES.map((s) => s.contentUpdated)) ?? '';
   map['/technologies/'] = newest(TECHNOLOGIES.map((t) => t.contentUpdated)) ?? '';
   map['/authors/'] = newest(PEOPLE.map((p) => p.contentUpdated)) ?? '';
-  map['/blog/'] = newest(posts.map((p) => p.updated ?? p.date)) ?? '';
+  map['/resources/'] = newest(posts.map((p) => p.updated ?? p.date)) ?? '';
 
   return map;
 }
