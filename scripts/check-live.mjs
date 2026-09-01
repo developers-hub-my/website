@@ -126,11 +126,35 @@ if (sitemap) {
   }
 }
 
+// robots.txt is context-dependent, so the assertion is too: production invites
+// the crawl and names the sitemap, a preview refuses it outright. Asserting the
+// production shape everywhere would fail every preview run — and asserting
+// nothing would let a crawlable staging copy pass unnoticed, which is the whole
+// reason the file differs.
 const robots = await get(`${origin}/robots.txt`);
 if (robots) {
   const body = await robots.text();
-  if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml$/m.test(body)) {
-    fail('P12', '/robots.txt', 'does not reference the sitemap');
+
+  if (isProduction) {
+    if (!/^Sitemap:\s*https:\/\/devhub\.my\/sitemap\.xml$/m.test(body)) {
+      fail('P12', '/robots.txt', 'does not reference the sitemap');
+    }
+    if (/^Disallow:\s*\/$/m.test(body)) {
+      fail('P12', '/robots.txt', 'production is serving the staging robots.txt — the whole site is disallowed');
+    }
+  } else if (!/^Disallow:\s*\/$/m.test(body)) {
+    fail('P13', '/robots.txt', 'a non-production origin is crawlable — it will duplicate every production page');
+  }
+}
+
+// A non-production origin must also be unindexable, not merely uncrawled.
+// Netlify sets this header on preview deploys; if it ever stops, a preview
+// linked from anywhere can still be indexed.
+if (!isProduction) {
+  const head = await get(`${origin}/`);
+  const tag = head?.headers.get('x-robots-tag') ?? '';
+  if (!tag.includes('noindex')) {
+    fail('P13', origin, `no X-Robots-Tag: noindex on a non-production origin (got "${tag}")`);
   }
 }
 
