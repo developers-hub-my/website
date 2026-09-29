@@ -10,7 +10,7 @@ tags:
 cover: /images/blog/claude-md-cover-2x1.png
 coverAlt: 'Blue and white cover for “CLAUDE.md: A Practical Framework for Building Better Claude Code Projects”, featuring a code editor illustration and the Developers Hub logo.'
 canonical: ''
-draft: true
+draft: false
 ---
 
 Working with Claude on a real software project changes the moment you stop treating it like a chatbot and start treating it like a member of the development team.
