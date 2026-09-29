@@ -10,7 +10,7 @@ tags:
 cover: /images/blog/claude-md-cover-2x1.png
 coverAlt: 'Blue and white cover for “CLAUDE.md: A Practical Framework for Building Better Claude Code Projects”, featuring a code editor illustration and the Developers Hub logo.'
 canonical: ''
-draft: false
+draft: true
 ---
 
 Working with Claude on a real software project changes the moment you stop treating it like a chatbot and start treating it like a member of the development team.
@@ -226,13 +226,9 @@ A useful section might look like this:
  **Commands**
 
 - Test: [test command]
-
 - Single test: [single test command]
-
 - Lint: [lint command]
-
 - Development: [development command]
-
 - Database setup: [database command]
 
 That is enough.
@@ -268,13 +264,9 @@ Keep them short.
  **Environment**
 
 - [Runtime version]
-
 - [Framework version]
-
 - [Local development environment]
-
 - [Database]
-
 - [Required background process]
 
 Do not turn this section into a full installation guide.
@@ -296,13 +288,9 @@ For example:
 ## Conventions
 
 - Public IDs use UUIDs.
-
 - Internal IDs are not exposed.
-
 - Business logic uses invokable Action classes.
-
 - Side effects use Observers.
-
 - Enums expose project-specific methods.
 
 The actual rules will depend on the project.
@@ -338,13 +326,9 @@ This deserves a clear section.
 ## Boundaries
 
 - [File or area that must not be edited directly]
-
 - [Change that requires approval]
-
 - [Dependency change that requires approval]
-
 - [Generated file that must not be modified]
-
 - [Database rule]
 
 Good boundaries are specific.
@@ -374,11 +358,8 @@ For example:
 ## Vocabulary
 
 - "Tenant" means the client organisation.
-
 - "Agent" means an internal support staff member.
-
 - "Member" means a user belonging to the client organisation.
-
 - "Application" means a submitted request, not the software itself.
 
 You do not need a glossary with fifty terms.
@@ -398,11 +379,8 @@ For example:
 ## Done means
 
 - Formatter passes.
-
 - Test suite passes.
-
 - New behaviour has automated coverage.
-
 - Required checks are complete.
 
 The exact rules are yours to define.
@@ -658,31 +636,22 @@ A good starting template can be surprisingly small.
  **Commands**
 
 - Test: [command]
-
 - Single test: [command]
-
 - Lint: [command]
-
 - Development: [command]
 
  **Environment**
 
 - [Runtime]
-
 - [Framework]
-
 - [Database]
-
 - [Important environment quirk]
 
  **Conventions**
 
 - [Project-specific convention]
-
 - [Naming rule]
-
 - [Business logic pattern]
-
 - [Integration pattern]
 
 Reference: [example file]
@@ -690,27 +659,20 @@ Reference: [example file]
  **Boundaries**
 
 - [Do not modify]
-
 - [Ask before doing]
-
 - [Database boundary]
-
 - [Dependency boundary]
 
  **Vocabulary**
 
 - "[Term]" = [meaning]
-
 - "[Term]" = [meaning]
-
 - "[Term]" = [meaning]
 
  **Done means**
 
 - [Required check]
-
 - [Required test]
-
 - [Required validation]
 
  **Gotchas**
