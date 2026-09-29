@@ -1,16 +1,17 @@
 ---
-title: CLAUDE.md - A Practical Framework for Building Better Claude Code Projects
+title: "CLAUDE.md: A Practical Framework for Claude Code Projects"
 description: A practical guide to using CLAUDE.md as the core context for Claude Code projects. Learn how rules, skills and hooks keep project guidance focused and easier to maintain.
 date: 2026-09-29
 updated: ''
 author: Zulfaizal Azly
-authorTitle: ''
+authorTitle: Digital Marketing, Developers Hub Sdn Bhd
 tags:
-  - Software Engineering, claude code,
+  - Software Engineering
+  - Claude Code
 cover: /images/blog/claude-md-cover-2x1.png
 coverAlt: 'Blue and white cover for “CLAUDE.md: A Practical Framework for Building Better Claude Code Projects”, featuring a code editor illustration and the Developers Hub logo.'
 canonical: ''
-draft: true
+draft: false
 ---
 
 Working with Claude on a real software project changes the moment you stop treating it like a chatbot and start treating it like a member of the development team.
@@ -37,7 +38,7 @@ The file should focus on things that are important, project-specific, easy to mi
 
 This guide presents a practical framework for doing that.
 
-# **1. What is CLAUDE.md?**
+## **1. What is CLAUDE.md?**
 
 CLAUDE.md is a Markdown file used to give Claude persistent instructions and context for a project.
 
@@ -69,7 +70,7 @@ The codebase remains the main source of truth for the code.
 
 CLAUDE.md gives Claude the additional context needed to work well inside that codebase.
 
-# **2. Why CLAUDE.md matters**
+## **2. Why CLAUDE.md matters**
 
 Software projects contain a lot of information.
 
@@ -107,7 +108,7 @@ The value is in how much useful decision-making context each instruction provide
 
 Claude Code's own documentation recommends keeping project instructions focused. It also distinguishes between CLAUDE.md, scoped rules, skills, hooks, and other configuration mechanisms because they solve different problems.
 
-# **3. The context budget problem**
+## **3. The context budget problem**
 
 Every time you add another rule, you are adding more information Claude has to consider.
 
@@ -151,7 +152,7 @@ The goal is not to maximise context.
 
 The goal is to maximise useful context.
 
-# **4. What belongs in CLAUDE.md**
+## **4. What belongs in CLAUDE.md**
 
 A strong CLAUDE.md usually contains a small number of high-value categories.
 
@@ -173,7 +174,7 @@ The principle should remain:
 
 Keep durable project knowledge that Claude cannot reliably infer on its own.
 
-# **5. What does NOT belong**
+## **5. What does NOT belong**
 
 Knowing what to leave out is just as important.
 
@@ -213,7 +214,7 @@ You do not need to rewrite an entire OWASP guide inside CLAUDE.md.
 
 Keep the project-specific rules that are easy to get wrong or especially important in your environment.
 
-# **6. Commands**
+## **6. Commands**
 
 Commands are simple, but they have very high practical value.
 
@@ -243,7 +244,7 @@ You are not documenting the tool.
 
 You are telling Claude which command this project uses.
 
-# **7. Environment quirks**
+## **7. Environment quirks**
 
 Some of the most useful project knowledge comes from things that are not obvious in the code.
 
@@ -273,7 +274,7 @@ Do not turn this section into a full installation guide.
 
 Keep only the quirks that affect how Claude should work.
 
-# **8. Project conventions**
+## **8. Project conventions**
 
 This is where the project becomes different from the framework.
 
@@ -307,7 +308,7 @@ Reference: [path to example]
 
 One strong example often communicates more clearly than a long description.
 
-# **9. Boundaries**
+## **9. Boundaries**
 
 Every project has things that should be handled carefully.
 
@@ -339,7 +340,7 @@ Good boundaries are specific.
 
 The second instruction tells Claude what the safe action is.
 
-# **10. Domain vocabulary**
+## **10. Domain vocabulary**
 
 Code does not always explain business language well.
 
@@ -368,7 +369,7 @@ Keep the terms that are important enough to affect implementation decisions.
 
 Business language is one of the areas where human knowledge is often much harder to infer from code alone.
 
-# **11. Definition of Done**
+## **11. Definition of Done**
 
 A task is not finished simply because the code compiles.
 
@@ -399,7 +400,7 @@ The second one gives Claude something it can verify.
 
 That makes it much more useful.
 
-# **12. Gotchas**
+## **12. Gotchas**
 
 This is where the project starts to capture real experience.
 
@@ -433,7 +434,7 @@ Be careful here.
 
 The goal is to store the lesson.
 
-# **13. .claude/rules/**
+## **13. .claude/rules/**
 
 Not every rule needs to live in the main CLAUDE.md.
 
@@ -465,7 +466,7 @@ The main file remains focused.
 
 The specialised rules stay close to the work they govern.
 
-# **14. Skills**
+## **14. Skills**
 
 Some instructions are not really rules.
 
@@ -495,7 +496,7 @@ This gives you a simple distinction:
 
 That separation keeps the main context cleaner.
 
-# **15. Hooks**
+## **15. Hooks**
 
 Hooks solve another problem.
 
@@ -523,7 +524,7 @@ Use hooks when you need repeatable enforcement.
 
 When a rule must hold every time, automation is usually safer than relying on a written instruction alone.
 
-# **16. Scope hierarchy**
+## **16. Scope hierarchy**
 
 A common mistake is thinking there is only one CLAUDE.md.
 
@@ -567,7 +568,7 @@ A temporary personal preference should not become a team convention.
 
 Good scope reduces noise.
 
-# **17. Maintenance**
+## **17. Maintenance**
 
 CLAUDE.md should not be treated as a file you write once and forget.
 
@@ -625,7 +626,7 @@ Claude Code also provides tools such as /memory, /skills, /hooks, and /doctor to
 
 The best context setup evolves through real use.
 
-# **18. A complete CLAUDE.md example**
+## **18. A complete CLAUDE.md example**
 
 A good starting template can be surprisingly small.
 
@@ -693,7 +694,7 @@ The file gives Claude the information that matters most when it is making decisi
 
 That is the point.
 
-# **19. Common mistakes**
+## **19. Common mistakes**
 
 Most problems with CLAUDE.md come from good intentions.
 
@@ -743,7 +744,7 @@ A better rule is often discovered through real work.
 
 Let the project teach you what deserves to be remembered.
 
-# **20. The final framework**
+## **20. The final framework**
 
 After all the sections, the framework can be reduced to one simple model.
 
@@ -771,7 +772,7 @@ The goal is not to make Claude know everything.
 
 The goal is to help Claude make better decisions.
 
-# **The point is not a bigger CLAUDE.md**
+## **The point is not a bigger CLAUDE.md**
 
 A good CLAUDE.md is not impressive because it is long.
 

@@ -60,6 +60,25 @@ export const PEOPLE: Person[] = [
     ],
     contentUpdated: '2026-09-01',
   },
+  {
+    slug: 'zulfaizal-azly',
+    name: 'Zulfaizal Azly',
+    jobTitle: 'Digital Marketing, Developers Hub Sdn Bhd',
+    bio:
+      'Zulfaizal Azly has experience in business analysis and digital marketing. He also works with Laravel and explores practical ways to use AI in software projects.',
+    knowsAbout: [
+      {
+        technologySlug: 'claude-code',
+        evidence:
+          'Author of "CLAUDE.md - A Practical Framework for Building Better Claude Code Projects", on structuring project context for Claude Code.',
+      },
+      {
+        technologySlug: 'laravel',
+        evidence: 'Builds software with Laravel and has worked on projects built on it.',
+      },
+    ],
+    contentUpdated: '2026-09-29',
+  },
 ];
 
 export const personBySlug = (slug: string): Person | undefined =>
