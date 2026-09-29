@@ -1,5 +1,5 @@
 ---
-title: 'CLAUDE.md: A Practical Framework for Building Better Claude Code Projects'
+title: 'CLAUDEmd: A Practical Framework for Building Better Claude Code Projects'
 description: A practical guide to using CLAUDE.md as the core context for Claude Code projects. Learn how rules, skills and hooks keep project guidance focused and easier to maintain.
 date: 2026-09-29
 updated: ''
