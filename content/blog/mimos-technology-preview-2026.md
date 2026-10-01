@@ -13,6 +13,10 @@ canonical: ''
 draft: false
 ---
 
+Developers Hub at MIMOS Technology Preview 2026
+
+Technology is moving fast, and we believe it is important to stay close to where new ideas begin.
+
 On 29 September 2026, Developers Hub attended MIMOS Technology Preview 2026 (MTP 2026) at Bukit Jalil, Kuala Lumpur, to explore local innovations and the opportunities they create for businesses and industries.
 
 One session that stood out was the keynote "From Innovation to Market Success" by Tan Sri Dato' Sri Haji Syed Zainal Abidin Syed Mohamed Tahir, Chairman of DNeX and SilTerra. It was a timely reminder that a good idea is only the beginning. Real value is created when technology solves real problems and delivers meaningful impact.
