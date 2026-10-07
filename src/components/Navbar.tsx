@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import Logo from './Logo';
 import DarkModeToggle from './DarkModeToggle';
+import FullscreenToggle from './FullscreenToggle';
 
 interface NavItem {
   name: string;
@@ -159,6 +160,7 @@ const Navbar = () => {
                 </div>
               );
             })}
+            <FullscreenToggle />
             <DarkModeToggle />
             <Link
               to="/contact/"
