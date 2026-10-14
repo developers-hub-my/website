@@ -18,7 +18,7 @@ const Services = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
           {/* 1. Featured - Education & Training (2x2) */}
-          <div className="col-span-2 row-span-2 group relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-600 to-cyan-600 p-5 sm:p-6 lg:p-8 text-white">
+          <div className="col-span-2 row-span-2 group relative overflow-hidden rounded-2xl bg-dh-navy p-5 sm:p-6 lg:p-8 text-white">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
@@ -49,8 +49,8 @@ const Services = () => {
 
           {/* 2. Software Development (1x1) */}
           <div className="col-span-1 group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 sm:p-5 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-500 transition-all duration-300">
-            <div className="w-10 h-10 bg-linear-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Code2 className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+              <Code2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">Software Dev</h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Custom web & mobile apps</p>
@@ -58,8 +58,8 @@ const Services = () => {
 
           {/* 3. IT Consultation (1x1) */}
           <div className="col-span-1 group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 sm:p-5 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-500 transition-all duration-300">
-            <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Headphones className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+              <Headphones className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">IT Consultation</h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Strategy & architecture</p>
@@ -67,8 +67,8 @@ const Services = () => {
 
           {/* 4. Business Solutions (1x1) */}
           <div className="col-span-1 group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 sm:p-5 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-500 transition-all duration-300">
-            <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-rose-600 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <BarChart className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+              <BarChart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">Business Solutions</h3>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Automation & analytics</p>

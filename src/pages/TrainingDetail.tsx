@@ -45,7 +45,7 @@ import GetNotifiedModal from '../components/GetNotifiedModal';
 const gradientStrip = 'bg-gradient-to-r from-blue-600 via-indigo-500 to-rose-400';
 
 const Eyebrow = ({ children }: { children: ReactNode }) => (
-  <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-rose-500 dark:text-rose-400 mb-3">
+  <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 dark:text-rose-400 mb-3">
     <span className={`h-px w-8 ${gradientStrip}`} />
     {children}
   </p>

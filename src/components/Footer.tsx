@@ -37,10 +37,14 @@ const Footer = () => {
             {/* Company Info */}
             <div className="col-span-2 md:col-span-2 lg:col-span-1">
               <div className="mb-4 sm:mb-6">
-                <div className="flex items-baseline">
-                  <span className="text-lg sm:text-xl font-bold text-white">Developers</span>
-                  <span className="text-lg sm:text-xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Hub</span>
-                </div>
+                {/* Footer ground is always dark: the mono lockup, as on the brand board. */}
+                <img
+                  src="/brand/devhub-lockup-mono.svg"
+                  alt="Developers Hub"
+                  width={804}
+                  height={299}
+                  className="h-14 w-auto"
+                />
               </div>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
                 Empowering businesses through technology and innovation. Your trusted partner for
@@ -141,10 +145,10 @@ const Footer = () => {
         <div className="border-t border-slate-800 dark:border-slate-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-              <div className="text-xs sm:text-sm text-slate-500 text-center sm:text-left">
+              <div className="text-xs sm:text-sm text-slate-400 text-center sm:text-left">
                 <p>© {currentYear} Developers Hub Sdn. Bhd. (202001019928 / 1376248-V)</p>
               </div>
-              <div className="flex space-x-4 sm:space-x-6 text-xs sm:text-sm text-slate-500">
+              <div className="flex space-x-4 sm:space-x-6 text-xs sm:text-sm text-slate-400">
                 <button
                   type="button"
                   onClick={() => setIsPrivacyOpen(true)}

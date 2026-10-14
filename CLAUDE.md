@@ -17,7 +17,7 @@ npm run check:live  # C1-C6, 404s and redirect hops against a served origin
 
 - **Framework**: React 19 with TypeScript, React Router 8
 - **Build Tool**: Vite 8, with a second SSR build used only for prerendering
-- **Styling**: Tailwind CSS with a custom blue palette; Inter loaded from Google Fonts
+- **Styling**: Tailwind CSS 4 (default palette + one `dh-navy` brand colour); Inter loaded from Google Fonts
 - **Icons**: lucide-react
 - **Linting**: ESLint with TypeScript and React Hooks plugins
 
@@ -108,43 +108,41 @@ Four rules are locked (Phase 03/14, enforced by `scripts/check-seo.mjs`):
 
 ### Card Components
 
-Two reusable card patterns for displaying content:
+- `ServiceCard` - Displays service with icon tile, title, description, feature list (`ChevronRight` bullets) and a Learn More link
+- Bento tiles in `Services.tsx` - one `bg-dh-navy` feature tile, compact tiles with a `blue-50` icon tile and `blue-600` icon
 
-- `ServiceCard` - Displays service with icon, title, description, and feature list (uses `ChevronRight` bullets)
-- `ProgramCard` - Displays training program with icon, metadata (duration, level, price), and enroll button
-
-### Custom Hooks
-
-Located in `src/hooks/`:
-
-- `usePrograms` - Manages training programs state (currently returns empty array, displays EmptyState)
-- `useNotifications` - Handles email subscription state with `handleSubscribe` callback
-
-### Notification Subscription System
-
-Modular form components in `src/components/notification/`:
-
-- `NotificationSubscribe` - Form container with submission handling
-- `EmailInput` - Controlled email input field
-- `SubscribeButton` - Submit button with loading state
-
-Used by `EmptyState` component to prompt users to subscribe when no content is available.
-
-### Unused Components
-
-Some components exist but are not currently used in App.tsx:
-
-- `Programs` - Training programs section (uses usePrograms hook and EmptyState)
-- `Contact` - Contact form with company details
-- `NotificationSubscribe` (in root components folder) - Duplicate, use the one in `/notification/` subdirectory
+The old `Programs` / `ProgramCard` / `EmptyState` / `notification/*` chain and the
+`usePrograms` / `useNotifications` hooks were never mounted and were removed in the
+design-system alignment. Training enquiries go through `GetNotifiedModal`.
 
 ### Styling Conventions
 
-- Custom blue color scale defined in `tailwind.config.js` (blue-50 through blue-900)
-- Primary accent color: `blue-600` (#0284c7)
-- Cards use `rounded-xl shadow-md hover:shadow-xl` pattern
-- Responsive breakpoints: `sm:`, `md:`, `lg:` with mobile-first approach
-- Section padding: `py-20` with `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` container pattern
+The visual rules live in the **Developers Hub design system** (a claude.ai Design
+System artifact built from this repo) — tokens, type scale, components, usage notes.
+In code terms:
+
+- Colours are Tailwind 4's **default** scales: `slate-*` neutrals, `blue-*` for
+  action, `cyan-*` for the gradient end. `blue-600` renders `#155dfc`, not
+  `#1e40af` and not `#0284c7`.
+- `@theme` in `src/index.css` adds only what Tailwind lacks: `dh-navy` (`#1e40af`),
+  the corporate navy used for the feature card, the contact panel and `theme-color`.
+  Do not add scales that no component uses.
+- Brand gradient is blue → cyan only (wordmark "Hub", the 80×4px bar under titles,
+  one hero line). No purple/indigo blobs or per-service rainbow icon tiles.
+- Academy (training pages only): `rose-600` eyebrow text (`rose-400` dark), the
+  blue → indigo → rose strip, diamond markers. `rose-500` fails contrast as small text.
+- Text pairs meet 4.5:1 in both themes: body `slate-600`/`slate-400`, subtle
+  `slate-500`/`slate-400`, placeholders `slate-500`/`slate-400`, footer secondary
+  text `slate-400`.
+- Cards: `rounded-xl` + `border-slate-200`, lift on hover (`hover:shadow-lg`/`xl`);
+  never a coloured left border.
+- Containers: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`; sections
+  `py-16 sm:py-20 lg:py-24`; inner pages `max-w-4xl` via `PageShell`.
+- Logo: use the files in `public/brand/` (exported from `docs/brand/devhub-logo-master.ai`);
+  colour lockup on light grounds, mono lockup on dark grounds, never a live-text
+  wordmark. Brand typeface is Helvetica (logo, print, decks); the web UI stays on Inter.
+- Known debt: blog and training pages still use `gray-*` where the rest of the
+  site uses `slate-*`; convert them in one pass, not piecemeal.
 
 ## Entity, SEO, AEO & GEO SOP
 

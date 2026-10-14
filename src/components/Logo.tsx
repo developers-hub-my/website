@@ -9,15 +9,28 @@ import { Link } from 'react-router';
 // only meant anything on the homepage itself; from /services/laravel/ it was a
 // link to nowhere. It is now a real link to `/`, which also gives every page an
 // inbound link to the homepage for the Phase 08 crawl.
+// The official lockup from the brand master (DH FINAL LOGO.ai, artboards 2 and
+// 3), cropped to SVG in public/brand/. The colour lockup is for light grounds;
+// on dark grounds the brand board pairs the mono mark with a white wordmark,
+// so dark mode swaps to that file rather than recolouring anything here.
+// Both <img>s are in the server-rendered DOM; the hidden one is display:none,
+// which also keeps it out of the accessibility tree.
 const Logo = () => (
-  <Link to="/" className="flex items-center space-x-2">
-    <img src="/logo.png" alt="Developers Hub Logo" className="h-8 sm:h-9 w-auto" />
-    <div className="flex items-baseline">
-      <span className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">Developers</span>
-      <span className="text-lg sm:text-xl font-bold bg-linear-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
-        Hub
-      </span>
-    </div>
+  <Link to="/" className="flex items-center" aria-label="Developers Hub — home">
+    <img
+      src="/brand/devhub-lockup.svg"
+      alt="Developers Hub"
+      width={863}
+      height={321}
+      className="h-11 sm:h-14 w-auto dark:hidden"
+    />
+    <img
+      src="/brand/devhub-lockup-mono.svg"
+      alt="Developers Hub"
+      width={804}
+      height={299}
+      className="hidden dark:block h-11 sm:h-14 w-auto"
+    />
   </Link>
 );
 
