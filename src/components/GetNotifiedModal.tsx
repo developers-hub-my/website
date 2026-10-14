@@ -15,7 +15,7 @@ interface GetNotifiedModalProps {
 }
 
 const inputClass =
-  'w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors';
+  'w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors';
 
 const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
 
@@ -80,7 +80,7 @@ const GetNotifiedModal = ({ isOpen, onClose, trainingTitle }: GetNotifiedModalPr
 
   const fieldError = (field: string) =>
     fieldErrors[field]?.[0] ? (
-      <p className="mt-1.5 text-sm text-rose-500">{fieldErrors[field][0]}</p>
+      <p className="mt-1.5 text-sm text-rose-600 dark:text-rose-400">{fieldErrors[field][0]}</p>
     ) : null;
 
   return (
@@ -185,7 +185,7 @@ const GetNotifiedModal = ({ isOpen, onClose, trainingTitle }: GetNotifiedModalPr
           </div>
 
           {error && (
-            <p className="mt-4 text-sm text-rose-500 bg-rose-50 dark:bg-rose-500/10 rounded-lg px-4 py-3">
+            <p className="mt-4 text-sm text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 rounded-lg px-4 py-3">
               {error}
             </p>
           )}

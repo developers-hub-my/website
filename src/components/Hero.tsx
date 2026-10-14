@@ -11,10 +11,10 @@ const Hero = () => {
 
       {/* Animated Mesh Gradient */}
       <div className="absolute inset-0 opacity-20 dark:opacity-30">
-        <div className="absolute top-0 -left-4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-400 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob"></div>
+        <div className="absolute top-0 -left-4 w-72 sm:w-96 h-72 sm:h-96 bg-sky-300 dark:bg-sky-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob"></div>
         <div className="absolute top-0 -right-4 w-72 sm:w-96 h-72 sm:h-96 bg-blue-400 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-400 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob animation-delay-4000"></div>
-        <div className="absolute bottom-0 right-20 w-72 sm:w-96 h-72 sm:h-96 bg-indigo-400 dark:bg-indigo-500 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob animation-delay-6000"></div>
+        <div className="absolute bottom-0 right-20 w-72 sm:w-96 h-72 sm:h-96 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl animate-blob animation-delay-6000"></div>
       </div>
 
       {/* Grid Pattern Overlay */}
@@ -22,9 +22,9 @@ const Hero = () => {
 
       {/* Floating Orbs */}
       <div className="absolute top-1/4 left-10 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full animate-float opacity-40 dark:opacity-60"></div>
-      <div className="absolute top-1/3 right-20 w-3 h-3 bg-purple-500 dark:bg-purple-400 rounded-full animate-float animation-delay-2000 opacity-40 dark:opacity-60"></div>
+      <div className="absolute top-1/3 right-20 w-3 h-3 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-float animation-delay-2000 opacity-40 dark:opacity-60"></div>
       <div className="absolute bottom-1/3 left-1/4 w-2 h-2 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-float animation-delay-4000 opacity-40 dark:opacity-60"></div>
-      <div className="absolute top-2/3 right-1/3 w-2 h-2 bg-indigo-500 dark:bg-indigo-400 rounded-full animate-float animation-delay-6000 opacity-40 dark:opacity-60"></div>
+      <div className="absolute top-2/3 right-1/3 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full animate-float animation-delay-6000 opacity-40 dark:opacity-60"></div>
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
@@ -39,7 +39,7 @@ const Hero = () => {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
             Empowering Businesses
             <br />
-            <span className="bg-linear-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-blue-400 dark:via-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
               Through Technology
             </span>
           </h1>
