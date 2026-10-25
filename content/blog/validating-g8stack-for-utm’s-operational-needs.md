@@ -19,7 +19,6 @@ June 2026, the G8Stack User Acceptance Testing (UAT) session with Universiti Tek
 
 The testing scope covered user and access management, API publication, subscription management, and operational monitoring. Each area connects platform capability with the responsibilities of the teams who will manage and use it.
 
-
 For Developers Hub, UAT is an important part of delivery governance. It provides a structured basis for assessing operational alignment, documenting findings and identifying gaps that could affect implementation.
 
 Direct participation from UTM’s users brings operational perspectives into the acceptance process. This helps stakeholders assess readiness against agreed requirements and establish clearer expectations around platform functionality and operational responsibilities.
