@@ -6,7 +6,7 @@ updated: ''
 author: Zulfaizal Azly
 authorTitle: ''
 tags:
-  - Business Analyst, Quality assurance, Software testing,
+  - Technology
 cover: /images/blog/WhatsApp Image 2026-06-05 at 16.54.52 (1).jpeg
 coverAlt: ''
 canonical: ''
