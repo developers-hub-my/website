@@ -1,12 +1,12 @@
 ---
-title: Validating G8Stack for UTM’s Operational Needs
+title: Validating G8Stack for UTM Operational Needs
 description: UAT is an important part of delivery governance. It provides a structured basis for assessing operational alignment, documenting findings and identifying gaps that could affect implementation.
 date: 2026-10-25
 updated: ''
 author: Zulfaizal Azly
 authorTitle: ''
 tags:
-  - Technology
+  - Business Analyst, Quality assurance, Software testing,
 cover: /images/blog/WhatsApp Image 2026-06-05 at 16.54.52 (1).jpeg
 coverAlt: ''
 canonical: ''
