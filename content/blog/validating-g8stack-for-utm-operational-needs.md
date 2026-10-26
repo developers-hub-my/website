@@ -23,7 +23,7 @@ For Developers Hub, UAT is an important part of delivery governance. It provides
 
 Direct participation from UTM’s users brings operational perspectives into the acceptance process. This helps stakeholders assess readiness against agreed requirements and establish clearer expectations around platform functionality and operational responsibilities.
 
-![](/images/blog/WhatsApp%20Image%202026-06-05%20at%2016.55.03.jpeg)
+![Zulfaizal azly on UAT scenario base](/images/blog/WhatsApp%20Image%202026-06-05%20at%2016.55.03.jpeg)
 
 The business value lies in greater visibility over implementation risk and a stronger basis for acceptance decisions. These are important foundations for institutional adoption and sustainable operations.
 
@@ -31,4 +31,4 @@ Our focus remains on supporting accountable delivery through evidence that stake
 
 We thank the UTM team for their participation and collaboration in this milestone as we continue working towards a platform aligned with the university’s API management needs.
 
-![](/images/blog/WhatsApp%20Image%202026-06-05%20at%2016.54.56.jpeg)
+![Nasrul hazim on ](/images/blog/WhatsApp%20Image%202026-06-05%20at%2016.54.56.jpeg)
