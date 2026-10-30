@@ -69,6 +69,7 @@ const lines = [
   '## Company',
   '',
   link('/about/', 'About', 'Company background, capabilities and team.'),
+  link('/explore/', 'Explore in 3D', 'An interactive 3D model of the company, its four service districts, its products and the sectors it serves.'),
   link('/contact/', 'Contact', 'Business address, email and opening hours.'),
   '',
 ];

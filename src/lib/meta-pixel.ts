@@ -62,3 +62,9 @@ export function trackMetaPageView(): void {
   if (!META_PIXEL_ID || !loaded || !window.fbq) return;
   window.fbq('track', 'PageView');
 }
+
+/** A custom Meta event, PascalCase like the standard ones (`PageView`). */
+export function trackMetaCustom(name: string, params: Record<string, string>): void {
+  if (!META_PIXEL_ID || !loaded || !window.fbq) return;
+  window.fbq('trackCustom', name, params);
+}

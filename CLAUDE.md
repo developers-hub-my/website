@@ -62,7 +62,8 @@ sections; every other route is a page in `src/pages/`.
 App.tsx
 ├── Navbar                       Fixed nav, scroll-aware, mobile hamburger
 ├── Routes
-│   ├── /                        Hero + About + Services + Contact sections
+│   ├── /                        src/components/home/*: hero, ways of working, g8suite products,
+│   │                            facts, training gallery, events, Explore teaser, closing CTA
 │   ├── /about/                  AboutPage        Organization, Person
 │   ├── /contact/                ContactPage      LocalBusiness, address, hours
 │   ├── /services/               ServicesIndex    the four Service entities
@@ -135,8 +136,19 @@ Used by `EmptyState` component to prompt users to subscribe when no content is a
 Some components exist but are not currently used in App.tsx:
 
 - `Programs` - Training programs section (uses usePrograms hook and EmptyState)
-- `Contact` - Contact form with company details
 - `NotificationSubscribe` (in root components folder) - Duplicate, use the one in `/notification/` subdirectory
+
+### Homepage
+
+- Sections live in `src/components/home/`. The four ways of working and the six
+  products come from `src/data/offer.ts`, shared with `/explore/` (it mirrors
+  the 3D scene — change both together).
+- Photos are pre-optimised AVIF + WebP in `public/images/home/<name>-<width>.*`
+  (from `_brand/photos/` in the business workspace); `home/Photo.tsx` renders
+  them and its `widths` must list files that exist. No client names in captions.
+- CTA clicks go through `trackCta()` (`src/lib/track.ts`): GA4 `cta_click`,
+  Meta `CtaClick`, both no-ops without their env var. Product links carry
+  `utm_source=devhub.my&utm_medium=referral&utm_campaign=homepage`.
 
 ### Styling Conventions
 

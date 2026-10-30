@@ -5,10 +5,13 @@ import { initAnalytics, trackPageView } from './lib/analytics';
 import { initMetaPixel, trackMetaPageView } from './lib/meta-pixel';
 import { useSeo } from './hooks/useSeo';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Contact from './components/Contact';
+import HomeHero from './components/home/HomeHero';
+import WaysOfWorking from './components/home/WaysOfWorking';
+import Products from './components/home/Products';
+import Proof from './components/home/Proof';
+import People from './components/home/People';
+import Events from './components/home/Events';
+import ClosingCta from './components/home/ClosingCta';
 import Footer from './components/Footer';
 import TrainingsIndex from './pages/TrainingsIndex';
 import BlogIndex from './pages/BlogIndex';
@@ -18,6 +21,8 @@ import CompanyProfileRedirect from './pages/CompanyProfileRedirect';
 import NotFound from './pages/NotFound';
 import LegacyBlogPost from './pages/LegacyBlogPost';
 import AboutPage from './pages/AboutPage';
+import ExplorePage from './pages/ExplorePage';
+import ExploreTeaser from './components/ExploreTeaser';
 import ContactPage from './pages/ContactPage';
 import ServicesIndex from './pages/ServicesIndex';
 import ServiceDetail from './pages/ServiceDetail';
@@ -57,6 +62,10 @@ function AnalyticsTracker() {
   return null;
 }
 
+const HOME_TITLE = 'Developers Hub | Build, Run & Teach Software in Malaysia';
+const HOME_DESCRIPTION =
+  'Developers Hub builds and supports software for universities, ministries and state agencies in Malaysia, and trains teams to own it. Johor Bahru, since 2020.';
+
 function Home() {
   const canonical = canonicalUrl('/');
   const crumbs = [{ name: 'Home' }];
@@ -65,10 +74,10 @@ function Home() {
   // Service entities, per the Phase 04 page implementation matrix. Organization
   // is emitted in full here and referenced by @id everywhere else on the site.
   useSeo({
-    title: 'Developers Hub | Software & Training, Johor Bahru',
-    description:
-      'Developers Hub Sdn Bhd builds custom software, advises on technical decisions, trains development teams and automates business workflows — from Johor Bahru, for clients across Malaysia.',
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     path: '/',
+    image: '/images/home/og-home.jpg',
     crumbs,
     nodes: [
       organizationNode(),
@@ -77,9 +86,8 @@ function Home() {
       localBusinessNode(),
       webPageNode({
         canonical,
-        name: 'Developers Hub | Software & Training, Johor Bahru',
-        description:
-          'Developers Hub Sdn Bhd builds custom software, advises on technical decisions, trains development teams and automates business workflows.',
+        name: HOME_TITLE,
+        description: HOME_DESCRIPTION,
         mainEntityId: ID.organization,
       }),
       ...SERVICES.map((service) => serviceNode(service, technologiesForService(service.slug))),
@@ -89,10 +97,14 @@ function Home() {
 
   return (
     <>
-      <Hero />
-      <About />
-      <Services />
-      <Contact />
+      <HomeHero />
+      <WaysOfWorking />
+      <Products />
+      <Proof />
+      <People />
+      <Events />
+      <ExploreTeaser />
+      <ClosingCta />
     </>
   );
 }
@@ -110,6 +122,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/services" element={<ServicesIndex />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />

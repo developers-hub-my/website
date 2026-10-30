@@ -54,6 +54,7 @@ export function routes(): string[] {
   return [
     '/',
     '/about/',
+    '/explore/',
     '/contact/',
     '/services/',
     ...SERVICES.map((service) => `/services/${service.slug}/`),
