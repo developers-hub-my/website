@@ -49,7 +49,13 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Non-blocking: the stylesheet loads as print and switches to all once
+         it arrives, so a slow fonts.googleapis.com never holds back first
+         paint (it cost ~0.8 s of mobile FCP in Lighthouse). display=swap
+         already meant text first painted in the fallback face. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" /></noscript>
   </head>
   <body class="font-sans antialiased">
     <!-- The Meta Pixel no-JS fallback is injected here at build time, and only
