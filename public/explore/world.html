@@ -633,9 +633,28 @@ function run(g){ // command centre: a curved video wall, operators at their cons
     for (const mx of [-.17,.17]){ d.add(mesh(new THREE.BoxGeometry(.3,.2,.02), M.graphite, mx,.6,-.12));
       const f = new THREE.Mesh(new THREE.PlaneGeometry(.28,.17), new THREE.MeshBasicMaterial({ color:new THREE.Color(mx<0?0x1e3a8a:0x0e7490).multiplyScalar(1.4), toneMapped:false })); f.position.set(mx,.6,-.108); f.rotation.y = Math.PI; d.add(f); }
     return { d, a }; });
-  XBOT.then(gltf=>consoleSpots.forEach(({d},i)=>{ const b = SkeletonUtils.clone(gltf.scene); b.scale.setScalar(.55); b.position.set(0,0,.42); b.rotation.y = Math.PI; d.add(b);
-    b.traverse(m=>{ if (m.isMesh){ m.frustumCulled = false; m.material = /Joints/i.test(m.material.name) ? M.cyanSoft : M.hull; } });
-    const mx = new THREE.AnimationMixer(b); const a = mx.clipAction(gltf.animations.find(c=>c.name==='idle')); a.time = i*.8; a.play(); mx.update(0); mixers.push(mx); }));
+  // two operators stay at their consoles and look about; two engineers walk rounds: globe → side rack → video wall and back
+  XBOT.then(gltf=>{ const clip = n=>gltf.animations.find(c=>c.name===n);
+    const bot = ()=>{ const b = SkeletonUtils.clone(gltf.scene); b.scale.setScalar(.55);
+      b.traverse(m=>{ if (m.isMesh){ m.frustumCulled = false; m.material = /Joints/i.test(m.material.name) ? M.cyanSoft : M.hull; } }); return b; };
+    const seated = [consoleSpots[1], consoleSpots[2]].map(({d},i)=>{ const b = bot(); b.position.set(0,0,.42); b.rotation.y = Math.PI; d.add(b);
+      const mx = new THREE.AnimationMixer(b); const a = mx.clipAction(clip('idle')); a.time = i*.8; a.play(); mx.update(0); mixers.push(mx); return b; });
+    const rounds = [-1,1].map((sd,i)=>{ const pts = [[.7,2.6],[2.1,1.7],[2.3,.25],[2.0,-.85],[.9,-1.12]].map(([x,z])=>new THREE.Vector3(sd*x,TOP+.12,z));
+      const path = new THREE.CatmullRomCurve3(pts), stops = [0, .5, 1].map(u=>u), b = bot(); g.add(b);
+      const mx = new THREE.AnimationMixer(b), walk = mx.clipAction(clip('walk')), idle = mx.clipAction(clip('idle')); walk.play(); idle.play(); mixers.push(mx);
+      return { b, path, len:path.getLength(), walk, idle, s:i?.6:0, dir:1, pause:i?0:1.5, w:0, stops }; });
+    const place = R=>{ const P = R.path.getPointAt(R.s), T = R.path.getTangentAt(Math.min(Math.max(R.s,.001),.999)).multiplyScalar(R.dir);
+      R.b.position.copy(P); if (R.w>.1 || R.pause<=0) R.b.rotation.y = Math.atan2(T.x,T.z); };
+    rounds.forEach(R=>{ R.walk.setEffectiveWeight(0); R.idle.setEffectiveWeight(1); place(R); }); mixers.forEach(m=>m.update(0));
+    ticks.push((t,dt)=>{
+      seated.forEach((b,i)=>b.rotation.y = Math.PI+Math.sin(t*.45+i*2)*.35); // glance at the wall and the neighbour
+      rounds.forEach(R=>{
+        if (R.pause>0) R.pause -= dt;
+        else { const n = R.s+R.dir*dt*.42/R.len, hit = R.stops.find(u=>(R.s-u)*(n-u)<0);
+          if (hit!==undefined){ R.s = hit; R.pause = 2.2; } else R.s = THREE.MathUtils.clamp(n,0,1);
+          if (R.s<=0 || R.s>=1){ R.dir *= -1; R.pause = 2.5; } } // turn back at the globe and at the wall
+        R.w = THREE.MathUtils.damp(R.w, R.pause>0 ? 0 : 1, 8, dt); R.walk.setEffectiveWeight(R.w); R.idle.setEffectiveWeight(1-R.w); place(R); }); });
+  });
   // holo-globe table at the front: the incident marker on it turns amber with the wall
   const table = new THREE.Group(); table.position.set(0,TOP,2.35); g.add(table);
   table.add(mesh(new THREE.CylinderGeometry(.55,.62,.5,6), M.graphite, 0,.25,0)); table.add(hexRing(.56,.015,M.cyan,.51));
