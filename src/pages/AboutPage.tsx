@@ -117,7 +117,7 @@ const AboutPage = () => {
           The company is also laid out as an interactive model: the hub, the four service districts, DevHub&rsquo;s
           own products and the sectors it serves.{' '}
           <Link to="/explore/" className="text-blue-600 dark:text-blue-400 hover:underline">
-            Explore Developers Hub in 3D
+            Explore Developers Hub
           </Link>
           .
         </p>

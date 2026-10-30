@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ExternalLink, Maximize, Play } from 'lucide-react';
 import { useDarkModeContext } from '../context/DarkModeContext';
+import { WORLD_VERSION } from '../data/explore-version';
 
 // The 3D scene is a separate static page (public/explore/world.html, written by
 // scripts/sync-3d.mjs). This frame shows its poster in the server HTML and only
@@ -13,7 +14,7 @@ type Look = 'night' | 'studio';
 type Stage = { state: 'poster' } | { state: 'live'; src: string; key: number };
 
 const lookFor = (isDark: boolean): Look => (isDark ? 'night' : 'studio');
-const worldSrc = (look: Look, hash: string) => `${WORLD_URL}?embed=1&look=${look}${hash}`;
+const worldSrc = (look: Look, hash: string) => `${WORLD_URL}?embed=1&look=${look}&v=${WORLD_VERSION}${hash}`;
 
 // Same server/client split as the navbar's full screen toggle: the server
 // snapshot says "unsupported", so the button only appears after hydration and
@@ -118,7 +119,7 @@ const ExploreStage = () => {
             Full screen
           </button>
         )}
-        <a href={WORLD_URL} target="_blank" rel="noopener" className={control}>
+        <a href={`${WORLD_URL}?v=${WORLD_VERSION}`} target="_blank" rel="noopener" className={control}>
           <ExternalLink className="w-4 h-4" aria-hidden="true" />
           Open in new tab
         </a>

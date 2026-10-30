@@ -37,7 +37,7 @@ const Events = () => (
             className="w-full h-auto rounded-xl bg-slate-100 dark:bg-slate-800"
           />
           <figcaption className="mt-3 font-semibold text-slate-900 dark:text-white">
-            DevHub at the FAI UTM Industry Engagement Day 2026
+            DevHub at a university industry engagement day, 2026
           </figcaption>
         </figure>
       </div>
