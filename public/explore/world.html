@@ -549,56 +549,136 @@ function build(g){ // a blueprint becomes a running system: a scan plane rises, 
   setH(TOPH+.01, false);
   ticks.push(t=>{ const c = t%10; // rise 6 s, hold 3 s, rewind 1 s
     if (c<6) setH(B+ease(c/6)*(TOPH-B), true); else if (c<9) setH(TOPH+.01, c<6.6); else setH(TOPH-ease(c-9)*(TOPH-B), true); });
+
+  // ── digital lab around the build: an automation line, two robot arms that pick modules off it and place them on the
+  // system, and an AI core. Arms use two-link IK, so the gripper really reaches the belt and the deck.
+  const B0 = TOP, armMat = new THREE.MeshStandardMaterial({ color:0xf1f5f9, roughness:.4, metalness:.2 }), joint = M.graphite;
+  g.add(mesh(new THREE.BoxGeometry(6,.1,.6), M.graphite, 0,B0+.42,2.05));                                   // conveyor bed
+  const beltTex = canvasTex(256,32,x=>{ x.fillStyle = '#1f2937'; x.fillRect(0,0,256,32); x.fillStyle = '#374151'; for (let i=0;i<16;i++) x.fillRect(i*16,0,6,32); });
+  beltTex.wrapS = THREE.RepeatWrapping; beltTex.repeat.set(12,1);
+  g.add(mesh(new THREE.PlaneGeometry(5.9,.5).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({ map:beltTex, roughness:.8 }), 0,B0+.476,2.05));
+  for (const z of [1.78,2.32]) g.add(mesh(new THREE.BoxGeometry(6,.06,.04), M.hull, 0,B0+.5,z));
+  for (const x of [-2.7,-.9,.9,2.7]) for (const z of [1.85,2.25]) g.add(mesh(new THREE.BoxGeometry(.06,.38,.06), M.graphite, x,B0+.19,z));
+  const crates = Array.from({length:7},(_,i)=>{ const c = mesh(new RoundedBoxGeometry(.24,.18,.24,2,.03), [M.brand,M.hull,M.brand][i%3], -2.9+i*.85, B0+.57, 2.05); c.castShadow = false; g.add(c); return c; });
+  const hazard = canvasTex(256,32,x=>{ for (let i=0;i<16;i++){ x.fillStyle = i%2 ? '#111827' : '#facc15'; x.beginPath(); x.moveTo(i*16,0); x.lineTo(i*16+16,0); x.lineTo(i*16,32); x.lineTo(i*16-16,32); x.fill(); } });
+  hazard.wrapS = THREE.RepeatWrapping; hazard.repeat.set(4,1);
+  const ik = new THREE.Vector3();
+  const arms = [[-2.35,1.15,-1],[2.35,1.15,1]].map(([bx,bz,sd],i)=>{ const base = new THREE.Group(); base.position.set(bx,B0,bz); g.add(base);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(.48,.6,32).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({ map:hazard })); ring.position.y = .012; base.add(ring);
+    base.add(mesh(new THREE.CylinderGeometry(.3,.36,.18,16), joint, 0,.09,0));
+    const yaw = new THREE.Group(); yaw.position.y = .18; base.add(yaw); yaw.add(mesh(new THREE.CylinderGeometry(.2,.24,.28,12), armMat, 0,.14,0));
+    const sh = new THREE.Group(); sh.position.y = .4; yaw.add(sh); sh.add(mesh(new THREE.SphereGeometry(.13,16,10), joint));
+    sh.add(mesh(new RoundedBoxGeometry(.15,.9,.15,2,.05), armMat, 0,.45,0));
+    const el = new THREE.Group(); el.position.y = .9; sh.add(el); el.add(mesh(new THREE.SphereGeometry(.1,16,10), joint));
+    el.add(mesh(new RoundedBoxGeometry(.12,.8,.12,2,.04), armMat, 0,.4,0));
+    const wr = new THREE.Group(); wr.position.y = .8; el.add(wr); wr.add(mesh(new THREE.CylinderGeometry(.07,.07,.12,10), joint, 0,.06,0));
+    const fingers = [-1,1].map(f=>{ const m = mesh(new THREE.BoxGeometry(.03,.16,.08), joint, f*.07,.2,0); wr.add(m); return m; });
+    wr.add(glow(new THREE.TorusGeometry(.075,.01,4,16).rotateX(Math.PI/2), M.cyan, 0,.13,0));
+    const held = mesh(new RoundedBoxGeometry(.22,.18,.22,2,.03), M.brand, 0,.33,0); held.castShadow = false; wr.add(held);
+    const pick = new THREE.Vector3(bx, B0+.66, 2.05), place = new THREE.Vector3(bx*.6, B0+1.62, .85), home = new THREE.Vector3(bx-sd*.2, B0+1.7, bz+.3);
+    return { base, yaw, sh, el, wr, fingers, held, pick, place, home, off:i*3 }; });
+  const reach = (A, P)=>{ // two-link IK: aim the arm's gripper (0.25 below the wrist) at P, in district space
+    const L1 = .9, L2 = .8, bx = A.base.position.x, bz = A.base.position.z, dx = P.x-bx, dz = P.z-bz;
+    A.yaw.rotation.y = Math.atan2(-dz, dx);
+    const d = Math.hypot(dx,dz), dy = P.y+.33-(A.base.position.y+.58), c = Math.min(L1+L2-.001, Math.hypot(d,dy));
+    const e = Math.acos(THREE.MathUtils.clamp((c*c-L1*L1-L2*L2)/(2*L1*L2),-1,1)), al = Math.atan2(d,dy), be = Math.atan2(L2*Math.sin(e), L1+L2*Math.cos(e)), tilt = al-be;
+    A.sh.rotation.z = -tilt; A.el.rotation.z = -e; A.wr.rotation.z = -(Math.PI-tilt-e); };
+  const KEYS = [[0,'home'],[1.2,'abovePick'],[1.7,'pick'],[2.3,'abovePick'],[3.6,'abovePlace'],[4.1,'place'],[4.7,'abovePlace'],[6,'home']];
+  const at = (A,k)=>k==='home' ? A.home : k==='pick' ? A.pick : k==='place' ? A.place : (k==='abovePick' ? A.pick : A.place).clone().add(new THREE.Vector3(0,.55,0));
+  const animArm = (A,t)=>{ const c = (t+A.off)%6; let i = 0; while (i<KEYS.length-2 && c>KEYS[i+1][0]) i++;
+    const [t0,k0] = KEYS[i], [t1,k1] = KEYS[i+1]; ik.lerpVectors(at(A,k0), at(A,k1), ease((c-t0)/(t1-t0))); reach(A, ik);
+    const holding = c>=1.7 && c<4.1; A.held.visible = holding; A.fingers.forEach((f,j)=>f.position.x = (j?1:-1)*(holding ? .12 : .16)); };
+  arms.forEach(A=>animArm(A,1.9));
+  // AI core: a glowing seed inside a turning lattice, orbit rings and a pulsing neural halo
+  const ai = new THREE.Group(); ai.position.set(-2.55,B0,-1.55); g.add(ai);
+  ai.add(mesh(new THREE.CylinderGeometry(.5,.58,.35,6), M.graphite, 0,.175,0)); ai.add(hexRing(.52,.015,M.cyan,.36));
+  ai.add(glow(new THREE.SphereGeometry(.2,20,14), neon(0x67e8f9,1.6), 0,1.15,0));
+  const lattice = glow(new THREE.IcosahedronGeometry(.48,1), new THREE.MeshBasicMaterial({ color:new THREE.Color(0x818cf8).multiplyScalar(1.6), wireframe:true, toneMapped:false }), 0,1.15,0); ai.add(lattice); spin.push([lattice,.5]);
+  for (const [rx,sp] of [[1.1,.8],[2.1,-.6]]){ const o = glow(new THREE.TorusGeometry(.66,.012,4,64), M.blue, 0,1.15,0); o.rotation.x = rx; ai.add(o); spin.push([o,sp,'z']); }
+  const nodes = Array.from({length:22},()=>{ const u = rand()*2-1, a = rand()*Math.PI*2, q = Math.sqrt(1-u*u); return new THREE.Vector3(Math.cos(a)*q*.95, 1.15+u*.95, Math.sin(a)*q*.95); });
+  const syn = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(nodes.flatMap(n=>[new THREE.Vector3(0,1.15,0), n])), new THREE.LineBasicMaterial({ color:0x67e8f9, transparent:true, opacity:.35 }));
+  ai.add(syn); ai.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(nodes), new THREE.PointsMaterial({ color:0xa5f3fc, size:.07 })));
+  for (const [txt,o,y] of [['AI core',ai,2.4],['Robotics',arms[0].base,2.5],['Automation line',crates[3],.6]]) label(txt,'station',y,o);
+  ticks.push((t,dt)=>{ beltTex.offset.x -= dt*.6; crates.forEach(c=>{ c.position.x += dt*.42; if (c.position.x>2.95) c.position.x = -2.95; });
+    arms.forEach(A=>animArm(A,t)); syn.material.opacity = .2+.3*Math.abs(Math.sin(t*2.2)); });
 }
 
-function run(g){ // operations centre: racks, live screens, and a repair drone that answers incidents
+function run(g){ // command centre: a curved video wall, operators at their consoles, a holo-globe table, racks along the sides,
+  // and a repair drone that answers incidents — the wall's readouts follow the same incident cycle
   const racks = [];
-  for (let k=0;k<3;k++){ const rack = new THREE.Group(), x = (k-1)*1.6, z = -.7; rack.position.set(x,TOP,z); g.add(rack);
-    rack.add(mesh(new RoundedBoxGeometry(1.25,3.1,1.1,3,.1), M.graphite, 0,1.55,0));
-    rack.add(mesh(new THREE.BoxGeometry(1.05,2.8,.02), M.glass, 0,1.55,.56));
+  for (const [x,z] of [[-3,-.9],[-3,.5],[3,-.9],[3,.5]]){ const rack = new THREE.Group(); rack.position.set(x,TOP,z); rack.rotation.y = x<0 ? Math.PI/2 : -Math.PI/2; g.add(rack);
+    rack.add(mesh(new RoundedBoxGeometry(1.15,2.5,.95,3,.08), M.graphite, 0,1.25,0));
+    rack.add(mesh(new THREE.BoxGeometry(.95,2.25,.02), M.glass, 0,1.25,.49));
     const led = M.cyan.clone(); led.userData.dynamic = true;
-    for (let j=0;j<6;j++) rack.add(glow(new THREE.BoxGeometry(.8,.05,.02), led, 0,.45+j*.42,.57));
-    const beacon = glow(new THREE.CylinderGeometry(.12,.12,.08,6), led, 0,3.16,0); rack.add(beacon);
-    rack.add(mesh(new THREE.CylinderGeometry(.018,.018,.9,8), M.hull, .5,1.6,.6));               // handle
-    for (let v=0;v<5;v++) rack.add(mesh(new THREE.BoxGeometry(.9,.02,.06), M.hull, 0,3.11,-.35+v*.17)); // top vents
-    racks.push({ x, z, led }); }
-  g.add(mesh(new THREE.BoxGeometry(4.6,.06,.3), M.graphite, 0,TOP+3.45,-.7));                     // cable tray
-  for (const x of [-2.2,2.2]) g.add(mesh(new THREE.CylinderGeometry(.02,.02,.3,6), M.graphite, x,TOP+3.27,-.7));
-  // screens: health, support, upgrades — redrawn a few times a second so readouts match the incident cycle
-  const W = 384, H = 224, screens = ['HEALTH','SUPPORT','UPGRADES'].map((title,k)=>{
-    const c = document.createElement('canvas'); c.width = W; c.height = H; const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-    const scr = glow(new THREE.PlaneGeometry(1.5,.875), new THREE.MeshBasicMaterial({ map:tex, transparent:true, opacity:.92, side:THREE.DoubleSide, toneMapped:false }), (k-1)*1.65,TOP+3.85,.35);
-    scr.rotation.set(-.15,-(k-1)*.3,0); g.add(scr);
-    const frame = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.5,.875)), new THREE.LineBasicMaterial({ color:new THREE.Color(0x3b82f6).multiplyScalar(2.5), toneMapped:false }));
-    scr.add(frame); return { title, x:c.getContext('2d'), tex }; });
+    for (let j=0;j<5;j++) rack.add(glow(new THREE.BoxGeometry(.72,.045,.02), led, 0,.4+j*.42,.5));
+    rack.add(glow(new THREE.CylinderGeometry(.1,.1,.07,6), led, 0,2.54,0));
+    rack.add(mesh(new THREE.CylinderGeometry(.016,.016,.8,8), M.hull, .45,1.3,.52));
+    racks.push({ x, z, led, front:new THREE.Vector3(x<0?1:-1,0,0) }); }
+  // raised operations floor
+  const C = new THREE.Vector3(0,TOP,1.1);
+  g.add(mesh(new THREE.CylinderGeometry(2.25,2.35,.12,40,1,false,Math.PI*.62,Math.PI*.76), M.graphite, C.x,TOP+.06,C.z));
+  // video wall: five panels on an arc, framed, on a curved backing
+  const W = 384, H = 224, titles = ['LOGS','HEALTH','SUPPORT','UPGRADES','NETWORK'];
+  { const back = M.graphite.clone(); back.side = THREE.DoubleSide; g.add(mesh(new THREE.CylinderGeometry(2.85,2.85,1.55,40,1,true,Math.PI*.7,Math.PI*.6), back, C.x,TOP+1.55,C.z)); }
+  const screens = titles.map((title,k)=>{ const a = (k-2)*.27, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+    const scr = glow(new THREE.PlaneGeometry(1.36,.8), new THREE.MeshBasicMaterial({ map:tex, toneMapped:false }), C.x+Math.sin(a)*2.78, TOP+1.6, C.z-Math.cos(a)*2.78);
+    scr.rotation.y = -a; g.add(scr);
+    scr.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.36,.8)), new THREE.LineBasicMaterial({ color:new THREE.Color(0x3b82f6).multiplyScalar(2.5), toneMapped:false })));
+    return { title, x:c.getContext('2d'), tex }; });
+  // consoles in an arc facing the wall, each with two monitors and a chair; operators arrive with the Xbot model
+  const consoleSpots = [-.62,-.21,.21,.62].map(a=>{ const p = C.clone().add(new THREE.Vector3(Math.sin(a)*1.45,0,-Math.cos(a)*1.45)), d = new THREE.Group();
+    d.position.copy(p).setY(TOP+.12); d.rotation.y = -a; g.add(d); // local -z faces the wall
+    d.add(mesh(new RoundedBoxGeometry(.7,.06,.36,2,.02), M.hull, 0,.42,0)); d.add(mesh(new THREE.BoxGeometry(.6,.4,.04), M.graphite, 0,.2,-.14));
+    for (const mx of [-.17,.17]){ d.add(mesh(new THREE.BoxGeometry(.3,.2,.02), M.graphite, mx,.6,-.12));
+      const f = new THREE.Mesh(new THREE.PlaneGeometry(.28,.17), new THREE.MeshBasicMaterial({ color:new THREE.Color(mx<0?0x1e3a8a:0x0e7490).multiplyScalar(1.4), toneMapped:false })); f.position.set(mx,.6,-.108); f.rotation.y = Math.PI; d.add(f); }
+    return { d, a }; });
+  XBOT.then(gltf=>consoleSpots.forEach(({d},i)=>{ const b = SkeletonUtils.clone(gltf.scene); b.scale.setScalar(.55); b.position.set(0,0,.42); b.rotation.y = Math.PI; d.add(b);
+    b.traverse(m=>{ if (m.isMesh){ m.frustumCulled = false; m.material = /Joints/i.test(m.material.name) ? M.cyanSoft : M.hull; } });
+    const mx = new THREE.AnimationMixer(b); const a = mx.clipAction(gltf.animations.find(c=>c.name==='idle')); a.time = i*.8; a.play(); mx.update(0); mixers.push(mx); }));
+  // holo-globe table at the front: the incident marker on it turns amber with the wall
+  const table = new THREE.Group(); table.position.set(0,TOP,2.35); g.add(table);
+  table.add(mesh(new THREE.CylinderGeometry(.55,.62,.5,6), M.graphite, 0,.25,0)); table.add(hexRing(.56,.015,M.cyan,.51));
+  const globe = glow(new THREE.IcosahedronGeometry(.45,2), new THREE.MeshBasicMaterial({ color:new THREE.Color(0x22d3ee).multiplyScalar(1.3), wireframe:true, toneMapped:false }), 0,1.15,0);
+  table.add(globe); spin.push([globe,.35]);
+  const orbit = glow(new THREE.TorusGeometry(.62,.01,4,64), M.blue, 0,1.15,0); orbit.rotation.x = 1.2; table.add(orbit); spin.push([orbit,.5,'z']);
+  const marker = glow(new THREE.SphereGeometry(.06,10,8), new THREE.MeshBasicMaterial({ color:0x22d3ee, toneMapped:false }), .3,.25,.25); marker.material.userData.dynamic = true; globe.add(marker);
+  // repair drone
   const drone = new THREE.Group(); g.add(drone);
   drone.add(mesh(new THREE.CylinderGeometry(.32,.24,.14,6), M.graphite));
   const rotor = hexRing(.42,.02,M.cyan,.06); drone.add(rotor);
   const beam = glow(new THREE.CylinderGeometry(.04,.35,1,16,1,true), new THREE.MeshBasicMaterial({ color:0x38bdf8, transparent:true, opacity:.25, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide }));
   beam.rotation.x = -Math.PI/2.6; beam.position.set(0,-.18,.47); drone.add(beam); // narrow at the drone, wide at the rack
-  const HOME = new THREE.Vector3(0,TOP+2.4,1.7), hist = Array.from({length:48},(_,i)=>.6+Math.sin(i*.7)*.08);
-  let state = 'normal', sub = 0, lastDraw = -1;
-  const draw = (t,prog)=>{ screens.forEach(({title,x,tex},k)=>{
-    x.fillStyle = 'rgba(7,13,26,.92)'; x.fillRect(0,0,W,H);
+  drone.traverse(o=>o.castShadow = false);
+  const HOME = new THREE.Vector3(0,TOP+3.1,1.2), hist = Array.from({length:48},(_,i)=>.6+Math.sin(i*.7)*.08), logs = [];
+  let state = 'normal', lastDraw = -1, hot = racks[0];
+  const draw = (t,prog)=>{ screens.forEach(({title,x,tex})=>{
+    x.fillStyle = 'rgba(7,13,26,.96)'; x.fillRect(0,0,W,H);
     x.fillStyle = '#60a5fa'; x.font = '700 18px Inter,Arial,sans-serif'; x.fillText(title,16,30);
     const warn = state==='open' || state==='fixing', col = warn ? '#fbbf24' : '#22d3ee';
-    if (k===0){ x.strokeStyle = col; x.lineWidth = 3; x.beginPath(); hist.forEach((v,i)=>x[i?'lineTo':'moveTo'](16+i*7.4, H-24-v*140)); x.stroke();
+    if (title==='HEALTH'){ x.strokeStyle = col; x.lineWidth = 3; x.beginPath(); hist.forEach((v,i)=>x[i?'lineTo':'moveTo'](16+i*7.4, H-24-v*140)); x.stroke();
       x.fillStyle = '#94a3b8'; x.font = '500 14px Inter,Arial,sans-serif'; x.fillText(warn?'Degraded: one rack':'All racks healthy',16,54); }
-    if (k===1){ const msg = state==='open' ? 'Incident opened' : state==='fixing' ? 'Engineer fixing it' : state==='resolved' ? 'Resolved' : 'No open incidents';
+    if (title==='SUPPORT'){ const msg = state==='open' ? 'Incident opened' : state==='fixing' ? 'Engineer fixing it' : state==='resolved' ? 'Resolved' : 'No open incidents';
       x.fillStyle = col; x.font = '700 26px Inter,Arial,sans-serif'; x.fillText(msg,16,96);
       x.fillStyle = '#94a3b8'; x.font = '500 14px Inter,Arial,sans-serif'; x.fillText('Logged and tracked against your SLA',16,128);
       ['Response','Fix','Confirm'].forEach((s2,i)=>{ const done = state==='resolved' || (state==='fixing' && i<1) || (state==='normal');
         x.fillStyle = done ? '#22d3ee' : '#334155'; x.fillRect(16+i*118,160,104,10); x.fillStyle = '#cbd5e1'; x.fillText(s2,16+i*118,196); }); }
-    if (k===2){ x.fillStyle = '#94a3b8'; x.font = '500 14px Inter,Arial,sans-serif'; x.fillText('Rolling out a new version',16,54);
+    if (title==='UPGRADES'){ x.fillStyle = '#94a3b8'; x.font = '500 14px Inter,Arial,sans-serif'; x.fillText('Rolling out a new version',16,54);
       x.fillStyle = '#1e293b'; x.fillRect(16,96,W-32,18); x.fillStyle = '#3b82f6'; x.fillRect(16,96,(W-32)*prog,18);
       x.fillStyle = '#e2e8f0'; x.font = '700 22px Inter,Arial,sans-serif'; x.fillText(`${Math.round(prog*100)}%`,16,150);
       x.fillStyle = '#94a3b8'; x.font = '500 14px Inter,Arial,sans-serif'; x.fillText('No downtime for the business',16,190); }
+    if (title==='LOGS'){ x.font = '500 13px ui-monospace,Menlo,monospace'; logs.slice(-9).forEach((l,i)=>{ x.fillStyle = l.w ? '#fbbf24' : '#94a3b8'; x.fillText(l.s,16,56+i*19); }); }
+    if (title==='NETWORK'){ const N = [[60,70],[150,120],[250,80],[320,160],[110,180],[220,190]];
+      x.strokeStyle = '#1e40af'; x.lineWidth = 2; [[0,1],[1,2],[2,3],[1,4],[4,5],[5,3],[2,5]].forEach(([a,b])=>{ x.beginPath(); x.moveTo(...N[a]); x.lineTo(...N[b]); x.stroke(); });
+      N.forEach((n,i)=>{ x.fillStyle = warn && i===racks.indexOf(hot)+1 ? '#fbbf24' : '#22d3ee'; x.beginPath(); x.arc(n[0],n[1],8,0,Math.PI*2); x.fill(); }); }
     tex.needsUpdate = true; }); };
   const setRack = (r,amber)=>r.led.color.setHex(amber?0xfbbf24:0x22d3ee).multiplyScalar((amber?2.6:3)*neonK);
   drone.position.copy(HOME); beam.visible = false; draw(0,.6);
-  ticks.push((t,dt)=>{ const c = t%11, r = racks[Math.floor(t/11)%3], at = new THREE.Vector3(r.x,TOP+2.1,r.z+1.25);
+  ticks.push((t,dt)=>{ const c = t%11, r = racks[Math.floor(t/11)%racks.length], at = new THREE.Vector3(r.x,TOP+1.9,r.z).addScaledVector(r.front,1.25);
     const ns = c<1.5 ? 'normal' : c<3.5 ? 'open' : c<6.5 ? 'fixing' : c<9 ? 'resolved' : 'normal';
-    if (ns!==state){ state = ns; racks.forEach(x=>setRack(x,false)); if (state==='open'||state==='fixing') setRack(r,true); }
+    if (ns!==state){ state = ns; hot = r; racks.forEach(x=>setRack(x,false)); if (state==='open'||state==='fixing') setRack(r,true);
+      marker.material.color.setHex(state==='open'||state==='fixing' ? 0xfbbf24 : 0x22d3ee);
+      logs.push({ s:`${new Date().toISOString().slice(11,19)}  rack-${racks.indexOf(r)+1}  ${state}`, w:state==='open'||state==='fixing' }); }
     const k = c<2 ? 0 : c<3.5 ? ease((c-2)/1.5) : c<6.5 ? 1 : c<8 ? 1-ease((c-6.5)/1.5) : 0;
     drone.position.lerpVectors(HOME,at,k); drone.position.y += Math.sin(t*3)*.05;
     drone.rotation.y = Math.atan2(r.x-drone.position.x, r.z-drone.position.z); // face the rack in district space
@@ -609,6 +689,7 @@ function run(g){ // operations centre: racks, live screens, and a repair drone t
 }
 
 const mixers = [];
+const XBOT = new Promise(res=>new GLTFLoader().load('/explore/assets/Xbot.glb', res, undefined, err=>console.warn('Xbot failed to load; scenes show no people', err)));
 function peopleD(g){ // a digital office: four zones (Training, Bootcamp, Coaching, Mentoring) that learners walk through, brightening at each, to a credential at the centre
   const names = ['Training','Bootcamp','Coaching','Mentoring'], ZR = 2.35;
   // office floor: carpet tiles inset in the slab
@@ -683,7 +764,7 @@ function peopleD(g){ // a digital office: four zones (Training, Bootcamp, Coachi
   burst.rotation.x = Math.PI/2; g.add(burst);
 
   const STAGE = [0x475569,0x3b82f6,0x6366f1,0x06b6d4,0x22d3ee], learners = [];
-  new GLTFLoader().load('/explore/assets/Xbot.glb', gltf=>{
+  XBOT.then(gltf=>{
     const clip = n => gltf.animations.find(c=>c.name===n), nod = THREE.AnimationUtils.makeClipAdditive(clip('agree').clone());
     const bot = (scale, body, joints) => { const b = SkeletonUtils.clone(gltf.scene); b.scale.setScalar(scale);
       b.traverse(m=>{ if (!m.isMesh) return; m.castShadow = true; m.frustumCulled = false; m.material = /Joints/i.test(m.material.name) ? joints : body; }); return b; };
@@ -720,7 +801,7 @@ function peopleD(g){ // a digital office: four zones (Training, Bootcamp, Coachi
         L.w = THREE.MathUtils.damp(L.w, L.pause>0 || L.s>=1 ? 0 : 1, 8, dt);
         L.walk.setEffectiveWeight(L.w); L.idle.setEffectiveWeight(1-L.w); place(L); });
     });
-  }, undefined, err=>console.warn('Xbot failed to load; People shows the office without people', err));
+  });
 }
 const builders = { platforms, build, run, people:peopleD };
 
