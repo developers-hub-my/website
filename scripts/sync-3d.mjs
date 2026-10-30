@@ -16,6 +16,7 @@
 //     no JSON-LD (check-seo fails any dist HTML with more than one block).
 // The script fails if any CDN URL survives the rewrite.
 
+import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, posix, relative } from 'node:path';
@@ -153,6 +154,10 @@ const remote = html.match(/https:\/\/(?:cdn\.jsdelivr\.net|unpkg\.com|esm\.sh)[^
 if (remote) fail(`remote URLs survived the rewrite: ${remote.join(', ')}`);
 
 writeFileSync(join(outDir, 'world.html'), html);
+// Version tag for the iframe/link URLs, so a re-synced scene is never served from a stale browser cache.
+const version = createHash('sha1').update(html).digest('hex').slice(0, 10);
+writeFileSync(join(root, 'src/data/explore-version.ts'),
+  `// Written by scripts/sync-3d.mjs — the hash of public/explore/world.html. Do not edit.\nexport const WORLD_VERSION = '${version}';\n`);
 
 // --- poster -----------------------------------------------------------------
 

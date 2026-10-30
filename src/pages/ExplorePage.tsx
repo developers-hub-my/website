@@ -1,3 +1,5 @@
+import { WORLD_URL } from '../components/ExploreStage';
+import { WORLD_VERSION } from '../data/explore-version';
 import { Link } from 'react-router';
 import PageShell, { Section } from '../components/PageShell';
 import ExploreStage from '../components/ExploreStage';
@@ -16,13 +18,13 @@ import { breadcrumbNode, logoNode, organizationNode, webPageNode, webSiteNode } 
 
 const DISTRICTS = WAYS;
 
-const TITLE = 'Explore Developers Hub in 3D';
+const TITLE = 'Explore Developers Hub';
 const DESCRIPTION =
   'An interactive 3D model of Developers Hub: the hub, its four service districts, its own products and the three sectors it serves, with a plain-text guide.';
 
 const ExplorePage = () => {
   const canonical = canonicalUrl('/explore');
-  const crumbs = [{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }, { name: 'Explore in 3D' }];
+  const crumbs = [{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }, { name: 'Explore DevHub' }];
 
   useSeo({
     title: pageTitle(TITLE),
@@ -38,14 +40,13 @@ const ExplorePage = () => {
     ],
   });
 
-  // A plain hash anchor: ExploreStage listens for the change and opens the
-  // scene on that spot, and the URL stays shareable.
+  // Opens the full scene on that spot (the standalone world page, with its own controls).
   const viewLink = (hash: string, name: string) => (
     <a
-      href={hash}
+      href={`${WORLD_URL}?v=${WORLD_VERSION}${hash}`}
       className="text-sm font-medium text-blue-700 dark:text-blue-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 rounded"
     >
-      View in 3D<span className="sr-only">: {name}</span>
+      Explore<span className="sr-only"> {name} in the DevHub world</span>
     </a>
   );
 

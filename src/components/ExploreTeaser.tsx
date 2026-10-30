@@ -9,7 +9,7 @@ const ExploreTeaser = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-8 lg:gap-12 items-center">
       <div className="lg:col-span-2">
         <h2 id="explore-teaser" className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-          Explore Developers Hub in 3D
+          Explore Developers Hub
         </h2>
         <p className="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed">
           Walk round an interactive model of the company: the hub, the four service districts, our own products and
