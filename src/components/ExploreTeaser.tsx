@@ -1,6 +1,6 @@
-import { Link } from 'react-router';
 import { ArrowRight } from 'lucide-react';
 import { trackCta } from '../lib/track';
+import { WORLD_HREF } from '../lib/explore';
 
 // Homepage entry point to /explore/. A static poster and a link only: the
 // WebGL scene and its iframe never load on the homepage.
@@ -15,14 +15,14 @@ const ExploreTeaser = () => (
           Walk round an interactive model of the company: the hub, the four service districts, our own products and
           the three sectors we work with. Click a district to see what happens there.
         </p>
-        <Link
-          to="/explore/"
-          onClick={() => trackCta('home_explore', 'Open the 3D model', '/explore/')}
+        <a
+          href={WORLD_HREF}
+          onClick={() => trackCta('home_explore', 'Explore DevHub', WORLD_HREF)}
           className="group mt-6 inline-flex items-center px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-950"
         >
-          Open the 3D model
+          Explore DevHub
           <ArrowRight className="ml-2 w-5 h-5" aria-hidden="true" />
-        </Link>
+        </a>
       </div>
       <img
         src="/images/explore/explore-poster.webp"
