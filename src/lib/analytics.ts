@@ -45,3 +45,9 @@ export function trackPageView(path: string): void {
     page_title: document.title,
   });
 }
+
+/** A GA4 event, snake_case like gtag's own (`page_view`). No-op when GA is off. */
+export function trackEvent(name: string, params: Record<string, string>): void {
+  if (!GA_MEASUREMENT_ID || !loaded) return;
+  window.gtag('event', name, params);
+}
