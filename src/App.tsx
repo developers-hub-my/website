@@ -18,6 +18,7 @@ import CompanyProfileRedirect from './pages/CompanyProfileRedirect';
 import NotFound from './pages/NotFound';
 import LegacyBlogPost from './pages/LegacyBlogPost';
 import AboutPage from './pages/AboutPage';
+import ExplorePage from './pages/ExplorePage';
 import ContactPage from './pages/ContactPage';
 import ServicesIndex from './pages/ServicesIndex';
 import ServiceDetail from './pages/ServiceDetail';
@@ -110,6 +111,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/services" element={<ServicesIndex />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
