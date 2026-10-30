@@ -141,10 +141,10 @@ const Footer = () => {
         <div className="border-t border-slate-800 dark:border-slate-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-              <div className="text-xs sm:text-sm text-slate-500 text-center sm:text-left">
+              <div className="text-xs sm:text-sm text-slate-400 text-center sm:text-left">
                 <p>© {currentYear} Developers Hub Sdn. Bhd. (202001019928 / 1376248-V)</p>
               </div>
-              <div className="flex space-x-4 sm:space-x-6 text-xs sm:text-sm text-slate-500">
+              <div className="flex space-x-4 sm:space-x-6 text-xs sm:text-sm text-slate-400">
                 <button
                   type="button"
                   onClick={() => setIsPrivacyOpen(true)}
