@@ -12,14 +12,16 @@
     "preview": "vite preview",
     "postbuild": "node scripts/generate-robots.mjs && node scripts/generate-sitemap.mjs && node scripts/generate-llms.mjs && node scripts/check-seo.mjs",
     "check:seo": "node scripts/check-seo.mjs",
-    "check:live": "node scripts/check-live.mjs"
+    "check:live": "node scripts/check-live.mjs",
+    "sync:3d": "node scripts/sync-3d.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "lucide-react": "^1.30.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router": "^8.3.0"
+    "react-router": "^8.3.0",
+    "three": "0.160.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
