@@ -4,61 +4,17 @@ import ExploreStage from '../components/ExploreStage';
 import { useSeo } from '../hooks/useSeo';
 import { canonicalUrl, ID, pageTitle } from '../data/site';
 import { SERVICES } from '../data/services';
+import { PRODUCTS, WAYS } from '../data/offer';
 import { breadcrumbNode, logoNode, organizationNode, webPageNode, webSiteNode } from '../lib/schema';
 
 // /explore/ — the 3D model of the company, with a plain-text account of
 // everything it shows so the page stands on its own without WebGL.
 //
-// The copy below mirrors the scene itself (DISTRICTS, PRODUCTS and SECTORS in
-// the business workspace's _brand/3d/developers-hub-3d.html, synced by
-// scripts/sync-3d.mjs). Change the scene and this list together; never add a
-// product or a claim here that the scene does not make.
+// The districts and products come from src/data/offer.ts, which mirrors the
+// scene itself (synced by scripts/sync-3d.mjs). Change the scene and that list
+// together; never add a product or a claim there that the scene does not make.
 
-const DISTRICTS = [
-  {
-    hash: '#platforms',
-    name: 'Platforms',
-    line: 'Software you own, on servers you own.',
-    body: "DevHub's own products, installed inside the client's network or hosted for them.",
-    related: null,
-  },
-  {
-    hash: '#build',
-    name: 'Build',
-    line: 'Built around your process, not ours.',
-    body: 'Solution architecture, system development and migration, by the engineers who will support the system afterwards.',
-    related: [
-      { to: '/services/software-development/', label: 'Software Development' },
-      { to: '/services/it-consultation/', label: 'IT Consultation' },
-    ],
-  },
-  {
-    hash: '#run',
-    name: 'Run & support',
-    line: 'Supported for the long term.',
-    body: 'Fixes, upgrades and SLA-based support after go-live, with a direct line to the builders.',
-    related: [{ to: '/services/software-development/', label: 'Software Development' }],
-  },
-  {
-    hash: '#people',
-    name: 'People',
-    line: 'Your team learns to run what we build.',
-    body: 'Training, bootcamps, coaching and mentoring, so the system stays the client’s long after the project ends.',
-    related: [
-      { to: '/services/technology-education/', label: 'Technology Education' },
-      { to: '/trainings/', label: 'Trainings' },
-    ],
-  },
-] as const;
-
-const PRODUCTS = [
-  { hash: '#g8stack', name: 'G8Stack', line: 'API management on the Kong gateway.', live: true },
-  { hash: '#g8deck', name: 'G8Deck', line: 'Deploy apps on infrastructure you own.', live: true },
-  { hash: '#gatherhub', name: 'GatherHub', line: 'Events, from registration to certificate.', live: true },
-  { hash: '#warung', name: 'Warung', line: 'A point of sale on the phone the shop already owns.', live: true },
-  { hash: '#bliptrace', name: 'Bliptrace', line: 'Error tracking for every app.', live: false },
-  { hash: '#devhub-academy', name: 'DevHub Academy', line: 'Short video series that end in a verifiable credential.', live: false },
-] as const;
+const DISTRICTS = WAYS;
 
 const TITLE = 'Explore Developers Hub in 3D';
 const DESCRIPTION =
