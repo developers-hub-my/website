@@ -4,11 +4,14 @@ import { ChevronDown, Menu, X } from 'lucide-react';
 import Logo from './Logo';
 import DarkModeToggle from './DarkModeToggle';
 import FullscreenToggle from './FullscreenToggle';
+import { WORLD_HREF } from '../lib/explore';
 
 interface NavItem {
   name: string;
   href: string;
   external?: boolean;
+  /** A static document outside the React app (the 3D world): a plain same-tab link. */
+  doc?: boolean;
 }
 
 // A group renders as a disclosure menu on desktop and flattens on mobile.
@@ -24,7 +27,11 @@ type NavEntry = NavItem | NavGroup;
 // internal route as <a href> would work — every URL is a real document now —
 // but it would reload the whole app on every menu click.
 const NavLink = ({ item, className, onClick }: { item: NavItem; className: string; onClick?: () => void }) =>
-  item.external ? (
+  item.doc ? (
+    <a href={item.href} className={className} onClick={onClick}>
+      {item.name}
+    </a>
+  ) : item.external ? (
     <a href={item.href} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
       {item.name}
     </a>
@@ -54,7 +61,7 @@ const navEntries: NavEntry[] = [
     name: 'About',
     children: [
       { name: 'About DevHub', href: '/about/' },
-      { name: 'Explore DevHub', href: '/explore/' },
+      { name: 'Explore DevHub', href: WORLD_HREF, doc: true },
       ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
     ],
   },

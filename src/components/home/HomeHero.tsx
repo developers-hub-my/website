@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import Photo from './Photo';
 import { trackCta } from '../../lib/track';
 import { primaryButton, secondaryButton } from './styles';
+import { WORLD_HREF } from '../../lib/explore';
 
 // The page's only h1. The photo is the LCP element on wide screens, so it is
 // eager with fetchpriority=high; on a phone it sits below the text.
@@ -45,13 +46,13 @@ const HomeHero = () => (
               Talk to us
               <ArrowRight className="ml-2 w-5 h-5 motion-safe:transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
-            <Link
-              to="/explore/"
+            <a
+              href={WORLD_HREF}
               className={secondaryButton}
-              onClick={() => trackCta('home_hero', 'Explore DevHub', '/explore/')}
+              onClick={() => trackCta('home_hero', 'Explore DevHub', WORLD_HREF)}
             >
               Explore DevHub
-            </Link>
+            </a>
           </div>
         </div>
 

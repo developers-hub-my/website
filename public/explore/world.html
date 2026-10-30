@@ -12,6 +12,9 @@
 html,body{margin:0;height:100%;background:var(--ink);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
 #stage{position:fixed;inset:0}
 body.embed header{display:none}
+header a.home{pointer-events:auto;display:inline-block;margin-bottom:8px;font-size:12px;font-weight:600;color:#93c5fd;text-decoration:none}
+header a.home:hover{text-decoration:underline}
+header a.home:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 body.labels-off .lbl{display:none!important}
 header{position:fixed;top:20px;left:24px;pointer-events:none;max-width:440px;background:rgba(7,13,26,.55);padding:14px 18px;border-radius:12px;backdrop-filter:blur(6px)}
 .kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);margin:0 0 6px}
@@ -1262,6 +1265,7 @@ addEventListener('keydown', e=>{ if (e.key==='t' || e.key==='T') tourTimer ? sto
 { let saved = null; try { saved = localStorage.getItem('dh3d-look'); } catch {}
   applyLook(new URLSearchParams(location.search).get('look') || (saved in LOOK ? saved : 'studio')); } // ?look=night for a booth
 if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+else if (location.pathname.startsWith('/explore/')) document.querySelector('header').insertAdjacentHTML('afterbegin','<a class="home" href="/">← devhub.my</a>'); // opened full-page from the website
 addEventListener('message', e=>{ if (e.origin===location.origin && e.data?.type==='dh3d:look' && e.data.look in LOOK) applyLook(e.data.look); }); // same-origin host page only
 if (kiosk) tour(0);
 { const h = location.hash.slice(1), d = DISTRICTS.find(d=>d.id===h), pr = PRODUCTS.find(([n])=>slug(n)===h);

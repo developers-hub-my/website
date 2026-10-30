@@ -8,7 +8,8 @@ import { WORLD_VERSION } from '../data/explore-version';
 // mounts the WebGL iframe after the visitor asks for it, so nothing here touches
 // `window` or `document` during render and the page works without JS or WebGL.
 
-export const WORLD_URL = '/explore/world.html';
+import { WORLD_URL } from '../lib/explore';
+export { WORLD_URL };
 
 type Look = 'night' | 'studio';
 type Stage = { state: 'poster' } | { state: 'live'; src: string; key: number };
