@@ -19,6 +19,7 @@ import NotFound from './pages/NotFound';
 import LegacyBlogPost from './pages/LegacyBlogPost';
 import AboutPage from './pages/AboutPage';
 import ExplorePage from './pages/ExplorePage';
+import ExploreTeaser from './components/ExploreTeaser';
 import ContactPage from './pages/ContactPage';
 import ServicesIndex from './pages/ServicesIndex';
 import ServiceDetail from './pages/ServiceDetail';
@@ -91,6 +92,7 @@ function Home() {
   return (
     <>
       <Hero />
+      <ExploreTeaser />
       <About />
       <Services />
       <Contact />

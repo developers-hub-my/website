@@ -53,6 +53,7 @@ const navEntries: NavEntry[] = [
     name: 'About',
     children: [
       { name: 'About DevHub', href: '/about/' },
+      { name: 'Explore in 3D', href: '/explore/' },
       ...(companyProfileUrl ? [{ name: 'Company Profile', href: companyProfileUrl, external: true }] : []),
     ],
   },

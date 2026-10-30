@@ -112,6 +112,17 @@ const AboutPage = () => {
         </ul>
       </Section>
 
+      <Section title="See it in 3D">
+        <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+          The company is also laid out as an interactive model: the hub, the four service districts, DevHub&rsquo;s
+          own products and the sectors it serves.{' '}
+          <Link to="/explore/" className="text-blue-600 dark:text-blue-400 hover:underline">
+            Explore Developers Hub in 3D
+          </Link>
+          .
+        </p>
+      </Section>
+
       <Section title="Company details">
         <dl className="grid sm:grid-cols-2 gap-4 text-sm">
           <div>
