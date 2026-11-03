@@ -4,6 +4,7 @@ import { ChevronDown, Menu, X } from 'lucide-react';
 import Logo from './Logo';
 import DarkModeToggle from './DarkModeToggle';
 import FullscreenToggle from './FullscreenToggle';
+import { focusRing } from './home/styles';
 import { WORLD_HREF } from '../lib/explore';
 
 interface NavItem {
@@ -74,8 +75,6 @@ const asLink = (entry: NavEntry): NavItem | null =>
 
 const mobileItems: NavItem[] = navEntries.flatMap((e) => ('href' in e ? [e] : e.children));
 
-const focusRing =
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-900';
 const topItemClass = `px-3 lg:px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 ${focusRing}`;
 
 const Navbar = () => {
@@ -172,7 +171,7 @@ const Navbar = () => {
             <DarkModeToggle />
             <Link
               to="/contact/"
-              className={`ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors ${focusRing}`}
+              className={`ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 dark:bg-primary-300 dark:text-slate-950 dark:hover:bg-primary-200 transition-colors ${focusRing}`}
             >
               Get in Touch
             </Link>
@@ -209,7 +208,7 @@ const Navbar = () => {
             ))}
             <Link
               to="/contact/"
-              className="block mt-4 px-4 py-3 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              className="block mt-4 px-4 py-3 bg-primary-600 text-white text-center font-semibold rounded-lg hover:bg-primary-700 dark:bg-primary-300 dark:text-slate-950 dark:hover:bg-primary-200 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               Get in Touch
