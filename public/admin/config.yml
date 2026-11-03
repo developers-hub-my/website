@@ -35,7 +35,7 @@ logout_redirect_url: https://devhub.my/blog
 # when app_title is set — this is branding, not white-labelling.
 app_title: Developers Hub Content Manager
 logo:
-  src: /favicon.svg
+  src: /logo.png
   # The sign-in screen is branded by public/admin/index.html; a second mark in
   # the app header would only compete with it.
   show_in_header: false
