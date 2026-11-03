@@ -7,11 +7,24 @@ import { WORLD_HREF } from '../../lib/explore';
 
 // The page's only h1. The photo is the LCP element on wide screens, so it is
 // eager with fetchpriority=high; on a phone it sits below the text.
-// Flat surface on purpose: the old blob/grid/orb backdrop and gradient text
-// fought the flat buttons and the documentary photo.
 const HomeHero = () => (
-  <section aria-labelledby="home-title" className="bg-slate-50 dark:bg-slate-950 pt-28 sm:pt-32 pb-16 sm:pb-20">
-    <div className={`${container} grid lg:grid-cols-12 gap-10 lg:gap-12 items-center`}>
+  <section aria-labelledby="home-title" className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 pt-28 sm:pt-32 pb-16 sm:pb-20">
+    {/* Soft brand backdrop, restored from the previous hero: gradient wash, drifting colour blobs, a fine grid and a few orbs.
+        Decorative only, behind the content; blobs and orbs stay still for reduced motion. */}
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-0 bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
+      <div className="absolute inset-0 opacity-20 dark:opacity-30">
+        <div className="absolute top-0 -left-4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-400 dark:bg-purple-500 rounded-full mix-blend-multiply dark:mix-blend-normal blur-3xl motion-safe:animate-blob" />
+        <div className="absolute top-0 -right-4 w-72 sm:w-96 h-72 sm:h-96 bg-blue-400 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-normal blur-3xl motion-safe:animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-20 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-400 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-normal blur-3xl motion-safe:animate-blob animation-delay-4000" />
+        <div className="absolute bottom-0 right-20 w-72 sm:w-96 h-72 sm:h-96 bg-indigo-400 dark:bg-indigo-500 rounded-full mix-blend-multiply dark:mix-blend-normal blur-3xl motion-safe:animate-blob animation-delay-6000" />
+      </div>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[64px_64px]" />
+      <div className="absolute top-1/4 left-10 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full motion-safe:animate-float opacity-40 dark:opacity-60" />
+      <div className="absolute top-1/3 right-20 w-3 h-3 bg-purple-500 dark:bg-purple-400 rounded-full motion-safe:animate-float animation-delay-2000 opacity-40 dark:opacity-60" />
+      <div className="absolute bottom-1/3 left-1/4 w-2 h-2 bg-cyan-500 dark:bg-cyan-400 rounded-full motion-safe:animate-float animation-delay-4000 opacity-40 dark:opacity-60" />
+    </div>
+    <div className={`relative ${container} grid lg:grid-cols-12 gap-10 lg:gap-12 items-center`}>
       <div className="lg:col-span-5">
         <h1
           id="home-title"
