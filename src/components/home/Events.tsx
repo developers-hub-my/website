@@ -4,7 +4,7 @@ import { container, h2 } from './styles';
 // Events DevHub took part in. Captions say where we were and nothing more:
 // no claims about the organisers, the guests or what the event achieved.
 const Events = () => (
-  <section aria-labelledby="events-title" className="bg-white dark:bg-slate-950 py-20 sm:py-28">
+  <section aria-labelledby="events-title" className="py-20 sm:py-28">
     <div className={container}>
       <h2 id="events-title" className={`max-w-3xl ${h2}`}>
         Out at events in 2026

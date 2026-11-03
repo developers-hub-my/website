@@ -7,7 +7,7 @@ const focus =
   'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-600 dark:focus-visible:ring-offset-primary-800';
 
 const ClosingCta = () => (
-  <section aria-labelledby="closing-title" className="bg-primary-600 dark:bg-primary-800 text-white py-20 sm:py-24">
+  <section aria-labelledby="closing-title" className="bg-primary-600/90 dark:bg-primary-800/70 text-white py-20 sm:py-24">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-8 items-end">
       <div className="lg:col-span-8">
         <h2 id="closing-title" className="text-3xl sm:text-5xl font-bold tracking-[-0.03em] leading-tight">

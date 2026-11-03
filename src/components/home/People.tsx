@@ -15,7 +15,7 @@ const SMALL = [
 ] as const;
 
 const People = () => (
-  <section aria-labelledby="people-title" className="bg-slate-50 dark:bg-slate-900 py-20 sm:py-28">
+  <section aria-labelledby="people-title" className="py-20 sm:py-28">
     <div className={container}>
       <div className="grid lg:grid-cols-12 gap-6 items-end">
         <h2 id="people-title" className={`lg:col-span-6 ${h2}`}>

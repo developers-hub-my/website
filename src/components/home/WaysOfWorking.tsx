@@ -13,7 +13,7 @@ const ICONS: Record<string, LucideIcon> = {
 // The four ways of working. Platforms has no service page of its own; it
 // points at the product list further down this page.
 const WaysOfWorking = () => (
-  <section aria-labelledby="what-we-do" className="bg-slate-50 dark:bg-slate-900 py-20 sm:py-28">
+  <section aria-labelledby="what-we-do" className="py-20 sm:py-28">
     <div className={`${container} grid lg:grid-cols-12 gap-12`}>
       <div className="lg:col-span-4">
         <h2 id="what-we-do" className={h2}>

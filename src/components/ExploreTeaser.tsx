@@ -5,7 +5,7 @@ import { WORLD_HREF } from '../lib/explore';
 // Homepage entry point to /explore/. A static poster and a link only: the
 // WebGL scene and its iframe never load on the homepage.
 const ExploreTeaser = () => (
-  <section aria-labelledby="explore-teaser" className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-950">
+  <section aria-labelledby="explore-teaser" className="py-20 sm:py-28">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-8 lg:gap-12 items-center">
       <div className="lg:col-span-2">
         <h2 id="explore-teaser" className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">

@@ -9,7 +9,7 @@ const linkClass =
 // g8suite: DevHub's own products. A dark field in both themes; status is said
 // in words with an icon, never by colour alone.
 const Products = () => (
-  <section id="products" aria-labelledby="products-title" className="bg-slate-900 dark:bg-black py-20 sm:py-28 text-white scroll-mt-20">
+  <section id="products" aria-labelledby="products-title" className="bg-slate-900/90 dark:bg-black/50 py-20 sm:py-28 text-white scroll-mt-20">
     <div className={container}>
       <div className="grid lg:grid-cols-12 gap-6 items-end">
         <h2 id="products-title" className="lg:col-span-7 text-3xl sm:text-4xl font-bold tracking-[-0.025em] leading-tight">

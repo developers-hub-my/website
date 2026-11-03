@@ -6,6 +6,7 @@ import { initMetaPixel, trackMetaPageView } from './lib/meta-pixel';
 import { useSeo } from './hooks/useSeo';
 import Navbar from './components/Navbar';
 import HomeHero from './components/home/HomeHero';
+import Backdrop from './components/home/Backdrop';
 import WaysOfWorking from './components/home/WaysOfWorking';
 import Products from './components/home/Products';
 import Proof from './components/home/Proof';
@@ -96,7 +97,8 @@ function Home() {
   });
 
   return (
-    <>
+    <div className="relative isolate [clip-path:inset(0)]">
+      <Backdrop />
       <HomeHero />
       <WaysOfWorking />
       <Products />
@@ -105,7 +107,7 @@ function Home() {
       <Events />
       <ExploreTeaser />
       <ClosingCta />
-    </>
+    </div>
   );
 }
 

@@ -18,7 +18,7 @@ const FACTS = [
 ] as const;
 
 const Proof = () => (
-  <section aria-labelledby="proof-title" className="bg-white dark:bg-slate-950 py-20 sm:py-28">
+  <section aria-labelledby="proof-title" className="py-20 sm:py-28">
     <div className={`${container} grid lg:grid-cols-12 gap-12 items-center`}>
       <div className="lg:col-span-7 lg:order-2">
         <h2 id="proof-title" className={h2}>
