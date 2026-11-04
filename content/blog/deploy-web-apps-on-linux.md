@@ -189,6 +189,8 @@ systemctl stop shop-fpm@blue
 
 Only after the new colour has passed its health check do we "promote": move `current`, and restart the queue workers and the scheduler, which read from `current`. If the health check fails, nothing that matters has moved.
 
+![Six-step blue/green switch: link the new release to the green colour, start the green PHP-FPM pool on its own socket, health-check it directly (on failure stop and blue stays live), point nginx at the green socket and reload, stop the blue pool, then promote current and restart the queue workers and scheduler](/images/blog/deploy-web-apps-on-linux/blue-green-switch.webp)
+
 > Takeaway: the symlink swap is atomic on disk only; the process swap needs two processes.
 
 ## 5. `Type=notify` on a daemon that never notifies

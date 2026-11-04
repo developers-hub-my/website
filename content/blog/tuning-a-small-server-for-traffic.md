@@ -101,6 +101,8 @@ Setting the `Host` header lets you hit the origin IP while nginx still routes th
 
 ## Results
 
+![Bar chart on one scale of requests per second across four runs on a 2 vCPU server: about 15 at baseline, 130 after FPM pool sizing, Laravel caches and OPcache, 698 after removing the health endpoint from the test mix (a test fix, the app did not change), and 1,167 with open_basedir off](/images/blog/tuning-a-small-server-for-traffic/results.webp)
+
 | Run | VUs | req/s | p95 | Failed |
 |---|---|---|---|---|
 | Baseline | 200 | ~15 | 13 s | 10% |

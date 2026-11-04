@@ -58,28 +58,7 @@ The cost is more moving parts and a network between them. The rest of this artic
 
 Before and after:
 
-```plain
-BEFORE                              AFTER
-
-+----------------------+            Internet
-| shop (one server)    |               |
-|                      |        +--------------+
-|  nginx + TLS         |        | edge         |  nginx, TLS on 443, ACME
-|  php-fpm (Laravel)   |        +--------------+
-|  MySQL               |               |
-|  Redis               |   ======= private network 10.0.0.0/24 =======
-|  storage/app uploads |               |
-|  cron + queue        |        +--------------+
-+----------------------+        | app-1        |  php-fpm, scheduler,
-                                | 10.0.0.10    |  queue workers
-                                +--------------+
-                                  |     |     |
-                         +--------+  +--+--+  +---------+
-                         | db-1   |  |cache-1| | store-1 |
-                         | MySQL  |  | Redis | | S3 API  |
-                         |10.0.0.20| |.0.0.21| |10.0.0.30|
-                         +--------+  +------+  +---------+
-```
+![Before: one public server running nginx with TLS, php-fpm, MySQL, Redis, uploads, cron and queue. After: the internet reaches only a public edge running nginx with TLS on 443; behind it, on private network 10.0.0.0/24, app-1 at 10.0.0.10 runs php-fpm, scheduler and queue workers, and connects to db-1 MySQL at 10.0.0.20, cache-1 Redis at 10.0.0.21 and store-1 S3 API at 10.0.0.30](/images/blog/migrate-single-node-to-3-tier/target-layout.webp)
 
 The edge can be nginx on `app-1` itself. What matters is that only the edge listens on the public internet. The database, cache and object storage listen on the private network only.
 
@@ -120,6 +99,8 @@ The guiding rule: **cut DNS last**. Everything else should already be working on
 We learned this the hard way. On one move we flipped DNS before the app was fully live on the new host. Users got 526 errors from the CDN (invalid origin certificate) and then 503s for somewhere between 10 and 45 minutes, depending on their resolver. The servers were fine. They just were not ready yet.
 
 Here is the order we follow now.
+
+![Eight-step cutover timeline: while users are still on the old server, lower the DNS TTL and build and test the new servers; then in the maintenance window put the old server in maintenance mode, dump and restore with row-count checks, sync the file delta, deploy the final release, install the existing certificate, and last of all flip DNS and stop the old scheduler and workers](/images/blog/migrate-single-node-to-3-tier/cutover-runbook.webp)
 
 ### 1. Lower the DNS TTL at least 24 hours before
 

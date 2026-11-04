@@ -102,6 +102,8 @@ We wrote down what "good" would look like before choosing anything.
 4. **Test and staging mail never reaches real people.** It should be caught and kept somewhere we can read it.
 5. **We find out when something goes wrong.** Bounces and spam complaints should raise an alert before a mail provider starts blocking us.
 
+![Before: every app and a staging copy sent through one shared relay account with one daily limit, one key and one reputation, so staging mail could reach real inboxes. After: each app sends as its own domain with its own send-only key, and staging mail goes to a mail sandbox where it is kept and never delivered](/images/blog/email-setup-for-every-app/before-after.webp)
+
 ## Test and staging: catch everything
 
 For every environment that is not production, mail goes to a mail sandbox. A mail sandbox is an SMTP server that accepts mail like a real one, stores it in an inbox you can browse, and never delivers any of it.
@@ -115,6 +117,8 @@ The important rule runs in the other direction too. Once an app has a real sendi
 For production we moved to Resend, an email API. An email API is a service you send mail through with a web request or with SMTP, and which also lets you manage domains, keys and events through its own API. That last part is what we needed. Every step a person used to do in a dashboard can now be done by our platform, in order, without a person.
 
 Here is what happens when a production app with its own domain is deployed.
+
+![Six-step production mail setup: add the domain, write the SPF, DKIM and bounce DNS records, verify the domain while the deploy carries on, create a send-only key for that app and domain, redeploy once and send a test email, then watch bounce and spam-complaint rates](/images/blog/email-setup-for-every-app/setup-flow.webp)
 
 ### 1. The domain is added
 
