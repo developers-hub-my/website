@@ -25,6 +25,8 @@ import AboutPage from './pages/AboutPage';
 import ExplorePage from './pages/ExplorePage';
 import ExploreTeaser from './components/ExploreTeaser';
 import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
 import ServicesIndex from './pages/ServicesIndex';
 import ServiceDetail from './pages/ServiceDetail';
 import TechnologiesIndex from './pages/TechnologiesIndex';
@@ -126,6 +128,8 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/services" element={<ServicesIndex />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
           <Route path="/technologies" element={<TechnologiesIndex />} />
