@@ -1,7 +1,4 @@
-import { useState } from 'react';
 import { Link } from 'react-router';
-import PrivacyPolicy from './PrivacyPolicy';
-import TermsOfService from './TermsOfService';
 import { SERVICES } from '../data/services';
 import { TECHNOLOGIES } from '../data/technologies';
 
@@ -26,8 +23,6 @@ const quickLinks = [
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
 
   return (
     <>
@@ -145,29 +140,17 @@ const Footer = () => {
                 <p>© {currentYear} Developers Hub Sdn. Bhd. (202001019928 / 1376248-V)</p>
               </div>
               <div className="flex space-x-4 sm:space-x-6 text-xs sm:text-sm text-slate-400">
-                <button
-                  type="button"
-                  onClick={() => setIsPrivacyOpen(true)}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
+                <Link to="/privacy/" className="hover:text-white transition-colors">
                   Privacy Policy
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsTermsOpen(true)}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
+                </Link>
+                <Link to="/terms/" className="hover:text-white transition-colors">
                   Terms of Service
-                </button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </footer>
-
-      {/* Modals */}
-      <PrivacyPolicy isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
-      <TermsOfService isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
     </>
   );
 };
